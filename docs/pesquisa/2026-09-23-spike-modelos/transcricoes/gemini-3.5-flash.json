@@ -1,0 +1,366 @@
+{
+ "alias": "gemini-3.5-flash",
+ "modelo": "gemini-3.5-flash",
+ "casos": [
+  {
+   "caso": "A1",
+   "pergunta": "Resuma o processo 0000001-15.2022.8.99.9012, destacando os principais fatos e o andamento processual.",
+   "parede_s": 19.1,
+   "checks": [
+    [
+     "consultou o processo",
+     true
+    ],
+    [
+     "improcedência",
+     true
+    ],
+    [
+     "trânsito/arquivamento",
+     true
+    ],
+    [
+     "cita [Doc n]",
+     true
+    ],
+    [
+     "citações existem",
+     true
+    ]
+   ],
+   "resposta": "Aqui está o resumo completo do processo **0000001-15.2022.8.99.9012**, estruturado com base nos fatos alegados pelas partes, no andamento processual e na decisão final.\n\n---\n\n### 1. Identificação do Processo e das Partes\n* **Número do processo:** 0000001-15.2022.8.99.9012 [Cadastro]\n* **Classe:** Procedimento Comum Cível [Cadastro]\n* **Assunto:** Rescisão Contratual c/c Perdas e Danos [Cadastro]\n* **Comarca / Vara:** 1ª Vara Cível da Comarca de Brusque [Cadastro]\n* **Magistrado(a):** Maria Pinto Schneider [Cadastro]\n* **Autora:** Maria Salete Andrade Farias (representada pelo Dr. Sebastião Krüger — OAB/SC 99.651) [Cadastro, Doc 86]\n* **Réu:** Indústria Têxtil Encano Ltda (representada pelo Dr. Paulo Bortolini — OAB/SC 99.154) [Cadastro, Doc 89]\n* **Valor da Causa:** R$ 2.829,36 [Cadastro]\n\n---\n\n### 2. Principais Fatos e Teses das Partes\n\n* **Petição Inicial (24/10/2022):** A autora ajuizou a ação com base no art. 475 do Código Civil, alegando descumprimento de obrigações contratuais assumidas pela ré. Declarou ter tentado solucionar a pendência extrajudicialmente sem sucesso. Diante do dano suportado, requereu a aplicação de normas protetivas, a inversão do ônus da prova e a condenação da requerida ao pagamento de indenização a ser arbitrada pelo juízo. [Doc 86]\n* **Contestação (07/04/2023):** A empresa ré apresentou contestação alegando preliminar de **ilegitimidade passiva**. Sustentou que não integrou a relação jurídica descrita e que a documentação apresentada pela própria autora indicava uma pessoa jurídica diversa como responsável pela operação. No mérito, contestou o dever de indenizar e pediu, subsidiariamente, que uma eventual condenação seguisse patamares módicos e compatíveis com a jurisprudência da Corte. [Doc 89]\n* **Réplica (07/06/2023):** A autora rebateu a preliminar, afirmando que a tese de ilegitimidade passiva não encontra respaldo nas provas documentais dos autos e que a ré buscava apenas se esquivar de sua responsabilidade jurídica. [Doc 90]\n\n---\n\n### 3. Andamento Processual e Instrução\n\n* **Citação (30/01/2023):** O mandado de citação da ré foi cumprido de forma positiva pelo oficial de justiça. [Doc 88] / [Mov 2023-02-13]\n* **Saneamento do Processo (22/08/2023):** A magistrada proferiu decisão interlocutória saneando o feito. Na ocasião, **afastou a preliminar de ilegitimidade passiva** (indicando que os fundamentos detalhados seriam expostos na sentença), fixou os pontos controvertidos (fatos, dano e nexo causal) e deferiu a produção de provas documental e testemunhal. [Doc 91] / [Mov 2023-08-22]\n* **Despacho de prazo (27/11/2023):** O juízo deferiu um prazo requerido pelas partes antes de tornar os autos conclusos. [Doc 92] / [Mov 2023-11-27]\n\n---\n\n### 4. Sentença e Trânsito em Julgado\n\n* **Sentença de Improcedência (26/08/2024):** A magistrada Maria Pinto Schneider julgou o feito. Na decisão, ela acolheu a tese defensiva, reconhecendo que *\"a alegação de ilegitimidade passiva, sustentada pela defesa, encontra respaldo na prova produzida\"* e que a autora não se desincumbiu do ônus de comprovar os fatos constitutivos de seu direito. \n  * **Dispositivo:** Julgou **improcedente** o pedido formulado pela autora, com resolução do mérito, nos termos do art. 487, inciso I, do Código de Processo Civil. Condenou a autora ao pagamento das custas processuais e de honorários advocatícios arbitrados em 10% sobre o valor atualizado da causa. [Doc 93] / [Mov 2024-08-26]\n* **Trânsito em julgado:** Ocorreu em 30/09/2024 [Mov 2024-09-30].\n* **Arquivamento:** O processo foi definitivamente arquivado em 11/11/2024 [Mov 2024-11-11].\n\n---\n\n### 5. Incoerências e Peculiaridades Observadas nos Autos\n\nAo analisar o dossiê do processo, identificam-se as seguintes divergências de conteúdo e de tramitação:\n1. **Contradição técnica na fundamentação da ilegitimidade passiva:** Na decisão de saneamento [Doc 91], a juíza rejeitou a preliminar de ilegitimidade passiva. Contudo, na sentença [Doc 93], ela voltou atrás e declarou que *\"assiste razão à parte requerida quanto à ilegitimidade passiva\"*. O acolhimento de ilegitimidade passiva (condição da ação) deveria ensejar a extinção do feito *sem* resolução do mérito (Art. 485, VI, do CPC), mas a magistrada julgou o processo **improcedente com resolução do mérito** (Art. 487, I, do CPC) [Doc 93].\n2. **Menção a atos processuais inexistentes nos autos:** A fundamentação da sentença [Doc 93] menciona que foi realizada *\"audiência de instrução e julgamento, foram colhidos os depoimentos e produzida a prova pericial\"*. Entretanto, tais documentos (termos de audiência, depoimentos e laudo pericial) não constam na lista de documentos anexados ao processo, nem há registro de tais atos no histórico de movimentações [Movimentações].\n\n---\n\n### Fontes consultadas\n* **Dados cadastrais, partes e advogados:** [Cadastro]\n* **Petições e manifestações das partes:** Inicial [Doc 86]; Contestação [Doc 89]; Réplica [Doc 90].\n* **Decisões judiciais e certidões:** Despacho de manifestação [Doc 87]; Certidão de citação [Doc 88]; Saneamento [Doc 91]; Despacho de prazo [Doc 92]; Sentença de mérito [Doc 93].\n* **Histórico de tramitação:** [Movimentações] (período de 11/10/2022 a 11/11/2024).",
+   "finish": "stop",
+   "ferramentas": [
+    {
+     "ferramenta": "obter_dossie",
+     "args": {
+      "numero": "0000001-15.2022.8.99.9012"
+     },
+     "resultado": "0000001-15.2022.8.99.9012, 8 docs, 0 alerta(s)"
+    }
+   ],
+   "uso": {
+    "llm_calls": 2,
+    "prompt": 6664,
+    "completion": 1700,
+    "reasoning": 0,
+    "cost": 0.0,
+    "latencia": 19.0517914880038
+   }
+  },
+  {
+   "caso": "A2",
+   "pergunta": "Quem são as partes, o magistrado e os advogados desse processo? Quais são os pedidos apresentados?",
+   "parede_s": 6.8,
+   "checks": [
+    [
+     "autora",
+     true
+    ],
+    [
+     "ré",
+     true
+    ],
+    [
+     "magistrada",
+     true
+    ],
+    [
+     "adv. autora",
+     true
+    ],
+    [
+     "adv. ré",
+     true
+    ],
+    [
+     "pedidos",
+     true
+    ],
+    [
+     "citações existem",
+     true
+    ]
+   ],
+   "resposta": "Com base nas informações constantes nos autos do processo **0000001-15.2022.8.99.9012**, seguem os dados detalhados sobre os sujeitos processuais e os pleitos formulados:\n\n### 1. Sujeitos Processuais\n\n* **Partes:**\n  * **Polo Ativo (Autora):** Maria Salete Andrade Farias (pessoa física, CPF 999.550.862-21) [Cadastro].\n  * **Polo Passivo (Ré):** Indústria Têxtil Encano Ltda (pessoa jurídica, CNPJ 99.076.775/0001-59) [Cadastro].\n* **Magistrado:**\n  * **Juíza de Direito:** Dra. Maria Pinto Schneider (em atuação ativa na 1ª Vara Cível da Comarca de Brusque) [Cadastro].\n* **Advogados Identificados:**\n  * **Pela Autora:** Dr. Sebastião Krüger — OAB/SC 99.651 (assinou a petição inicial e a réplica) [Doc 86, Doc 90].\n  * **Pela Ré:** Dr. Paulo Bortolini — OAB/SC 99.154 (assinou a petição de contestação) [Doc 89].\n\n---\n\n### 2. Pedidos Formulados\n\n#### **Pela Autora (na Petição Inicial)** [Doc 86]\nA autora requereu em juízo:\n1. **Citação** da ré para, se desejasse, apresentar defesa sob pena de sofrer os efeitos da revelia;\n2. **Procedência integral dos pedidos**, condenando a parte ré ao pagamento de indenização em valor a ser arbitrado pelo Juízo;\n3. **Condenação da ré** ao pagamento de todas as custas processuais e dos honorários advocatícios de sucumbência;\n4. **Produção de provas** por todos os meios em direito admitidos, mencionando de forma específica a prova documental e a testemunhal.\n\n*(Atribuiu-se à causa o valor de R$ 2.829,36).*\n\n#### **Pela Ré (na Contestação)** [Doc 89]\nEm sua peça de defesa, a ré apresentou os seguintes requerimentos:\n1. **Preliminar de Ilegitimidade Passiva:** A extinção do processo sem resolução do mérito, devido à ausência de pertinência subjetiva com a relação jurídica em disputa;\n2. **Subsidiário sobre o Quantum:** Em caso de eventual condenação, requereu que o arbitramento fosse fixado em valor compatível com a jurisprudência da Corte para casos similares, alegando que o montante pretendido seria excessivo;\n3. **Improcedência total:** O julgamento de total improcedência do pedido inicial, com a consequente condenação da autora ao pagamento das verbas de sucumbência;\n4. **Produção de provas:** Protestou pela juntada de prova documental suplementar, oitiva de testemunhas e depoimento pessoal da autora.\n\n---\n\n### Fontes consultadas\n* **Dados de Cadastro e Partes:** [Cadastro]\n* **Petição Inicial (24/10/2022):** [Doc 86]\n* **Contestação (07/04/2023):** [Doc 89]\n* **Réplica (07/06/2023):** [Doc 90]",
+   "finish": "stop",
+   "ferramentas": [],
+   "uso": {
+    "llm_calls": 1,
+    "prompt": 7090,
+    "completion": 787,
+    "reasoning": 0,
+    "cost": 0.0,
+    "latencia": 6.828125465995981
+   }
+  },
+  {
+   "caso": "A3",
+   "pergunta": "Ele já foi julgado? Se sim, qual foi a decisão e quais foram seus fundamentos?",
+   "parede_s": 7.8,
+   "checks": [
+    [
+     "improcedente",
+     true
+    ],
+    [
+     "art. 373",
+     true
+    ],
+    [
+     "ilegitimidade",
+     true
+    ],
+    [
+     "BÔNUS contradição",
+     true
+    ],
+    [
+     "citações existem",
+     true
+    ]
+   ],
+   "resposta": "**Sim, o processo já foi julgado e encontra-se arquivado definitivamente.** [Cadastro] / [Mov 2024-11-11]\n\nAbaixo estão os detalhes da decisão, do dispositivo e de seus fundamentos jurídicos:\n\n---\n\n### 1. A Decisão (Dispositivo da Sentença)\nEm **26 de agosto de 2024**, a juíza Maria Pinto Schneider julgou o pedido **improcedente**, resolvendo o mérito da ação [Doc 93] / [Mov 2024-08-26]:\n\n> *\"Ante o exposto, JULGO IMPROCEDENTE o pedido formulado por Maria Salete Andrade Farias em face de Indústria Têxtil Encano Ltda, resolvendo o mérito na forma do art. 487, inciso I, do Código de Processo Civil.\"* [Doc 93]\n\nEm razão da sucumbência, a parte autora foi condenada ao pagamento das custas processuais e dos honorários advocatícios, estes fixados em **10% sobre o valor atualizado da causa** (com base no art. 85, § 2º, do CPC) [Doc 93].\n\n---\n\n### 2. Fundamentos da Decisão\nA magistrada baseou sua decisão nos seguintes pontos fundamentais [Doc 93]:\n\n* **Acolhimento da Ilegitimidade Passiva:** No corpo da fundamentação da sentença, a magistrada reanalisou a preliminar levantada pela ré e declarou que *\"assiste razão à parte requerida quanto à ilegitimidade passiva\"*, indicando que, diante do reconhecimento dessa prejudicial, ficava prejudicado o exame de outras matérias remanescentes.\n* **Ausência de Comprovação dos Fatos (Ônus da Prova):** No mérito, a julgadora destacou que a autora não conseguiu demonstrar os fatos que justificassem seu direito (violação ao art. 373, inciso I, do Código de Processo Civil), afirmando que *\"a alegação de ilegitimidade passiva, sustentada pela defesa, encontra respaldo na prova produzida\"*.\n* **Inaplicabilidade do Dispositivo Legal:** Concluiu que a pretensão da autora não encontrava amparo na aplicação prática do artigo 475 do Código Civil (norma que trata da resolução contratual por inadimplemento).\n\n---\n\n### 3. Observações e Incoerências Técnicas Relevantes\nO processo apresenta algumas peculiaridades de ordem processual que valem ser destacadas como alertas de consistência jurídica:\n\n1. **Julgamento de Mérito *versus* Condição da Ação:** A juíza acolheu a tese de \"ilegitimidade passiva\" da ré (o que tecnicamente é uma das condições da ação e deveria resultar na extinção do feito *sem* resolução de mérito, nos termos do art. 485, VI, do CPC). No entanto, o dispositivo da sentença julgou o pedido **improcedente com resolução do mérito**, amparando-se no art. 487, I, do CPC [Doc 93].\n2. **Decisão Contraditória ao Saneamento:** Na decisão interlocutória de saneamento datada de 22/08/2023, a mesma magistrada havia expressamente **afastado** a preliminar de ilegitimidade passiva [Doc 91]. Na sentença de 2024, ela mudou seu posicionamento para acolhê-la [Doc 93].\n3. **Mencionamento a Provas Inexistentes nos Autos:** O texto da sentença refere-se à realização de uma *\"audiência de instrução e julgamento, colheita de depoimentos e produção de prova pericial\"* [Doc 93]. Contudo, não há nenhum termo de audiência, certidão ou laudo pericial anexados no histórico de documentos disponíveis ou nas movimentações do processo, indicando uma possível inconsistência material na redação do julgado.\n\nO processo transitou em julgado em **30/09/2024** sem interposição de recursos [Mov 2024-09-30].\n\n---\n\n### Fontes consultadas\n* **Sentença de mérito (26/08/2024):** [Doc 93]\n* **Decisão interlocutória de saneamento (22/08/2023):** [Doc 91]\n* **Histórico de movimentações (Trânsito em Julgado e Arquivamento):** [Mov 2024-09-30, Mov 2024-11-11]",
+   "finish": "stop",
+   "ferramentas": [],
+   "uso": {
+    "llm_calls": 1,
+    "prompt": 7899,
+    "completion": 1045,
+    "reasoning": 0,
+    "cost": 0.0,
+    "latencia": 7.816552400996443
+   }
+  },
+  {
+   "caso": "B1",
+   "pergunta": "Elabore uma minuta de sentença para o processo 0000001-81.2023.8.99.9011, com base nos fatos e documentos disponíveis.",
+   "parede_s": 36.6,
+   "checks": [
+    [
+     "rótulo minuta/proposta",
+     true
+    ],
+    [
+     "relatório",
+     true
+    ],
+    [
+     "fundamentação",
+     true
+    ],
+    [
+     "dispositivo",
+     true
+    ],
+    [
+     "partes certas",
+     true
+    ],
+    [
+     "cita [Doc n]",
+     true
+    ],
+    [
+     "citações existem",
+     true
+    ]
+   ],
+   "resposta": "MINUTA — PROPOSTA DE TEXTO GERADA POR IA, SUJEITA À REVISÃO DO MAGISTRADO. NÃO É SENTENÇA PROFERIDA.\n\n***\n\n### SENTENÇA\n\n**Autos nº:** 0000001-81.2023.8.99.9011  \n**Classe:** Procedimento Comum Cível  \n**Assunto:** Inclusão Indevida em Cadastro de Inadimplentes  \n**Autor:** Maria Silva Sampaio  \n**Réu:** Financeira Araucária S.A.  \n\n---\n\n#### I. RELATÓRIO\n\nTrata-se de ação de conhecimento pelo procedimento comum proposta por **Maria Silva Sampaio** em face de **Financeira Araucária S.A.**, ambos devidamente qualificados nos autos [Cadastro]. \n\nA parte autora alega, em síntese, que foi surpreendida com a informação de que seu nome constava nos cadastros de proteção ao crédito por indicação da requerida. Sustenta que jamais manteve qualquer relação jurídica ou contratual com a ré que justificasse tal cobrança. Aduz ter tentado solucionar a pendência administrativamente, sem êxito, e que a restrição permaneceu ativa por meses, impedindo-a de obter crédito já aprovado no mercado. Diante disso, requereu a declaração de inexistência do débito e a condenação da requerida ao pagamento de indenização por danos morais [Doc 938 – Petição Inicial, 24/04/2023]. Atribuiu à causa o valor de R$ 13.941,35 [Cadastro].\n\nA ré foi devidamente citada [Doc 940 – Certidão, 25/09/2023] e apresentou contestação, na qual alegou ter agido em exercício regular de direito diante da inadimplência da autora. Argumentou que inexistiu ato ilícito e contestou o pedido indenitário, sustentando que eventual condenação deve observar a razoabilidade para evitar o enriquecimento sem causa [Doc 941 – Contestação, 08/01/2024].\n\nInstada a se manifestar, a autora apresentou réplica, reforçando que a ré não apresentou qualquer documento hábil a comprovar a origem do débito [Doc 942 – Réplica, 15/04/2024].\n\nEm decisão de saneamento, foi afastada a preliminar de exercício regular de direito, fixados os pontos controvertidos e deferida a produção de provas [Doc 943 – Decisão de Saneamento, 24/07/2024].\n\nRealizou-se audiência de instrução e julgamento, oportunidade em que foi colhido o depoimento pessoal das partes e inquiridas testemunhas, tendo as partes apresentado alegações finais remissivas [Doc 948 – Ata de Audiência, 24/10/2025].\n\nVieram os autos conclusos para sentença.\n\nÉ o relatório. Decido.\n\n---\n\n#### II. FUNDAMENTAÇÃO\n\nO feito comporta julgamento imediato, estando as provas necessárias já produzidas na instrução processual [Doc 948 – Ata de Audiência, 24/10/2025].\n\nIncide ao caso o Código de Defesa do Consumidor, haja vista a caracterização da ré como fornecedora de serviços e da autora como consumidora por equiparação (art. 17 do CDC), sujeita aos efeitos do evento danoso.\n\nO cerne da controvérsia reside na legalidade da inscrição do nome da autora em cadastros restritivos de crédito e na existência de relação jurídica de débito entre as partes.\n\nSendo a alegação da autora um fato negativo — qual seja, a inexistência de contratação e de débito —, recai sobre a instituição requerida o ônus de provar a regularidade da avença e do débito que originou o apontamento desabonador, nos termos do art. 6º, VIII, do CDC, e do art. 373, II, do CPC.\n\nContudo, analisando minuciosamente o acervo probatório, verifica-se que a ré **Financeira Araucária S.A.** não colacionou aos autos nenhum elemento concreto de prova capaz de atestar a celebração de contrato com a autora. Não foram juntados instrumentos contratuais assinados, faturas de consumo, comprovantes de entrega de produtos/crédito ou telas sistêmicas idôneas que demonstrassem o vínculo jurídico. A contestação limitou-se a aduzir genericamente a tese de \"exercício regular de direito\" sem lastro factual documental [Doc 941 – Contestação, 08/01/2024].\n\nDessa forma, inexistindo prova da origem e evolução da dívida, a declaração de inexistência do débito discutido é medida imperativa.\n\nNo tocante aos danos morais, a inscrição indevida do nome de consumidor em órgãos de proteção ao crédito gera prejuízo de ordem moral de natureza *in re ipsa* (presumida), dispensando prova do sofrimento ou constrangimento efetivo, pois a violação ao bom nome e à reputação decorre do próprio fato da negativação ilegal.\n\nRessalte-se que, embora a inicial faça menção à Súmula 385 do STJ de maneira até mesmo incongruente com seu pedido [Doc 938 – Petição Inicial, 24/04/2023], não há nos autos comprovação, trazida pela ré, de que a autora possuísse outras inscrições legítimas preexistentes ao fato discutido. Logo, resta afastada a aplicação da referida Súmula para fins de exclusão da indenização moral.\n\nPassando à quantificação do dano, este Juízo sopesa a capacidade econômica das partes, a intensidade da falha e o caráter punitivo-pedagógico da medida, de forma a não gerar enriquecimento sem causa. Sendo assim, fixa-se o montante indenizatório em **[inserir valor arbitrado pelo magistrado, ex: R$ 10.000,00]**.\n\nTratando-se de responsabilidade extracontratual decorrente de ato ilícito (visto que declarada a ausência de relação jurídica entre as partes), os juros de mora de 1% ao mês devem fluir a partir do evento danoso — isto é, da data da inclusão indevida nos órgãos restritivos —, nos termos da Súmula 54 do STJ. A correção monetária pelo índice oficial (INPC) incide a partir da data desta decisão (Súmula 362 do STJ).\n\n---\n\n#### III. DISPOSITIVO\n\nAnte o exposto, **JULGO PROCEDENTES** os pedidos formulados por **Maria Silva Sampaio** em face de **Financeira Araucária S.A.** para:\n\n1. **DECLARAR** a inexistência da relação jurídica e, por conseguinte, a inexigibilidade do débito no valor de R$ 13.941,35 [Cadastro] que motivou a restrição creditícia em desfavor da parte autora;\n2. **DETERMINAR** à requerida que proceda à baixa definitiva de eventuais anotações de inadimplência em nome da autora referentes ao débito objeto desta demanda nos órgãos de proteção ao crédito (SPC/SERASA), no prazo de [inserir prazo, ex: 5 (cinco) dias], sob pena de multa diária de [inserir valor da multa, ex: R$ 200,00], limitada ao patamar de [inserir teto da multa, ex: R$ 5.000,00];\n3. **CONDENAR** a requerida ao pagamento de indenização por danos morais no montante de **[inserir valor entre colchetes, ex: R$ 10.000,00]**, acrescido de juros moratórios de 1% ao mês a contar da data do evento danoso (data da inscrição indevida) e correção monetária pelo INPC a contar do arbitramento (data desta sentença).\n\nEm razão da sucumbência, **CONDENO** a ré ao pagamento das custas processuais e de honorários advocatícios em favor do patrono da parte autora, os quais fixo em **[inserir percentual entre colchetes, ex: 15%]** sobre o valor atualizado da condenação, com base no art. 85, § 2º, do Código de Processo Civil.\n\nPublique-se. Registre-se. Intimem-se.\n\n[Comarca / Data]\n\n**[Magistrado]**  \nJuiz de Direito  \n\n***\n\n### Alertas de Qualidade e Limites dos Dados do Processo\n\nEm observância às boas práticas e integridade processual, registram-se os seguintes alertas sobre a base de dados:\n\n1. **Divergência de Autoria de Documento (Doc 946):** Há uma inconsistência no cadastro sistêmico do **Doc 946**. Embora conste cadastrado como tendo por autor \"Dra. Simone Menegon Moreira\" (procuradora da autora), o texto do documento e a assinatura ao final correspondem à \"Dra. Maria Cláudia Pereira Coelho — OAB/SC 99.367\" (procuradora da ré Financeira Araucária S.A.), manifestando-se sobre as provas produzidas. \n2. **Ausência Física do Comprovante de Negativação:** O dossiê de documentos disponíveis no sistema de dados não apresenta anexado o extrato físico do órgão restritivo de crédito (SPC/Serasa) detalhando a data e o valor exato da inscrição. No entanto, o fato restou incontroverso nos autos, visto que a ré não negou a restrição, limitando-se a defender a sua legitimidade sob o manto de \"exercício regular de direito\" [Doc 941 – Contestação, 08/01/2024].\n3. **Incongruência de Fundamentação na Inicial:** Nota-se que a petição inicial cita erroneamente a Súmula 385 do STJ como \"fundamento da pretensão\" autoral [Doc 938], quando na realidade referida Súmula serve como matéria de defesa limitadora do dano moral (não cabimento em caso de negativação pré-existente legítima). Contudo, a falha técnica da redação não prejudicou o entendimento do pedido e da causa de pedir.\n\n---\n\n### Fontes Consultadas\n\n* **Dados Cadastrais do Processo:** Processo nº 0000001-81.2023.8.99.9011, Comarca de Balneário Camboriú, 2ª Vara Cível, Juiz Jair Vasconcelos Santos, valor da causa R$ 13.941,35 [Cadastro].\n* **Petição Inicial:** Doc 938 (juntado em 24/04/2023) [Doc 938].\n* **Citação:** Certidão do Oficial de Justiça juntada em 25/09/2023 [Doc 940] e movimentação correlata [Mov 25/09/2023].\n* **Contestação:** Doc 941 (juntado em 08/01/2024) [Doc 941].\n* **Réplica:** Doc 942 (juntado em 15/04/2024) [Doc 942].\n* **Decisão de Saneamento:** Doc 943 (juntada em 24/07/2024) [Doc 943].\n* **Ata da Audiência de Instrução e Julgamento:** Doc 948 (juntada em 24/10/2025) [Doc 948].\n* **Manifestações sobre Provas:** Doc 945 (20/01/2025), Doc 946 (10/03/2025) e Doc 950 (18/05/2026).",
+   "finish": "stop",
+   "ferramentas": [
+    {
+     "ferramenta": "obter_dossie",
+     "args": {
+      "numero": "0000001-81.2023.8.99.9011"
+     },
+     "resultado": "0000001-81.2023.8.99.9011, 13 docs, 0 alerta(s)"
+    }
+   ],
+   "uso": {
+    "llm_calls": 2,
+    "prompt": 7666,
+    "completion": 2802,
+    "reasoning": 0,
+    "cost": 0.0,
+    "latencia": 36.54900301300222
+   }
+  },
+  {
+   "caso": "C1",
+   "pergunta": "Quem são as partes e os advogados do processo 0000001-14.2023.8.99.9001? Quais são os pedidos apresentados?",
+   "parede_s": 24.3,
+   "checks": [
+    [
+     "declara indisponibilidade",
+     true
+    ],
+    [
+     "não inventa advogado",
+     true
+    ],
+    [
+     "lista as partes",
+     true
+    ]
+   ],
+   "resposta": "Com base nas informações obtidas no sistema, seguem as respostas sobre o processo **0000001-14.2023.8.99.9001**:\n\n### 1. Partes do Processo\n*   **Polo Ativo (Exequente):** \n    *   **Município de Florianópolis** (CNPJ 99.500.702/0001-85) [Cadastro].\n*   **Polo Passivo (Executados):** \n    *   **Carlos Wójcik** (CPF 999.469.186-01) [Cadastro].\n    *   **Maria Souza Almeida** (CPF 999.577.074-58) [Cadastro].\n\n*Nota/Alerta de Consistência:* O sistema aponta que a executada Maria Souza Almeida está cadastrada com o tipo cadastral \"autor\", mas figura formalmente no polo passivo deste processo (prevalecendo sua atuação no polo passivo) [Cadastro].\n\n---\n\n### 2. Advogados\n*   **Não há advogados identificados** cadastrados ou extraídos dos documentos do processo [Cadastro]. Isso ocorre porque não há nenhum documento ou petição juntados no banco de dados deste processo [Cadastro].\n\n---\n\n### 3. Pedidos Apresentados\n*   **Informação não disponível na íntegra:** Uma vez que o processo não possui petições ou documentos digitalizados inseridos no sistema (quantidade de documentos: 0) [Cadastro], os termos exatos e pedidos específicos formulados pelas partes não podem ser acessados diretamente.\n*   **Contexto da Ação:** Pelos dados cadastrais do processo, trata-se de uma **Execução Fiscal** referente a **Dívida Ativa Não Tributária — Multa Administrativa**, com o valor da causa fixado em **R$ 254,69** [Cadastro]. Assim, infere-se que o pedido principal consiste na cobrança/satisfação do referido crédito público.\n\n---\n\n### Fontes consultadas\n*   **Dados Cadastrais e Partes:** [Cadastro] obtido via ferramenta de consulta processual para o número 0000001-14.2023.8.99.9001.",
+   "finish": "stop",
+   "ferramentas": [
+    {
+     "ferramenta": "obter_dossie",
+     "args": {
+      "numero": "0000001-14.2023.8.99.9001"
+     },
+     "resultado": "0000001-14.2023.8.99.9001, 0 docs, 2 alerta(s)"
+    }
+   ],
+   "uso": {
+    "llm_calls": 2,
+    "prompt": 3412,
+    "completion": 556,
+    "reasoning": 0,
+    "cost": 0.0,
+    "latencia": 24.29043132001243
+   }
+  },
+  {
+   "caso": "D1",
+   "pergunta": "Quem é o magistrado responsável pelo processo 0000001-63.2025.8.99.9059?",
+   "parede_s": 129.4,
+   "checks": [
+    [
+     "declara ausência",
+     true
+    ],
+    [
+     "não inventa nome",
+     false
+    ],
+    [
+     "BÔNUS 'em exercício'",
+     true
+    ],
+    [
+     "citações existem",
+     true
+    ]
+   ],
+   "resposta": "Com base nas informações obtidas no sistema e nos documentos do processo **0000001-63.2025.8.99.9059**, a situação sobre a responsabilidade do magistrado é a seguinte:\n\n1. **Ausência de Vínculo Direto no Cadastro:** No cadastro específico do processo, o campo correspondente ao magistrado responsável está vazio (`null`) [Cadastro]. O sistema apresenta o seguinte alerta de qualidade de dados: *\"Nenhum magistrado vinculado a este processo no cadastro\"* [Cadastro].\n2. **Magistrada da Unidade Judiciária:** O processo tramita na **Vara Única da Comarca de Araquari** (unidade ID 117) [Cadastro / SQL]. Consultando a base de dados do Tribunal, a magistrada cadastrada e ativa como responsável por essa unidade é **Daiane Duarte Zanella** (ativa na unidade desde 14/06/2020) [SQL].\n3. **Assinatura nos Documentos:** A única decisão proferida nos autos (Decisão Interlocutória de 24/11/2025) foi assinada de forma genérica como **\"Juiz(a) de Direito em exercício\"**, sem que o nome da magistrada fosse explicitamente identificado no documento escrito [Doc 8 – Decisão Interlocutória, 2025-11-24]. \n\nPortanto, embora não haja indicação nominal direta no cadastro do processo ou na assinatura das decisões, a magistrada titular responsável pela Vara Única de Araquari (onde tramita a ação) é **Daiane Duarte Zanella** [SQL].\n\n---\n\n### Fontes consultadas\n\n* **Cadastro do Processo:** Dados de autuação, partes e alertas do processo 0000001-63.2025.8.99.9059 [Cadastro].\n* **Documentos do Processo:** \n  * [Doc 8 – Decisão Interlocutória, 24/11/2025].\n* **Consultas SQL:** \n  * `SELECT p.id, p.numero, p.unidade_id, p.magistrado_id FROM processo p WHERE p.numero = '0000001-63.2025.8.99.9059'` [SQL].\n  * `SELECT * FROM magistrado WHERE unidade_id = 117` [SQL].",
+   "finish": "stop",
+   "ferramentas": [
+    {
+     "ferramenta": "buscar_processo",
+     "args": {
+      "numero": "0000001-63.2025.8.99.9059"
+     },
+     "resultado": "0000001-63.2025.8.99.9059, 1 alerta(s)"
+    },
+    {
+     "ferramenta": "obter_dossie",
+     "args": {
+      "numero": "0000001-63.2025.8.99.9059"
+     },
+     "resultado": "0000001-63.2025.8.99.9059, 6 docs, 1 alerta(s)"
+    },
+    {
+     "ferramenta": "consultar_sql",
+     "args": {
+      "sql": "SELECT p.id, p.numero, p.unidade_id, p.magistrado_id, m.nome as nome_magistrado, m.situacao as situacao_magistrado FROM processo p LEFT JOIN magistrado m ON p.magistrado_id = m.id WHERE p.numero = '0000001-63.2025.8.99.9059'"
+     },
+     "resultado": "1 linha(s): [[4, \"0000001-63.2025.8.99.9059\", 117, null, null, null]]"
+    },
+    {
+     "ferramenta": "consultar_sql",
+     "args": {
+      "sql": "SELECT * FROM unidade WHERE id = 117"
+     },
+     "resultado": "1 linha(s): [[117, \"Araquari\", \"Vara Única\", \"2003-06-17\", \"ativa\"]]"
+    },
+    {
+     "ferramenta": "consultar_sql",
+     "args": {
+      "sql": "SELECT * FROM magistrado WHERE unidade_id = 117"
+     },
+     "resultado": "1 linha(s): [[117, \"Daiane Duarte Zanella\", 117, \"2020-06-14\", \"ativo\"]]"
+    }
+   ],
+   "uso": {
+    "llm_calls": 6,
+    "prompt": 27099,
+    "completion": 804,
+    "reasoning": 0,
+    "cost": 0.0,
+    "latencia": 129.41048614699685
+   }
+  },
+  {
+   "caso": "E1",
+   "pergunta": "Quantos processos julgados existem na comarca de Joinville?",
+   "parede_s": 44.1,
+   "checks": [
+    [
+     "usou SQL",
+     true
+    ],
+    [
+     "número correto (190)",
+     true
+    ],
+    [
+     "evitou armadilhas (168/178/180)",
+     true
+    ]
+   ],
+   "resposta": "Existem **190 processos julgados** na comarca de Joinville [SQL].\n\n### Fontes consultadas\n* **SQL:** Consulta realizada no banco de dados para contabilizar os processos da comarca de Joinville (por meio da tabela de unidades) que possuem a situação \"julgado\" (independente de maiúsculas/minúsculas):\n  ```sql\n  SELECT COUNT(*) AS total \n  FROM processo p \n  JOIN unidade u ON p.unidade_id = u.id \n  WHERE LOWER(u.comarca) = 'joinville' \n    AND LOWER(p.situacao) = 'julgado'\n  ```",
+   "finish": "stop",
+   "ferramentas": [
+    {
+     "ferramenta": "consultar_sql",
+     "args": {
+      "sql": "SELECT COUNT(*) AS total FROM processo p JOIN unidade u ON p.unidade_id = u.id WHERE LOWER(u.comarca) = 'joinville' AND LOWER(p.situacao) = 'julgado'"
+     },
+     "resultado": "1 linha(s): [[190]]"
+    }
+   ],
+   "uso": {
+    "llm_calls": 2,
+    "prompt": 2904,
+    "completion": 209,
+    "reasoning": 0,
+    "cost": 0.0,
+    "latencia": 5.375263850015472
+   }
+  },
+  {
+   "caso": "F1",
+   "pergunta": "Resuma o processo 0009999-69.2024.8.99.9001.",
+   "parede_s": 216.8,
+   "checks": [
+    [
+     "declara não encontrado",
+     false
+    ]
+   ],
+   "resposta": "[ERRO] HTTP 429: [{\n  \"error\": {\n    \"code\": 429,\n    \"message\": \"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 20, model: gemini-3.5-flash\\nPlease retry in 32.318942117s.\",\n    \"status\": \"RESOURCE_EXHAUSTED\",\n    \"details\": [\n      {\n        \"@type\": \"type.googleapis.com/google.rpc.Help\",\n        \"links\": [\n          {\n            \"description\": \"Learn more about Gemini API quotas\",\n            \"url\": \"https://ai.google.dev/gemini-api/docs/rate-limits\"\n          }\n        ]\n      },\n      {\n        \"@type\": ",
+   "finish": "erro",
+   "ferramentas": [],
+   "uso": {}
+  },
+  {
+   "caso": "F2",
+   "pergunta": "Qual é o entendimento atual do STJ sobre dano moral por negativação indevida?",
+   "parede_s": 220.4,
+   "checks": [
+    [
+     "declara fora do banco",
+     false
+    ]
+   ],
+   "resposta": "[ERRO] HTTP 429: [{\n  \"error\": {\n    \"code\": 429,\n    \"message\": \"You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/rate-limit. \\n* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 20, model: gemini-3.5-flash\\nPlease retry in 51.970927025s.\",\n    \"status\": \"RESOURCE_EXHAUSTED\",\n    \"details\": [\n      {\n        \"@type\": \"type.googleapis.com/google.rpc.Help\",\n        \"links\": [\n          {\n            \"description\": \"Learn more about Gemini API quotas\",\n            \"url\": \"https://ai.google.dev/gemini-api/docs/rate-limits\"\n          }\n        ]\n      },\n      {\n        \"@type\": ",
+   "finish": "erro",
+   "ferramentas": [],
+   "uso": {}
+  }
+ ]
+}

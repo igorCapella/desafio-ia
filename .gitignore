@@ -1,0 +1,11 @@
+# Segredos — nunca versionar
+.env
+.env.*
+!.env.example
+
+# Banco extraído (41 MB); o ZIP original fica como fonte
+desafio.sqlite
+*.sqlite-journal
+
+# Mockups do brainstorming (companheiro visual)
+.superpowers/

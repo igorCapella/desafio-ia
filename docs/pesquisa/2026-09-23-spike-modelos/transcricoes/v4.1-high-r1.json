@@ -1,0 +1,258 @@
+{
+ "alias": "v4.1-high-r1",
+ "modelo": "deepseek/deepseek-v4.1-flash",
+ "casos": [
+  {
+   "caso": "A1",
+   "pergunta": "Resuma o processo 0000001-15.2022.8.99.9012, destacando os principais fatos e o andamento processual.",
+   "parede_s": 33.6,
+   "checks": [
+    [
+     "consultou o processo",
+     true
+    ],
+    [
+     "improcedência",
+     true
+    ],
+    [
+     "trânsito/arquivamento",
+     true
+    ],
+    [
+     "cita [Doc n]",
+     true
+    ],
+    [
+     "citações existem",
+     true
+    ]
+   ],
+   "resposta": "# Resumo do processo 0000001-15.2022.8.99.9012\n\n## Dados cadastrais [Cadastro]\n- **Classe:** Procedimento Comum Cível\n- **Assunto:** Rescisão Contratual c/c Perdas e Danos\n- **Comarca/Unidade:** Brusque – 1ª Vara Cível\n- **Magistrada:** Maria Pinto Schneider (situação: ativa)\n- **Autuação:** 11/10/2022 · **Sentença:** 26/08/2024 · **Situação:** Julgado\n- **Valor da causa:** R$ 2.829,36\n- **Partes:** polo ativo — Maria Salete Andrade Farias (CPF 999.550.862-21); polo passivo — Indústria Têxtil Encano Ltda (CNPJ 99.076.775/0001-59)\n- **Advogados identificados nos documentos:** Dr. Sebastião Krüger (OAB/SC 99.651), pela autora; Dr. Paulo Bortolini (OAB/SC 99.154), pela ré. Não há tabela de advogados no banco; a identificação decorre apenas das assinaturas nos documentos.\n\n## Principais fatos e alegações\n- **Petição Inicial (24/10/2022)** [Doc 86 – Petição Inicial, 24/10/2022]: a autora narra relação jurídica entre as partes e descumprimento de obrigações pela requerida, alega tentativa prévia de solução amigável sem êxito e fundamenta o pedido no art. 475 do Código Civil, com pedido de inversão do ônus probatório. Pede citação, procedência integral com indenização \"em valor a ser arbitrado por este Juízo\", custas e honorários, e produção de provas documental e testemunhal.\n- **Contestação (07/04/2023)** [Doc 89 – Contestação, 07/04/2023]: a ré suscita **preliminar de ilegitimidade passiva**, afirmando não ter integrado a relação jurídica e que os próprios documentos da autora apontariam pessoa jurídica diversa como responsável; subsidiariamente, impugna o *quantum*. Requer improcedência e condenação da autora na sucumbência.\n- **Réplica (07/06/2023)** [Doc 90 – Réplica, 07/06/2023]: a autora impugna a contestação, sustenta que a ilegitimidade não encontra respaldo na documentação e que os documentos da inicial não foram especificamente impugnados (art. 341 do CPC).\n- **Decisão de Saneamento (22/08/2023)** [Doc 91 – Decisão de Saneamento, 22/08/2023]: **afasta a preliminar de ilegitimidade passiva**, dá o feito por saneado, fixa pontos controvertidos (ocorrência dos fatos, existência do dano e nexo causal) e defere prova documental e testemunhal, com prazo comum de 15 dias para rol de testemunhas.\n- **Sentença (26/08/2024)** [Doc 93 – Sentença, 26/08/2024]: **julga IMPROCEDENTE** o pedido, com resolução do mérito (art. 487, I, do CPC), condenando a autora em custas e honorários de 10% sobre o valor atualizado da causa (art. 85, § 2º, do CPC).\n\n## Andamento processual [Mov …]\n1. 11/10/2022 – Distribuição por Sorteio\n2. 14/11/2022 – Despacho Proferido [Doc 87, 14/11/2022: prazo de 15 dias à autora sobre a documentação juntada]\n3. 19/12/2022 – Expedição de Mandado\n4. 13/02/2023 – Citação Positiva [Doc 88 – Certidão, 30/01/2023: cumprimento do mandado, com contrafé e ciência da ré]\n5. 07/04/2023 – Juntada de Petição (contestação)\n6. 14/06/2023 – Juntada de Petição (réplica)\n7. 22/08/2023 – Decisão Interlocutória Proferida\n8. 27/11/2023 – Despacho Proferido [Doc 92, 27/11/2023: defere prazo requerido e determina conclusão]\n9. 22/05/2024 – Conclusão para Despacho\n10. 15/08/2024 – Juntada de Petição\n11. 26/08/2024 – Sentença com Resolução do Mérito\n12. 30/09/2024 – Trânsito em Julgado\n13. 11/11/2024 – Arquivamento Definitivo\n\n## Alertas de qualidade dos dados\nO dossiê não retornou alertas automáticos (`\"alertas\": []`), mas há inconsistências que registro:\n\n1. **Contradição entre a sentença e a decisão de saneamento quanto à ilegitimidade passiva:** a decisão de saneamento **afastou** a preliminar [Doc 91, 22/08/2023], enquanto a sentença afirma que \"assiste razão à parte requerida quanto à ilegitimidade passiva\" e a reconhece [Doc 93, 26/08/2024]. As duas peças são incompatíveis entre si.\n2. **Contradição interna na própria sentença:** reconhece a prejudicial de ilegitimidade passiva (\"reconhecida a prejudicial, resta prejudicado o exame das demais questões\"), mas ao mesmo tempo decide o mérito e conclui por improcedência **com resolução do mérito** (art. 487, I, do CPC). Se a ilegitimidade passiva fosse efetivamente acolhida, a extinção seria **sem** resolução do mérito (art. 485, VI, do CPC). Além disso, a sentença afirma que \"no mérito, contudo, o pedido não prospera\" por falta de prova do fato constitutivo (art. 373, I, do CPC) — fundamento diverso daquele anunciado no início.\n3. **Instrução não documentada nos autos:** a sentença menciona \"realizada audiência de instrução e julgamento, foram colhidos os depoimentos e produzida a prova pericial\" [Doc 93, 26/08/2024], mas **não há movimentação** de audiência de instrução nem documento de prova pericial/laudo no dossiê. Os documentos disponíveis são apenas 8, todos listados acima.\n4. **Divergências entre datas de movimentação e de juntada dos documentos:** por exemplo, a citação positiva consta como movimentação em 13/02/2023, mas a certidão de cumprimento foi juntada em 30/01/2023 [Doc 88]; a contestação está datada/juntada em 07/04/2023 [Doc 89], coincidindo com a movimentação de 07/04/2023, enquanto a réplica foi juntada em 07/06/2023 [Doc 90], mas a movimentação correspondente é de 14/06/2023.\n5. **Ausência de dados:** não há identificação de testemunhas, laudos, depoimentos ou decisão sobre o mérito em grau recursal; e o pedido indenizatório não foi quantificado na inicial (\"valor a ser arbitrado por este Juízo\"), de modo que não há parâmetro numérico além do valor da causa.\n\n## Fontes consultadas\n- [Cadastro] – dossiê do processo 0000001-15.2022.8.99.9012 (classe, assunto, comarca/unidade, magistrada, datas, valor da causa, situação, partes).\n- [Doc 86 – Petição Inicial, 24/10/2022]; [Doc 87 – Despacho, 14/11/2022]; [Doc 88 – Certidão, 30/01/2023]; [Doc 89 – Contestação, 07/04/2023]; [Doc 90 – Réplica, 07/06/2023]; [Doc 91 – Decisão de Saneamento, 22/08/2023]; [Doc 92 – Despacho, 27/11/2023]; [Doc 93 – Sentença, 26/08/2024].\n- [Mov …] – lista de movimentações do dossiê (13 registros, de 11/10/2022 a 11/11/2024).\n\nObservação: como a sentença apresenta contradições internas e em relação à decisão de saneamento, qualquer conclusão sobre o fundamento efetivo da improcedência depende de esclarecimento nos autos ou de decisão judicial — não é possível resolvê-la com os dados disponíveis.",
+   "finish": "stop",
+   "ferramentas": [
+    {
+     "ferramenta": "obter_dossie",
+     "args": {
+      "numero": "0000001-15.2022.8.99.9012"
+     },
+     "resultado": "0000001-15.2022.8.99.9012, 8 docs, 0 alerta(s)"
+    }
+   ],
+   "uso": {
+    "llm_calls": 2,
+    "prompt": 7059,
+    "completion": 2505,
+    "reasoning": 348,
+    "cost": 0.0018317712000000001,
+    "latencia": 33.639567919999536,
+    "provedores": [
+     "DeepInfra",
+     "DeepInfra"
+    ]
+   }
+  },
+  {
+   "caso": "A2",
+   "pergunta": "Quem são as partes, o magistrado e os advogados desse processo? Quais são os pedidos apresentados?",
+   "parede_s": 15.0,
+   "checks": [
+    [
+     "autora",
+     true
+    ],
+    [
+     "ré",
+     true
+    ],
+    [
+     "magistrada",
+     true
+    ],
+    [
+     "adv. autora",
+     true
+    ],
+    [
+     "adv. ré",
+     true
+    ],
+    [
+     "pedidos",
+     true
+    ],
+    [
+     "citações existem",
+     true
+    ]
+   ],
+   "resposta": "## Partes [Cadastro]\n- **Polo ativo:** Maria Salete Andrade Farias — CPF 999.550.862-21; tipo cadastral \"autor\".\n- **Polo passivo:** Indústria Têxtil Encano Ltda — CNPJ 99.076.775/0001-59; tipo cadastral \"réu\".\n\n## Magistrado [Cadastro]\n- **Maria Pinto Schneider**, situação **ativa**, atuando na 1ª Vara Cível da Comarca de Brusque. Assina os despachos, a decisão de saneamento e a sentença dos autos [Doc 87, 14/11/2022; Doc 91, 22/08/2023; Doc 92, 27/11/2023; Doc 93, 26/08/2024].\n\n## Advogados [Cadastro / documentos]\nIdentificados apenas pelas assinaturas nos documentos (não há tabela de advogados no banco):\n- **Dr. Sebastião Krüger — OAB/SC 99.651**, pela autora; assina a Petição Inicial [Doc 86, 24/10/2022] e a Réplica [Doc 90, 07/06/2023].\n- **Dr. Paulo Bortolini — OAB/SC 99.154**, pela ré; assina a Contestação [Doc 89, 07/04/2023].\n\nNão há nos autos identificação de outros procuradores (por exemplo, substabelecimentos ou advogados de testemunhas), nem registro do patrono em cadastro próprio — a identificação decorre exclusivamente do campo `documento.autor`.\n\n## Pedidos apresentados\n**Na Petição Inicial** [Doc 86 – Petição Inicial, 24/10/2022]:\na) citação da parte requerida para apresentar defesa, sob pena de revelia;\nb) procedência integral dos pedidos, condenando-se a requerida ao pagamento de indenização **em valor a ser arbitrado pelo Juízo** (não há quantificação do valor pretendido na inicial);\nc) condenação da requerida ao pagamento das custas processuais e dos honorários advocatícios;\nd) produção de todos os meios de prova admitidos, especialmente documental e testemunhal.\nFundamento invocado: art. 475 do Código Civil, com alegação de inversão do ônus probatório. Valor da causa: R$ 2.829,36.\n\n**Na Contestação** [Doc 89 – Contestação, 07/04/2023]:\n- preliminar de **ilegitimidade passiva**, com pedido de extinção sem resolução do mérito;\n- subsidiariamente, impugnação ao *quantum*, pedindo arbitramento em patamar inferior;\n- ao final, improcedência total do pedido e condenação da autora na sucumbência;\n- protesto pela produção de prova documental suplementar e testemunhal, além de depoimento pessoal da parte adversa.\n\n**Na Réplica** [Doc 90 – Réplica, 07/06/2023]:\n- rejeição integral das teses defensivas e procedência dos pedidos, sob o argumento de que os documentos da inicial não foram especificamente impugnados (art. 341 do CPC).\n\n## Observações relevantes\n- O pedido indenizatório não é numericamente delimitado na inicial [Doc 86, 24/10/2022]; o único valor informado é o da causa (R$ 2.829,36) [Cadastro].\n- Os pedidos formulados foram julgados improcedentes na sentença [Doc 93, 26/08/2024], que, contudo, apresenta contradições já apontadas (reconhecimento da ilegitimidade passiva na fundamentação, mas improcedência com resolução do mérito no dispositivo, em conflito com a decisão de saneamento que afastou essa preliminar [Doc 91, 22/08/2023]).\n\n### Fontes consultadas\n- [Cadastro] – partes, magistrada, dados do processo.\n- [Doc 86 – Petição Inicial, 24/10/2022]; [Doc 89 – Contestação, 07/04/2023]; [Doc 90 – Réplica, 07/06/2023]; [Doc 87 – Despacho, 14/11/2022]; [Doc 91 – Decisão de Saneamento, 22/08/2023]; [Doc 92 – Despacho, 27/11/2023]; [Doc 93 – Sentença, 26/08/2024].",
+   "finish": "stop",
+   "ferramentas": [],
+   "uso": {
+    "llm_calls": 1,
+    "prompt": 7983,
+    "completion": 1283,
+    "reasoning": 229,
+    "cost": 0.0005787712,
+    "latencia": 14.97182741100005,
+    "provedores": [
+     "DeepInfra"
+    ]
+   }
+  },
+  {
+   "caso": "A3",
+   "pergunta": "Ele já foi julgado? Se sim, qual foi a decisão e quais foram seus fundamentos?",
+   "parede_s": 16.6,
+   "checks": [
+    [
+     "improcedente",
+     true
+    ],
+    [
+     "art. 373",
+     true
+    ],
+    [
+     "ilegitimidade",
+     true
+    ],
+    [
+     "BÔNUS contradição",
+     true
+    ],
+    [
+     "citações existem",
+     true
+    ]
+   ],
+   "resposta": "## O processo foi julgado?\n**Sim.** A situação cadastral é \"Julgado\" [Cadastro], e a sentença foi proferida em **26/08/2024** [Mov 26/08/2024 – Sentença com Resolução do Mérito; Doc 93 – Sentença, 26/08/2024]. Depois disso, houve **trânsito em julgado em 30/09/2024** e **arquivamento definitivo em 11/11/2024** [Mov 30/09/2024; Mov 11/11/2024].\n\n## Qual foi a decisão\nNo dispositivo, a magistrada **julgou IMPROCEDENTE o pedido** formulado por Maria Salete Andrade Farias em face de Indústria Têxtil Encano Ltda, **resolvendo o mérito na forma do art. 487, inciso I, do Código de Processo Civil**, e condenou a autora ao pagamento das custas processuais e de honorários advocatícios fixados em **10% sobre o valor atualizado da causa**, nos termos do art. 85, § 2º, do CPC [Doc 93 – Sentença, 26/08/2024].\n\n## Fundamentos invocados na sentença\nConforme o texto do [Doc 93 – Sentença, 26/08/2024], a fundamentação apresenta dois blocos:\n\n1. **Ilegitimidade passiva:** \"Assiste razão à parte requerida quanto à ilegitimidade passiva. Reconhecida a prejudicial, resta prejudicado o exame das demais questões suscitadas.\" Acrescenta que \"a alegação de ilegitimidade passiva, sustentada pela defesa, encontra respaldo na prova produzida\".\n2. **Mérito / ônus da prova:** \"No mérito, contudo, o pedido não prospera. A parte autora não se desincumbiu do ônus de comprovar os fatos constitutivos de seu direito, como lhe competia à luz do art. 373, inciso I, do Código de Processo Civil\", acrescentando que \"o art. 475 do Código Civil não socorre a pretensão deduzida\".\n\nA sentença ainda registra que o feito comporta julgamento no estado em que se encontra (art. 355 do CPC) e menciona que houve \"audiência de instrução e julgamento\", com \"depoimentos\" e \"prova pericial\" [Doc 93].\n\n## Contradições e limites que devem ser apontados\nA decisão não é internamente coerente, e isso precisa ser destacado:\n\n- **Conflito com a decisão de saneamento:** em 22/08/2023 a magistrada havia **afastado** a preliminar de ilegitimidade passiva [Doc 91 – Decisão de Saneamento, 22/08/2023]. A sentença de 26/08/2024, ao contrário, afirma que a ré tem razão quanto à ilegitimidade [Doc 93]. As duas peças são incompatíveis.\n- **Contradição interna da própria sentença:** reconhecida a ilegitimidade passiva como prejudicial, o exame do mérito estaria prejudicado — e a extinção seria **sem** resolução do mérito (art. 485, VI, do CPC). Todavia, o dispositivo julga improcedente **com** resolução do mérito (art. 487, I, do CPC), fundamentando-se, além disso, na falta de prova do fato constitutivo (art. 373, I, do CPC), que é razão de mérito distinta da ilegitimidade.\n- **Instrução não documentada:** a sentença menciona audiência de instrução e prova pericial [Doc 93], mas **não há movimentação de audiência de instrução nem laudo pericial** entre os documentos/movimentações disponíveis nos autos (8 documentos e 13 movimentações).\n\nAssim, embora o resultado registrado seja **improcedência com resolução do mérito**, não é possível, com os dados dos autos, determinar com segurança qual foi o fundamento efetivo da decisão, dada a divergência entre a fundamentação anunciada (ilegitimidade passiva) e o dispositivo (mérito), e o conflito com a decisão de saneamento. Qualquer conclusão sobre a ratio decidendi depende de esclarecimento nos autos ou de decisão judicial — não sendo possível resolvê-la por suposição.\n\n### Fontes consultadas\n- [Cadastro] – situação \"Julgado\".\n- [Doc 91 – Decisão de Saneamento, 22/08/2023]; [Doc 93 – Sentença, 26/08/2024].\n- [Mov 26/08/2024 – Sentença com Resolução do Mérito]; [Mov 30/09/2024 – Trânsito em Julgado]; [Mov 11/11/2024 – Arquivamento Definitivo].",
+   "finish": "stop",
+   "ferramentas": [],
+   "uso": {
+    "llm_calls": 1,
+    "prompt": 9291,
+    "completion": 1504,
+    "reasoning": 362,
+    "cost": 0.0006808872,
+    "latencia": 16.550654831999964,
+    "provedores": [
+     "DeepInfra"
+    ]
+   }
+  },
+  {
+   "caso": "B1",
+   "pergunta": "Elabore uma minuta de sentença para o processo 0000001-81.2023.8.99.9011, com base nos fatos e documentos disponíveis.",
+   "parede_s": 74.9,
+   "checks": [
+    [
+     "rótulo minuta/proposta",
+     true
+    ],
+    [
+     "relatório",
+     true
+    ],
+    [
+     "fundamentação",
+     true
+    ],
+    [
+     "dispositivo",
+     true
+    ],
+    [
+     "partes certas",
+     true
+    ],
+    [
+     "cita [Doc n]",
+     true
+    ],
+    [
+     "citações existem",
+     true
+    ]
+   ],
+   "resposta": "# MINUTA — PROPOSTA DE TEXTO GERADA POR IA, SUJEITA À REVISÃO DO MAGISTRADO. NÃO É SENTENÇA PROFERIDA.\n\n**Autos n. 0000001-81.2023.8.99.9011**\n**Classe:** Procedimento Comum Cível — **Assunto:** Inclusão Indevida em Cadastro de Inadimplentes [Cadastro]\n**Órgão:** 2ª Vara Cível da Comarca de Balneário Camboriú [Cadastro]\n**Magistrado:** Jair Vasconcelos Santos (situação cadastral: ativo) [Cadastro]\n\n---\n\n## I. RELATÓRIO\n\nTrata-se de ação de conhecimento pelo procedimento comum proposta por **Maria Silva Sampaio** (polo ativo) em face de **Financeira Araucária S.A.** (polo passivo), distribuída por sorteio em 30/03/2023 [Cadastro; Mov 2023-03-30 – Distribuição por Sorteio]. A autora está representada pela **Dra. Simone Menegon Moreira (OAB/SC 99.918)** e a ré pela **Dra. Maria Cláudia Pereira Coelho (OAB/SC 99.367)** [Cadastro – advogados identificados nos documentos].\n\n**Da inicial (Doc 938 – Petição Inicial, 24/04/2023):** a autora narra que, ao tentar realizar compra a prazo no comércio local, foi informada de que seu nome constava em cadastros de proteção ao crédito por indicação da requerida; afirma nunca ter mantido relação contratual com a demandada, nunca ter recebido cobrança prévia e que a negativação seria indevida; relata tentativa frustrada de solução administrativa e alega que a restrição impediu a obtenção de financiamento já aprovado, causando constrangimento. Invoca a **Súmula 385 do STJ**, sustenta a presença dos elementos da responsabilidade civil e a inversão do ônus probatório. Formula os pedidos de: (a) citação da requerida, sob pena de revelia; (b) procedência integral, com condenação em indenização **\"em valor a ser arbitrado por este Juízo\"**; (c) condenação em custas e honorários; (d) produção de provas documental e testemunhal. Atribui à causa o valor de **R$ 13.941,35** [Doc 938].\n\n**Do despacho inicial (Doc 939 – Despacho, 01/06/2023):** determinou que a autora se manifestasse, em 15 dias, sobre a documentação juntada, e após voltassem conclusos [Doc 939; Mov 2023-06-01 – Despacho Proferido].\n\n**Da citação (Doc 940 – Certidão, 25/09/2023):** certificado o cumprimento do mandado de citação, com recebimento da contrafé pela requerida [Doc 940; Mov 2023-09-25 – Citação Positiva].\n\n**Da contestação (Doc 941 – Contestação, 08/01/2024):** a ré sustenta, em síntese, o **exercício regular de direito** diante de \"inadimplência verificada\", agindo \"nos exatos limites contratuais e legais\"; impugna o valor pretendido por excessivo e desproporcional, invocando razoabilidade, proporcionalidade e vedação ao enriquecimento sem causa. Requer improcedência total, com sucumbência da autora, e protesta por prova documental suplementar, testemunhal e depoimento pessoal da adversa [Doc 941; Mov 2024-01-08 – Juntada de Petição].\n\n**Da réplica (Doc 942 – Réplica/Impugnação à Contestação, 15/04/2024):** a autora afirma que a defesa não infirma os fatos e que os documentos da inicial não foram especificamente impugnados (art. 341 do CPC), requerendo a rejeição das teses defensivas [Doc 942; Mov 2024-04-15 – Juntada de Petição].\n\n**Da decisão de saneamento (Doc 943 – Decisão de Saneamento, 24/07/2024):** o Juízo afastou a \"preliminar de exercício regular de direito\", \"pelos fundamentos que serão detalhados por ocasião da sentença\"; deu o feito por saneado; fixou como **pontos controvertidos**: a ocorrência dos fatos narrados na inicial, a existência do dano alegado e o nexo de causalidade; deferiu prova documental e testemunhal, com prazo comum de 15 dias para rol de testemunhas [Doc 943; Mov 2024-07-24 – Decisão Interlocutória Proferida].\n\n**Das manifestações sobre provas:** a autora manifestou-se em 20/01/2025 (Doc 945) e novamente em 18/05/2026 (Doc 950), pedindo julgamento antecipado, afirmando que os elementos confirmam a inicial [Docs 945 e 950]; a ré reiterou os termos da contestação quanto ao exercício regular de direito e pediu improcedência (Doc 946) [Doc 946].\n\n**Da audiência de instrução (Doc 948 – Ata de Audiência, \"Aos 24 de outubro de 2025\"):** consigna a presença das partes, procuradores e testemunhas arroladas; colheita de depoimento pessoal e inquirição de testemunhas, \"cujos termos foram gravados em sistema audiovisual\"; encerrada a instrução, as partes apresentaram alegações finais remissivas; autos conclusos para sentença [Doc 948; cfr. Mov 2025-11-19 – Audiência Designada e Mov 2026-03-26 – Audiência de Instrução Realizada].\n\n**Despachos posteriores:** Docs 944 (08/10/2024), 947 (26/05/2025) e 949 (03/02/2026) [Docs 944, 947 e 949]. Última movimentação registrada: Mov 2026-07-27 – Despacho Proferido.\n\nO feito encontra-se **sem sentença** (data_sentenca nula) e com situação cadastral **\"Em andamento\"** [Cadastro].\n\n---\n\n## II. FUNDAMENTAÇÃO\n\n### II.1. Pressupostos processuais e regularidade\n\nPresentes os pressupostos processuais e as condições da ação, conforme reconhecido na decisão de saneamento [Doc 943], que deu o feito por saneado. A citação foi regularmente cumprida [Doc 940]. Não há, nos autos disponíveis, arguição de nulidade pendente de exame.\n\n### II.2. Objeto da decisão\n\nNos termos da decisão de saneamento, os pontos controvertidos são: (i) a ocorrência dos fatos narrados na inicial; (ii) a existência do dano; e (iii) o nexo de causalidade [Doc 943]. A controvérsia central consiste em verificar se houve **inscrição/negativação indevida** imputável à ré e se dela decorrem os efeitos jurídicos pretendidos pela autora [Docs 938 e 941].\n\n### II.3. Da tese de exercício regular de direito\n\nA ré sustenta que sua conduta se deu \"nos exatos limites contratuais e legais\", diante de \"inadimplência verificada\" [Doc 941]. A decisão de saneamento **afastou** essa tese como \"preliminar\", remetendo os fundamentos à sentença [Doc 943]. Registre-se, para exame na sentença, que o acolhimento dessa defesa depende da comprovação, nos autos, de relação contratual e de inadimplência — elementos que [**verificar se constam dos autos; não localizados entre os documentos disponíveis nesta minuta**].\n\n### II.4. Da prova dos fatos constitutivos e do ônus probatório\n\nA autora afirma ter juntado \"documentação\" e invoca a inversão do ônus probatório e o art. 341 do CPC quanto à falta de impugnação específica [Docs 938 e 942]. Contudo, **entre os documentos efetivamente disponíveis nos autos, não se localizam peças de prova documental da negativação** (v.g., certidão de inscrição em cadastro restritivo, protocolo de atendimento, comprovante de recusa de crédito). Os documentos relacionados no dossiê são, essencialmente, petições das partes, despachos, decisão de saneamento e ata de audiência [Docs 938 a 950]. O despacho de 01/06/2023 faz referência a \"documentação juntada\" [Doc 939], mas **essa documentação não integra o conjunto de documentos retornado** — o que precisa ser confirmado antes do julgamento.\n\nQuanto à prova oral, a ata consigna que os depoimentos foram \"gravados em sistema audiovisual\", **sem transcrever o conteúdo** [Doc 948]. Assim, **o teor dos depoimentos não está acessível nesta minuta** e [**deve ser considerado a partir do registro audiovisual / mídia dos autos**].\n\n### II.5. Das inconsistências a serem resolvidas antes do julgamento\n\nAntes de decidir o mérito, recomenda-se sanar as seguintes inconsistências identificadas nos dados:\n\n1. **Contradição de titularidade do Doc 946:** o metadado do documento atribui a autoria a \"Dra. Simone Menegon Moreira — OAB/SC 99.918\" (advogada da autora), mas o **texto é assinado por \"Dra. Maria Cláudia Pereira Coelho — OAB/SC 99.367\"** e o corpo afirma expressamente que quem se manifesta é a **\"Financeira Araucária S.A.\"** [Doc 946]. Ou seja, trata-se de manifestação da ré, com metadado divergente.\n2. **Divergência de datas da audiência:** a ata está datada de **24/10/2025** e tem data de juntada 24/10/2025 [Doc 948], mas a movimentação de **\"Audiência Designada\" é de 19/11/2025** e a de **\"Audiência de Instrução Realizada\" é de 26/03/2026** [Movs respectivas] — a ata seria anterior à própria designação.\n3. **Documentos repetidos:** os despachos Docs 939, 944 e 949 são textualmente idênticos; e as manifestações dos Docs 945 e 950 também são idênticas [Docs 939, 944, 945, 949, 950] — possível duplicidade de registro.\n4. **Valor da causa x pedido:** a inicial pede indenização \"em valor a ser arbitrado por este Juízo\", mas a contestação afirma que se pleiteia \"reparação no valor de R$ 13.941,35\" [Docs 938 e 941]; o valor consta como valor da causa no cadastro [Cadastro].\n5. **Fundamento invocado na inicial:** a autora invoca a **Súmula 385 do STJ** como fundamento da pretensão [Doc 938], sem explicar nos autos sua pertinência ao caso — [**examinar a adequação do fundamento**].\n\n### II.6. Conclusão da fundamentação\n\n[**Espaço reservado à decisão judicial.** A procedência ou improcedência depende: (a) da confirmação, nos autos, da efetiva negativação e de sua imputabilidade à ré; (b) do exame da defesa de exercício regular de direito à luz da prova de contrato/inadimplência; (c) da valoração da prova oral registrada em audiovisual. Sem esses elementos, não é possível concluir pela ocorrência do ato ilícito, do dano e do nexo causal, nem fixar eventual quantum indenizatório.]\n\n---\n\n## III. DISPOSITIVO\n\n[**Proposta de estrutura — decisão a cargo do magistrado**]:\n\nAnte o exposto, [**JULGO PROCEDENTE / JULGO IMPROCEDENTE / EXTINGO SEM RESOLUÇÃO DE MÉRITO**] os pedidos formulados por **Maria Silva Sampaio** em face de **Financeira Araucária S.A.**, nos termos da fundamentação supra.\n\n[**Em caso de procedência**]: condeno a ré ao pagamento de indenização por dano moral no valor de **R$ [a arbitrar]** [**considerar o valor da causa de R$ 13.941,35 como parâmetro**], com correção monetária e juros [**critérios a definir**].\n\n[**Em qualquer hipótese**]: condeno a parte [**vencida**] ao pagamento das custas processuais e honorários advocatícios, fixados em [**percentual/valor a definir**].\n\nP.R.I. [**Após o trânsito em julgado, arquivem-se**].\n\nBalneário Camboriú, [**data**].\n\n[**Assinatura do magistrado — não assinar em nome do Juiz**]\n\n---\n\n## Fontes consultadas\n\n- **Cadastro** do processo 0000001-81.2023.8.99.9011 (classe, assunto, comarca, unidade, magistrado e situação, autuação, valor da causa, situação) e partes/advogados.\n- **Documentos:** Doc 938 (Petição Inicial, 24/04/2023); Doc 939 (Despacho, 01/06/2023); Doc 940 (Certidão, 25/09/2023); Doc 941 (Contestação, 08/01/2024); Doc 942 (Réplica, 15/04/2024); Doc 943 (Decisão de Saneamento, 24/07/2024); Doc 944 (Despacho, 08/10/2024); Doc 945 (Manifestação sobre Provas, 20/01/2025); Doc 946 (Manifestação sobre Provas, 10/03/2025); Doc 947 (Despacho, 26/05/2025); Doc 948 (Ata de Audiência, 24/10/2025); Doc 949 (Despacho, 03/02/2026); Doc 950 (Manifestação sobre Provas, 18/05/2026).\n- **Movimentações:** 2023-03-30 (Distribuição por Sorteio); 2023-06-01 (Despacho Proferido); 2023-09-25 (Citação Positiva); 2024-01-08 e 2024-04-15 (Juntada de Petição); 2024-07-24 (Decisão Interlocutória Proferida); 2025-11-19 (Audiência Designada); 2026-03-26 (Audiência de Instrução Realizada); 2026-07-27 (Despacho Proferido).\n\n**Observação sobre alertas:** a ferramenta de dossiê retornou a lista de alertas **vazia** (`alertas: []`). As inconsistências apontadas no item II.5 foram identificadas por análise direta dos dados retornados, não por alerta automático. Não foram usados dados externos a esta consulta.",
+   "finish": "stop",
+   "ferramentas": [
+    {
+     "ferramenta": "obter_dossie",
+     "args": {
+      "numero": "0000001-81.2023.8.99.9011"
+     },
+     "resultado": "0000001-81.2023.8.99.9011, 13 docs, 0 alerta(s)"
+    }
+   ],
+   "uso": {
+    "llm_calls": 2,
+    "prompt": 7980,
+    "completion": 5989,
+    "reasoning": 2300,
+    "cost": 0.0032154024,
+    "latencia": 74.94176023,
+    "provedores": [
+     "DeepInfra",
+     "DeepInfra"
+    ]
+   }
+  },
+  {
+   "caso": "D1",
+   "pergunta": "Quem é o magistrado responsável pelo processo 0000001-63.2025.8.99.9059?",
+   "parede_s": 18.5,
+   "checks": [
+    [
+     "declara ausência",
+     true
+    ],
+    [
+     "não inventa nome",
+     false
+    ],
+    [
+     "BÔNUS 'em exercício'",
+     true
+    ],
+    [
+     "citações existem",
+     true
+    ]
+   ],
+   "resposta": "## Magistrado responsável — Processo 0000001-63.2025.8.99.9059\n\n**Não é possível afirmar quem é o magistrado responsável por este processo com base nos dados disponíveis.**\n\n**O que os autos mostram:**\n\n- No cadastro do processo, o campo **magistrado está vazio** (`null`), e a ferramenta emite o alerta: *\"Nenhum magistrado vinculado a este processo no cadastro.\"* [Cadastro]\n- O processo tramita na **Vara Única da Comarca de Araquari** [Cadastro].\n- Os atos decisórios juntados aos autos (Doc 8 – Decisão Interlocutória, de 24/11/2025) estão assinados de forma **genérica**, apenas como *\"Juiz(a) de Direito em exercício\"*, sem nome, matrícula ou identificação do titular [Doc 8 – Decisão Interlocutória, 2025-11-24].\n\n**Consulta complementar ao cadastro de magistrados** [SQL]:\n\n```sql\nSELECT m.id, m.nome, m.unidade_id, u.comarca, u.vara, m.data_inicio, m.situacao\nFROM magistrado m\nJOIN unidade u ON u.id = m.unidade_id\nWHERE lower(u.comarca) LIKE '%araquari%';\n```\n\nResultado: há **um magistrado cadastrado para a Vara Única de Araquari** — **Daiane Duarte Zanella** (unidade_id 117, data de início 2020-06-14, situação \"ativo\") [SQL].\n\n**Ressalva importante:** esse registro indica apenas quem está cadastrado como titular da unidade judiciária, **não que ele esteja vinculado a este processo específico**. Como o processo não possui magistrado_id no cadastro e nenhum documento o nomeia, a vinculação não pode ser confirmada — a coincidência de unidade é indício, não prova. Além disso, a decisão foi proferida por *\"Juiz(a) de Direito em exercício\"*, o que pode indicar substituição, sem que os dados informem por quem.\n\nPara confirmar, seria necessária a correção/atualização do vínculo de magistrado no cadastro do processo (ou consulta à escala/substituições da unidade).\n\n---\n\n### Fontes consultadas\n- [Cadastro] Dossiê do processo 0000001-63.2025.8.99.9059 (classe, comarca, unidade, magistrado, situacao) e alertas de qualidade — *\"Nenhum magistrado vinculado a este processo no cadastro.\"*\n- [Doc 8 – Decisão Interlocutória, 2025-11-24] assinatura genérica \"Juiz(a) de Direito em exercício\".\n- [SQL] consulta ao cadastro de magistrado/unidade para a comarca de Araquari (resultado: Daiane Duarte Zanella, unidade 117, ativo, desde 2020-06-14).",
+   "finish": "stop",
+   "ferramentas": [
+    {
+     "ferramenta": "obter_dossie",
+     "args": {
+      "numero": "0000001-63.2025.8.99.9059"
+     },
+     "resultado": "0000001-63.2025.8.99.9059, 6 docs, 1 alerta(s)"
+    },
+    {
+     "ferramenta": "consultar_sql",
+     "args": {
+      "sql": "SELECT m.id, m.nome, m.unidade_id, u.comarca, u.vara, m.data_inicio, m.situacao FROM magistrado m JOIN unidade u ON u.id = m.unidade_id WHERE lower(u.comarca) LIKE '%araquari%'"
+     },
+     "resultado": "1 linha(s): [[117, \"Daiane Duarte Zanella\", 117, \"Araquari\", \"Vara Única\", \"2020-06-14\", \"ativo\"]]"
+    }
+   ],
+   "uso": {
+    "llm_calls": 3,
+    "prompt": 11012,
+    "completion": 1102,
+    "reasoning": 243,
+    "cost": 0.001396136,
+    "latencia": 18.473863978000736,
+    "provedores": [
+     "DeepInfra",
+     "DeepInfra",
+     "DeepInfra"
+    ]
+   }
+  }
+ ]
+}

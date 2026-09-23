@@ -1,0 +1,29 @@
+{
+ "alias": "gemini-3.8-flash",
+ "modelo": "gemini-3.8-flash",
+ "casos": [
+  {
+   "caso": "E1",
+   "pergunta": "Quantos processos julgados existem na comarca de Joinville?",
+   "parede_s": 143.3,
+   "checks": [
+    [
+     "usou SQL",
+     false
+    ],
+    [
+     "número correto (180 ou 190)",
+     false
+    ],
+    [
+     "evitou armadilha (168/178)",
+     true
+    ]
+   ],
+   "resposta": "[ERRO] HTTP 503: [{\n  \"error\": {\n    \"code\": 503,\n    \"message\": \"This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.\",\n    \"status\": \"UNAVAILABLE\"\n  }\n}\n]",
+   "finish": "erro",
+   "ferramentas": [],
+   "uso": {}
+  }
+ ]
+}
