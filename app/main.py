@@ -3,7 +3,7 @@ from collections.abc import AsyncIterable
 from contextlib import aclosing, asynccontextmanager, closing
 from pathlib import Path
 
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException, Query
 from fastapi.sse import EventSourceResponse, ServerSentEvent
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
@@ -70,6 +70,27 @@ def sessao_nova():
     return {"sessao_id": nova_sessao()}
 
 
+@app.get("/api/documento/{doc_id}")
+def documento(doc_id: int, sessao_id: str = Query(max_length=64)):
+    # Só documentos lidos nesta conversa (spec §7): o painel não vira porta para varrer o banco por id.
+    sessao = obter_sessao(sessao_id)
+    negado = HTTPException(status_code=403, detail="Documento fora do escopo desta conversa.")
+    if doc_id not in sessao.docs_vistos:
+        raise negado
+    with closing(abrir_conexao()) as conn:
+        row = conn.execute("select id, numero, tipo, autor, data_juntada, paginas, texto "
+                           "from v_documentos where id=?", (doc_id,)).fetchone()
+    if row is None:
+        raise negado
+    return dict(row)
+
+
+def _registrar_recusa(p: Pergunta, motivo: str) -> None:
+    # Spec §9.3: um registro por pergunta — inclusive as recusadas antes de chegar ao modelo.
+    registrar({"sessao": p.sessao_id, "pergunta": p.pergunta, "recusada": motivo, "custo": 0.0},
+              caminho=AUDITORIA)
+
+
 # O próprio endpoint é o gerador de eventos: é assim que o FastAPI 0.141 faz SSE nativo
 # (response_class=EventSourceResponse; ele cuida do formato, do keepalive e da desconexão).
 @app.post("/api/chat", response_class=EventSourceResponse)
@@ -77,10 +98,12 @@ async def chat(p: Pergunta) -> AsyncIterable[ServerSentEvent]:
     s = get_settings()
     sessao = obter_sessao(p.sessao_id)
     if custo_acumulado(AUDITORIA) >= s.orcamento_usd:  # no teto ou acima (spec §5.5)
+        _registrar_recusa(p, "orcamento")
         yield _sse("erro", {"mensagem": "Orçamento do protótipo atingido; novas perguntas "
                                         "estão suspensas."})
         return
     if p.sessao_id in _EM_ANDAMENTO:
+        _registrar_recusa(p, "em_andamento")
         yield _sse("erro", {"mensagem": "Já há uma pergunta em andamento nesta conversa; "
                                         "aguarde a resposta."})
         return

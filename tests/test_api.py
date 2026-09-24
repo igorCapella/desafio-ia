@@ -182,3 +182,41 @@ def test_validar_banco_com_mensagem_clara(tmp_path):
     sqlite3.connect(vazio).close()
     with pytest.raises(RuntimeError, match="faltam as tabelas"):
         main._validar_banco(str(vazio))
+
+
+def test_documento_fora_da_conversa_403(cliente):
+    sid = _sid(cliente)
+    assert cliente.get(f"/api/documento/93?sessao_id={sid}").status_code == 403
+    assert cliente.get("/api/documento/93?sessao_id=nao-e-um-id").status_code == 403
+
+
+def test_documento_lido_na_conversa_200(cliente):
+    from app.agente.sessao import obter_sessao
+    from app.dados.ferramentas import obter_dossie
+
+    sid = _sid(cliente)
+    obter_sessao(sid).registrar_resultado("obter_dossie", obter_dossie(NUM))
+    r = cliente.get(f"/api/documento/93?sessao_id={sid}")
+    assert r.status_code == 200
+    assert r.json()["id"] == 93 and r.json()["numero"] == NUM and r.json()["texto"]
+    assert cliente.get(f"/api/documento/94?sessao_id={sid}").status_code == 403  # outro processo
+
+
+def test_perguntas_recusadas_tambem_sao_registradas(cliente, monkeypatch):
+    monkeypatch.setattr(main, "responder", _fake({"tipo": "texto", "delta": "oi"}, FIM))
+    sid = _sid(cliente)
+    main._EM_ANDAMENTO.add(sid)
+    try:
+        _chat(cliente, sid, "primeira")
+    finally:
+        main._EM_ANDAMENTO.discard(sid)
+    assert _ultima_auditoria()["recusada"] == "em_andamento"
+    monkeypatch.setattr(main, "custo_acumulado", lambda caminho=None: 999.0)
+    _chat(cliente, sid, "segunda")
+    linha = _ultima_auditoria()
+    assert linha["recusada"] == "orcamento" and linha["pergunta"] == "segunda"
+
+
+def test_id_de_sessao_grande_demais_422(cliente):
+    r = cliente.post("/api/chat", json={"sessao_id": "x" * 65, "pergunta": "oi"})
+    assert r.status_code == 422
