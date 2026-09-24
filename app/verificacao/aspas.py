@@ -3,16 +3,17 @@ import re
 _RX_ASPAS = re.compile(r'[“"]([^”"\n]{20,}?)[”"]')
 
 
-def _norm(s: str) -> str:
+def normalizar_trecho(s: str) -> str:
     s = re.sub(r"[*_`]", "", s).lower().replace("“", '"').replace("”", '"')
     return re.sub(r"\s+", " ", s).strip(" .,;:")
 
 
 def verificar_aspas(resposta: str, docs: dict[int, str]) -> list[dict]:
-    textos = {i: _norm(t or "") for i, t in docs.items()}
+    textos = {i: normalizar_trecho(t or "") for i, t in docs.items()}
     literais, fontes, suspeitos = [], [], []
     for trecho in _RX_ASPAS.findall(resposta):
-        frags = [_norm(x) for x in re.split(r"\.\.\.|…|\[\.\.\.\]", trecho) if len(_norm(x)) >= 15]
+        frags = [normalizar_trecho(x) for x in re.split(r"\.\.\.|…|\[\.\.\.\]", trecho)
+                 if len(normalizar_trecho(x)) >= 15]
         if not frags:
             continue
         # Todos os fragmentos (separados por reticências) têm de estar no MESMO documento.

@@ -66,9 +66,23 @@ def test_pergunta_sobre_a_sentenca_existente_nao_e_minuta():
 def test_dispositivo_citado_entre_aspas_nao_alerta():
     r = MINUTA.replace("Trata-se de ação...",
                        'A sentença anterior [Doc 93] disse: "julgo improcedente o pedido".')
-    assert _alertas(verificar_minuta(r)) == []
-
+    docs = {93: "Ante o exposto, julgo improcedente o pedido. Custas pela autora."}
+    assert _alertas(verificar_minuta(r, docs=docs)) == []
 
 def test_resposta_sem_minuta_redigida_nao_cobra_aviso():
     assert _alertas(verificar_minuta("Antes de redigir, confirme: o processo já foi julgado?")) == []
+
+
+def test_decisao_inventada_entre_aspas_alerta():
+    r = MINUTA.replace("[JULGO PROCEDENTE / IMPROCEDENTE] o pedido",
+                       '"JULGO PROCEDENTE o pedido, condenando o réu"')
+    selos = verificar_minuta(r, docs={93: "outro texto dos autos"})
+    assert any("decisão de mérito" in m for m in _alertas(selos))
+
+
+def test_pedido_de_minuta_por_substantivo():
+    for p in ("Preciso de uma proposta de sentença para esse processo",
+              "Quero um rascunho de sentença", "Preciso de uma sentença para o processo"):
+        assert eh_minuta("...", p), p
+    assert not eh_minuta("...", "Qual o dispositivo da sentença?")
 

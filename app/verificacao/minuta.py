@@ -1,19 +1,24 @@
 import re
 
 from app.dados.conexao import py_normalizar
+from app.verificacao.aspas import normalizar_trecho
 
 AVISO = "PROPOSTA DE TEXTO GERADA POR IA — NÃO É SENTENÇA PROFERIDA"  # a faixa que a interface exibe
 _MARCA = "proposta de texto gerada por ia"  # parte do aviso usada na detecção (tolera pontuação)
 _VERBOS = (r"elabore|elaborar|elabora|redija|redigir|redige|minute|minutar|proponha|propor|"
            r"fa[çc]a|fazer|escreva|escrever|prepare|preparar|gere|gerar|crie|criar")
-# Pedido de minuta: a palavra "minuta", ou um verbo de redação com a SENTENÇA como objeto direto
-# ("redija a sentença", "escreva uma nova sentença") — não "faça um resumo da sentença" (spec §6).
+# Pedido de minuta (spec §6): a palavra "minuta"; um verbo de redação com a SENTENÇA como objeto
+# direto ("redija a sentença"); ou o substantivo ("proposta de sentença", "preciso de uma sentença").
+# Não conta: "faça um resumo da sentença", "qual o dispositivo da sentença?".
 _RX_PEDIDO = re.compile(
-    rf"\bminutas?\b|\b(?:{_VERBOS})\s+"
+    r"\bminutas?\b"
+    rf"|\b(?:{_VERBOS})\s+"
     r"(?:(?:uma|um|a|o|nova|novo|outra|proposta\s+de|modelo\s+de|projeto\s+de|rascunho\s+de)\s+){0,3}"
-    r"senten[çc]a\b", re.I)
+    r"senten[çc]a\b"
+    r"|\b(?:proposta|projeto|modelo|rascunho|esbo[çc]o)\s+de\s+senten[çc]a\b"
+    r"|\b(?:preciso|quero|gostaria)\s+(?:de\s+)?uma\s+(?:nova\s+)?senten[çc]a\b", re.I)
 _RX_DISPOSITIVO = re.compile(r"\bjulgo\s+(parcialmente\s+)?(procedente|improcedente)", re.I)
-_RX_CITADO = re.compile(r"\[[^\]]*\]|[“\"][^”\"\n]*[”\"]")  # colchetes e trechos entre aspas
+_RX_ENTRE_ASPAS = re.compile(r'[“"]([^”"\n]+)[”"]')
 _RX_SECAO = re.compile(r"^\s*(?:#+\s*|\*\*\s*)?(?:[IVX]+\s*[-–.]\s*)?"
                        r"(relat[óo]rio|fundamenta[çc][ãa]o|dispositivo)\b", re.I | re.M)
 _RX_AVISO_JULGADO = re.compile(r"j[áa]\s+(?:foi\s+)?(?:julgad|sentenciad)|"
@@ -29,6 +34,18 @@ def eh_minuta(resposta: str, pergunta: str) -> bool:
     if _MARCA in (resposta or "").lower():
         return True
     return bool(_RX_PEDIDO.search(pergunta or ""))
+
+
+def _sem_lacunas_e_citacoes(resposta: str, docs: dict[int, str] | None) -> str:
+    # Decisão entre colchetes é lacuna para o magistrado. Entre aspas, só sai da conferência o
+    # trecho que está de fato nos autos (citação da sentença existente); aspas inventadas ficam.
+    textos = [normalizar_trecho(t or "") for t in (docs or {}).values()]
+
+    def _trocar(m: re.Match) -> str:
+        trecho = normalizar_trecho(m.group(1))
+        return " " if trecho and any(trecho in t for t in textos) else m.group(0)
+
+    return _RX_ENTRE_ASPAS.sub(_trocar, re.sub(r"\[[^\]]*\]", " ", resposta))
 
 
 def _redigiu(resposta: str) -> bool:
@@ -49,10 +66,10 @@ def _avisou_sentenca(resposta: str, sentencas: list[int]) -> bool:
 
 def verificar_minuta(resposta: str, *, magistrado: str | None = None,
                      n_documentos: int | None = None, ja_julgado: bool = False,
-                     sentencas: list[int] | None = None) -> list[dict]:
+                     sentencas: list[int] | None = None,
+                     docs: dict[int, str] | None = None) -> list[dict]:
     selos = []
-    # Decisão entre colchetes é lacuna para o magistrado; entre aspas é citação da sentença que já existe.
-    if _RX_DISPOSITIVO.search(_RX_CITADO.sub(" ", resposta)):
+    if _RX_DISPOSITIVO.search(_sem_lacunas_e_citacoes(resposta, docs)):
         selos.append(_selo("alerta", "A minuta propõe uma decisão de mérito fora de colchetes; "
                                      "decidir cabe ao magistrado."))
     else:

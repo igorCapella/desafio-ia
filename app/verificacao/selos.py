@@ -24,5 +24,5 @@ def verificar(resposta: str, pergunta: str, sessao: Sessao, *, houve_sql: bool,
                       or foco.get("situacao") == "Julgado")
         selos += verificar_minuta(resposta, magistrado=foco.get("magistrado"),
                                   n_documentos=foco.get("n_documentos"), ja_julgado=ja_julgado,
-                                  sentencas=foco.get("sentencas", []))
+                                  sentencas=foco.get("sentencas", []), docs=sessao.docs_vistos)
     return {"selos": selos, "eh_minuta": minuta}
