@@ -111,7 +111,19 @@ async def chat(p: Pergunta) -> AsyncIterable[ServerSentEvent]:
     _EM_ANDAMENTO.add(p.sessao_id)
     custo_antes = sessao.custo_total
     resposta, uso, ferramentas, erros, selos = "", {}, [], [], []
-    houve_sql, concluiu = False, False
+    houve_sql, gravado = False, False
+
+    def gravar(interrompida: bool) -> None:
+        # Um registro por pergunta (spec §9.3), inclusive quando o cliente desconecta no meio.
+        nonlocal gravado
+        gravado = True
+        registrar({"sessao": p.sessao_id, "pergunta": p.pergunta,
+                   "processo_em_foco": sessao.processo_em_foco, "ferramentas": ferramentas,
+                   "modelo": uso.get("modelo"), "provedor": uso.get("provedor"),
+                   "tokens": {k: uso.get(k, 0) for k in ("prompt", "completion", "raciocinio")},
+                   "custo": round(sessao.custo_total - custo_antes, 6),
+                   "latencia_ms": uso.get("latencia_ms"), "selos": selos, "erros": erros,
+                   "interrompida": interrompida}, caminho=AUDITORIA)
     try:
         async with aclosing(responder(sessao, p.pergunta)) as eventos:
             async for ev in eventos:
@@ -143,19 +155,14 @@ async def chat(p: Pergunta) -> AsyncIterable[ServerSentEvent]:
             erros.append({"mensagem": "Falha na verificação.",
                           "detalhe": f"{type(e).__name__}: {e}"[:300]})
         selos = ver["selos"]
+        gravar(interrompida=False)  # antes do fim: a resposta só termina depois de registrada
+        _EM_ANDAMENTO.discard(p.sessao_id)  # e a conversa já aceita a próxima pergunta
         yield _sse("verificacao", {**ver, "aviso": AVISO if ver["eh_minuta"] else None})
         yield _sse("fim", {"uso": uso, "custo_sessao": round(sessao.custo_total, 4)})
-        concluiu = True
     finally:
-        # Grava mesmo se o cliente desconectar no meio (spec §9.3).
         _EM_ANDAMENTO.discard(p.sessao_id)
-        registrar({"sessao": p.sessao_id, "pergunta": p.pergunta,
-                   "processo_em_foco": sessao.processo_em_foco, "ferramentas": ferramentas,
-                   "modelo": uso.get("modelo"), "provedor": uso.get("provedor"),
-                   "tokens": {k: uso.get(k, 0) for k in ("prompt", "completion", "raciocinio")},
-                   "custo": round(sessao.custo_total - custo_antes, 6),
-                   "latencia_ms": uso.get("latencia_ms"), "selos": selos, "erros": erros,
-                   "interrompida": not concluiu}, caminho=AUDITORIA)
+        if not gravado:
+            gravar(interrompida=True)
 
 
 # Por último: rotas /api/* registradas acima têm prioridade sobre os arquivos estáticos.

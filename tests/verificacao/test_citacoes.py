@@ -66,3 +66,12 @@ def test_mov_periodo_confere_se_as_duas_pontas_existem():
     ruim = verificar_citacoes("Tramitação [Mov 11/10/2022 a 01/01/2025].", docs_vistos={},
                               movs_vistas=movs, houve_sql=False)
     assert _status(ruim) == {"alerta"}
+
+
+def test_datas_iso_e_varios_documentos_no_mesmo_marcador():
+    r = "Ver [Doc 939, 2023-06-01; Doc 944, 2024-10-08] e (Doc 86)."
+    ok = verificar_citacoes(r, docs_vistos={939: "", 944: "", 86: ""}, movs_vistas=set(),
+                            houve_sql=False)
+    assert _status(ok) == {"ok"}
+    ruim = verificar_citacoes(r, docs_vistos={939: "", 86: ""}, movs_vistas=set(), houve_sql=False)
+    assert next(s for s in ruim if s["status"] == "alerta")["trechos"] == ["Doc 944"]

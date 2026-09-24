@@ -125,5 +125,5 @@ def test_registrar_resultado_guarda_texto_do_cadastro_sem_documentos():
         "processo": {"numero": "0000001-15.2022.8.99.9012", "assunto": "Assunto Muito Específico"},
         "documentos": [{"id": 86, "tipo": "Petição Inicial", "texto": "TEXTO DO DOCUMENTO"}],
         "movimentacoes": []})
-    assert "Assunto Muito Específico" in s.textos_cadastro[0]
-    assert "TEXTO DO DOCUMENTO" not in s.textos_cadastro[0]
+    assert "Assunto Muito Específico" in s.textos_das_ferramentas[0]
+    assert "TEXTO DO DOCUMENTO" not in s.textos_das_ferramentas[0]

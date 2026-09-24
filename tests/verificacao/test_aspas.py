@@ -46,4 +46,21 @@ def test_aspas_do_cadastro_sao_literais_mas_nao_viram_link_de_documento():
     selos = verificar_aspas('O assunto é "Inclusão Indevida em Cadastro de Inadimplentes".',
                             DOCS, cadastro)
     assert [s["status"] for s in selos] == ["ok"]
-    assert selos[0]["docs"] == [] and selos[0]["trechos_cadastro"]
+    assert selos[0]["docs"] == [] and selos[0]["trechos_das_ferramentas"]
+
+
+def test_texto_entre_duas_citacoes_nao_vira_citacao():
+    r = 'A "sentença" foi citada e, depois de um longo trecho sem aspas nenhumas, o "réu" recorreu.'
+    assert verificar_aspas(r, DOCS) == []
+
+
+def test_aviso_da_minuta_entre_aspas_nao_e_citacao():
+    r = 'A minuta começa com o aviso "PROPOSTA DE TEXTO GERADA POR IA — NÃO É SENTENÇA PROFERIDA".'
+    assert verificar_aspas(r, DOCS) == []
+
+
+def test_aspas_que_repetem_a_pergunta_nao_sao_aprovadas_nem_alertadas():
+    perguntas = ["Qual é a jurisprudência do STJ sobre dano moral por negativação indevida?"]
+    r = 'Busquei "dano moral por negativação indevida" e nada encontrei.'
+    assert [s["status"] for s in verificar_aspas(r, DOCS)] == ["alerta"]
+    assert verificar_aspas(r, DOCS, perguntas=perguntas) == []

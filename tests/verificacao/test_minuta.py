@@ -97,3 +97,12 @@ def test_assinatura_com_nome_e_cargo_na_mesma_linha_alerta():
     r = MINUTA.replace("Juiz(a) de Direito", "Daiane Duarte Zanella — Juíza de Direito")
     assert any("assinatura" in m
                for m in _alertas(verificar_minuta(r, magistrado="Daiane Duarte Zanella")))
+
+
+def test_citacao_da_sentenca_existente_com_reticencias_nao_alerta():
+    r = MINUTA.replace("Trata-se de ação...", 'A sentença [Doc 93] decidiu: "JULGO IMPROCEDENTE o '
+                                              'pedido ... resolvendo o mérito da causa".')
+    docs = {93: "Ante o exposto, JULGO IMPROCEDENTE o pedido formulado, resolvendo o mérito da causa."}
+    assert _alertas(verificar_minuta(r, docs=docs)) == []
+    outro = {93: "Ante o exposto, JULGO IMPROCEDENTE o pedido formulado."}
+    assert any("decisão de mérito" in m for m in _alertas(verificar_minuta(r, docs=outro)))

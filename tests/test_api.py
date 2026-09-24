@@ -229,3 +229,20 @@ def test_sql_marcado_apos_busca_conta_como_consulta(cliente, monkeypatch):
         {"tipo": "texto", "delta": "São 527 processos [SQL]."}, FIM))
     eventos = dict(_chat(cliente, _sid(cliente)))
     assert ("citacao", "ok") in {(s["tipo"], s["status"]) for s in eventos["verificacao"]["selos"]}
+
+
+def test_turno_registrado_e_conversa_liberada_antes_do_fim(cliente, monkeypatch):
+    monkeypatch.setattr(main, "responder", _fake({"tipo": "texto", "delta": "oi"}, FIM))
+    sse, visto = main._sse, {}
+
+    def espiao(evento, dados):
+        if evento == "fim":  # o que o cliente já pode observar ao receber o fim
+            visto["registrado"] = Path(main.AUDITORIA).exists()
+            visto["livre"] = sid not in main._EM_ANDAMENTO
+        return sse(evento, dados)
+
+    monkeypatch.setattr(main, "_sse", espiao)
+    sid = _sid(cliente)
+    assert [n for n, _ in _chat(cliente, sid)][-1] == "fim"
+    assert visto == {"registrado": True, "livre": True}
+    assert "erro" not in [n for n, _ in _chat(cliente, sid)]  # a pergunta seguinte é aceita

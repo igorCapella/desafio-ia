@@ -1,7 +1,7 @@
 import re
 
 from app.dados.conexao import py_normalizar
-from app.verificacao.aspas import normalizar_trecho
+from app.verificacao.aspas import RX_ENTRE_ASPAS, fragmentos, normalizar_trecho
 
 AVISO = "PROPOSTA DE TEXTO GERADA POR IA — NÃO É SENTENÇA PROFERIDA"  # a faixa que a interface exibe
 _MARCA = "proposta de texto gerada por ia"  # parte do aviso usada na detecção (tolera pontuação)
@@ -18,7 +18,6 @@ _RX_PEDIDO = re.compile(
     r"|\b(?:proposta|projeto|modelo|rascunho|esbo[çc]o)\s+de\s+senten[çc]a\b"
     r"|\b(?:preciso|quero|gostaria)\s+(?:de\s+)?uma\s+(?:nova\s+)?senten[çc]a\b", re.I)
 _RX_DISPOSITIVO = re.compile(r"\bjulgo\s+(parcialmente\s+)?(procedente|improcedente)", re.I)
-_RX_ENTRE_ASPAS = re.compile(r'[“"]([^”"\n]+)[”"]')
 _RX_SECAO = re.compile(r"^\s*(?:#+\s*|\*\*\s*)?(?:[IVX]+\s*[-–.]\s*)?"
                        r"(relat[óo]rio|fundamenta[çc][ãa]o|dispositivo)\b", re.I | re.M)
 _RX_AVISO_JULGADO = re.compile(r"j[áa]\s+(?:foi\s+)?(?:julgad|sentenciad)|"
@@ -43,10 +42,11 @@ def _sem_lacunas_e_citacoes(resposta: str, docs: dict[int, str] | None) -> str:
     textos = [normalizar_trecho(t or "") for t in (docs or {}).values()]
 
     def _trocar(m: re.Match) -> str:
-        trecho = normalizar_trecho(m.group(1))
-        return " " if trecho and any(trecho in t for t in textos) else m.group(0)
+        # Com reticências, cada fragmento tem de estar no mesmo documento (como na verificação de aspas).
+        frags = fragmentos(m.group(1) or m.group(2))
+        return " " if frags and any(all(f in t for f in frags) for t in textos) else m.group(0)
 
-    return _RX_ENTRE_ASPAS.sub(_trocar, re.sub(r"\[[^\]]*\]", " ", resposta))
+    return RX_ENTRE_ASPAS.sub(_trocar, re.sub(r"\[[^\]]*\]", " ", resposta))
 
 
 def _redigiu(resposta: str) -> bool:

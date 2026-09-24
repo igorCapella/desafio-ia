@@ -2,9 +2,10 @@ import re
 
 from app.dados.conexao import py_normalizar
 
-# [Doc 86], [Doc. 86 – Petição Inicial, 24/10/2022], [Doc 86, 90], [Docs 86 e 90], (Doc 86).
-# Um número seguido de "/" é data, não documento.
-_RX_DOC = re.compile(r"[\[(]Docs?\.?\s*(\d+(?![\d/])(?:\s*(?:,|;|\be\b)\s*\d+(?![\d/]))*)", re.I)
+# [Doc 86], [Doc. 86 – Petição Inicial, 24/10/2022], [Doc 86, 90], [Docs 86 e 90], (Doc 86),
+# [Doc 939, 2023-06-01; Doc 944, 2024-10-08]. Número seguido de "/" ou "-" é data, não documento.
+_RX_MARCADOR_DOC = re.compile(r"[\[(]\s*Docs?\b[^\])]*[\])]", re.I)
+_RX_IDS_DOC = re.compile(r"\bDocs?\.?\s*(\d+(?![\d/-])(?:\s*(?:,|;|\be\b)\s*\d+(?![\d/-]))*)", re.I)
 _RX_MOV = re.compile(r"\[Mov\.?\s*([^\]]*)\]", re.I)
 _RX_DATA = re.compile(r"(\d{2})/(\d{2})/(\d{4})|(\d{4})-(\d{2})-(\d{2})")
 _RX_PERIODO = re.compile(r"^\s*(\d{2}/\d{2}/\d{4}|\d{4}-\d{2}-\d{2})\s*(?:a|até|–|—|-)\s*"
@@ -44,8 +45,8 @@ def _mov_confere(conteudo: str, movs_vistas: set[tuple[str, str]]) -> bool:
 def verificar_citacoes(resposta: str, docs_vistos: dict[int, str],
                        movs_vistas: set[tuple[str, str]], houve_sql: bool) -> list[dict]:
     selos: list[dict] = []
-    docs_citados = {int(n) for grupo in _RX_DOC.findall(resposta)
-                    for n in re.findall(r"\d+", grupo)}
+    docs_citados = {int(n) for marcador in _RX_MARCADOR_DOC.findall(resposta)
+                    for grupo in _RX_IDS_DOC.findall(marcador) for n in re.findall(r"\d+", grupo)}
     invalidos = sorted(docs_citados - docs_vistos.keys())
     if docs_citados and not invalidos:
         selos.append(_selo("ok", f"{len(docs_citados)} citação(ões) de documento conferida(s)."))

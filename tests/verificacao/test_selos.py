@@ -39,3 +39,17 @@ def test_numero_da_pergunta_conta_como_conhecido():
     res = verificar(f"O processo {outro} não foi encontrado.", f"E o {outro}?", Sessao(),
                     houve_sql=False)
     assert all(s["status"] == "ok" for s in res["selos"])
+
+
+def test_aspas_do_nao_encontrado_sao_literais_e_as_da_pergunta_ficam_de_fora():
+    s = Sessao()
+    pergunta = "Há jurisprudência sobre negativação indevida no STJ? E o 0009999-69.2024.8.99.9001?"
+    s.registrar_pergunta(pergunta)
+    s.registrar_resultado("obter_dossie", {"encontrado": False, "numero": "0009999-69.2024.8.99.9001",
+                                           "erro": "Processo não encontrado no banco."})
+    r = ('Sobre "negativação indevida no STJ", o banco não tem jurisprudência; o 0009999-69.2024.'
+         '8.99.9001 deu "Processo não encontrado no banco".')
+    aspas = [x for x in verificar(r, pergunta, s, houve_sql=False)["selos"] if x["tipo"] == "aspas"]
+    # O "não encontrado" é resultado de ferramenta: literal. A pergunta é do usuário: fica de fora.
+    assert [(x["status"], x["trechos_das_ferramentas"]) for x in aspas] == [
+        ("ok", ["Processo não encontrado no banco"])]

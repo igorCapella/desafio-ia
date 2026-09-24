@@ -12,7 +12,8 @@ def verificar(resposta: str, pergunta: str, sessao: Sessao, *, houve_sql: bool,
     """Confere a forma da resposta contra as fontes lidas na conversa (spec §6)."""
     selos: list[dict] = []
     selos += verificar_citacoes(resposta, sessao.docs_vistos, sessao.movs_vistas, houve_sql)
-    selos += verificar_aspas(resposta, sessao.docs_vistos, sessao.textos_cadastro)
+    selos += verificar_aspas(resposta, sessao.docs_vistos, sessao.textos_das_ferramentas,
+                             sessao.perguntas)
     selos += verificar_normas(resposta, sessao.docs_vistos)
     conhecidos = sessao.processos_consultados | set(RX_CNJ.findall(pergunta or ""))
     selos += verificar_processo_foco(resposta, sessao.processo_em_foco, conhecidos)
