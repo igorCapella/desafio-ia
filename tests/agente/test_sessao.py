@@ -60,3 +60,35 @@ def test_limite_de_sessoes_descarta_a_mais_antiga(monkeypatch):
     monkeypatch.setattr(S, "_MAX_SESSOES", 3)
     ids = [nova_sessao() for _ in range(5)]
     assert list(S.SESSOES) == ids[2:]
+
+
+def test_compactar_respeita_o_limite_do_turno():
+    s = Sessao()
+    s.adicionar({"role": "tool", "name": "obter_dossie", "content": "a" * 50, "_numero": "A"})
+    s.adicionar({"role": "tool", "name": "obter_dossie", "content": "b" * 50, "_numero": "B"})
+    s.definir_foco("C", {})
+    s.compactar_dossies_antigos(ate=1)
+    assert "omitido" in s.historico[0]["content"] and s.historico[1]["content"] == "b" * 50
+
+
+def test_registrar_pergunta_guarda_cpfs_digitados():
+    s = Sessao()
+    s.registrar_pergunta("Processos do CPF 999.550.862-21 e do 12345678901? "
+                         "Veja o 0000001-15.2022.8.99.9012")
+    assert s.cpfs_do_usuario == {"99955086221", "12345678901"}
+
+
+def test_registrar_resultado_acumula_fontes_da_conversa():
+    s = Sessao()
+    s.registrar_resultado("obter_dossie", {
+        "encontrado": True, "processo": {"numero": "0000001-15.2022.8.99.9012"},
+        "documentos": [{"id": 86, "texto": "petição"}],
+        "movimentacoes": [{"data": "2022-01-10", "descricao": "Distribuição por Sorteio"}]})
+    s.registrar_resultado("buscar_processos",
+                          {"processos": [{"numero": "0000002-97.2022.8.99.9012"}]})
+    s.registrar_resultado("consultar_sql", {"linhas": [["0000003-78.2023.8.99.9002", 5]]})
+    assert s.docs_vistos == {86: "petição"}
+    assert ("2022-01-10", "Distribuição por Sorteio") in s.movs_vistas
+    assert s.processos_consultados == {"0000001-15.2022.8.99.9012",
+                                       "0000002-97.2022.8.99.9012",
+                                       "0000003-78.2023.8.99.9002"}
