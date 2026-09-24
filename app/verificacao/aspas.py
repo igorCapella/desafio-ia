@@ -23,9 +23,18 @@ def trechos_entre_aspas(texto: str) -> list[str]:
     return [a or b for a, b in RX_ENTRE_ASPAS.findall(_RX_CODIGO.sub(" ", texto))]
 
 
-def _contido(frags: list[str], textos: list[str]) -> bool:
+def _no_texto(fragmento: str, texto: str) -> bool:
+    # Palavras inteiras nas pontas: "procedente o pedido" não é literal de "improcedente o pedido".
+    if fragmento not in texto:
+        return False
+    antes = r"(?<!\w)" if fragmento[0].isalnum() else ""
+    depois = r"(?!\w)" if fragmento[-1].isalnum() else ""
+    return re.search(antes + re.escape(fragmento) + depois, texto) is not None
+
+
+def literal_em(frags: list[str], textos: list[str]) -> bool:
     # Todos os fragmentos (separados por reticências) têm de estar no MESMO texto.
-    return any(all(f in t for f in frags) for t in textos)
+    return any(all(_no_texto(f, t) for f in frags) for t in textos)
 
 
 def verificar_aspas(resposta: str, docs: dict[int, str], textos_ferramentas: list[str] = (),
@@ -42,13 +51,13 @@ def verificar_aspas(resposta: str, docs: dict[int, str], textos_ferramentas: lis
         if (len(trecho) < _MIN_CARACTERES or not frags
                 or any(t in normalizar_trecho(trecho) for t in _TEXTOS_DO_SISTEMA)):
             continue
-        doc = next((i for i, t in textos.items() if _contido(frags, [t])), None)
+        doc = next((i for i, t in textos.items() if literal_em(frags, [t])), None)
         if doc is not None:
             literais.append(trecho[:120])
             fontes.append(doc)
-        elif _contido(frags, das_ferramentas):
+        elif literal_em(frags, das_ferramentas):
             de_ferramentas.append(trecho[:120])
-        elif not _contido(frags, do_usuario):
+        elif not literal_em(frags, do_usuario):
             suspeitos.append(trecho[:120])
     selos = []
     total = len(literais) + len(de_ferramentas)

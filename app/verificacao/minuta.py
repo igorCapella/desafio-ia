@@ -1,7 +1,7 @@
 import re
 
 from app.dados.conexao import py_normalizar
-from app.verificacao.aspas import RX_ENTRE_ASPAS, fragmentos, normalizar_trecho
+from app.verificacao.aspas import RX_ENTRE_ASPAS, fragmentos, literal_em, normalizar_trecho
 
 AVISO = "PROPOSTA DE TEXTO GERADA POR IA — NÃO É SENTENÇA PROFERIDA"  # a faixa que a interface exibe
 _MARCA = "proposta de texto gerada por ia"  # parte do aviso usada na detecção (tolera pontuação)
@@ -36,15 +36,15 @@ def eh_minuta(resposta: str, pergunta: str) -> bool:
     return bool(_RX_PEDIDO.search(pergunta or ""))
 
 
-def _sem_lacunas_e_citacoes(resposta: str, docs: dict[int, str] | None) -> str:
-    # Decisão entre colchetes é lacuna para o magistrado. Entre aspas, só sai da conferência o
-    # trecho que está de fato nos autos (citação da sentença existente); aspas inventadas ficam.
-    textos = [normalizar_trecho(t or "") for t in (docs or {}).values()]
+def _sem_lacunas_e_citacoes(resposta: str, sentencas: list[str]) -> str:
+    # Decisão entre colchetes é lacuna para o magistrado. Entre aspas, só sai da conferência a citação
+    # literal da sentença que o processo em foco já tem; aspas inventadas ou de outro processo ficam.
+    textos = [normalizar_trecho(t or "") for t in sentencas]
 
     def _trocar(m: re.Match) -> str:
-        # Com reticências, cada fragmento tem de estar no mesmo documento (como na verificação de aspas).
+        # Com reticências, cada fragmento tem de estar na mesma sentença.
         frags = fragmentos(m.group(1) or m.group(2))
-        return " " if frags and any(all(f in t for f in frags) for t in textos) else m.group(0)
+        return " " if frags and literal_em(frags, textos) else m.group(0)
 
     return RX_ENTRE_ASPAS.sub(_trocar, re.sub(r"\[[^\]]*\]", " ", resposta))
 
@@ -80,7 +80,9 @@ def verificar_minuta(resposta: str, *, magistrado: str | None = None,
                      sentencas: list[int] | None = None,
                      docs: dict[int, str] | None = None) -> list[dict]:
     selos = []
-    if _RX_DISPOSITIVO.search(_sem_lacunas_e_citacoes(resposta, docs)):
+    # `docs` é tudo o que a conversa leu (vários processos); a citação isenta é só da sentença deste.
+    da_sentenca = [t for i, t in (docs or {}).items() if i in set(sentencas or [])]
+    if _RX_DISPOSITIVO.search(_sem_lacunas_e_citacoes(resposta, da_sentenca)):
         selos.append(_selo("alerta", "A minuta propõe uma decisão de mérito fora de colchetes; "
                                      "decidir cabe ao magistrado."))
     else:

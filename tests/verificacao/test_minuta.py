@@ -67,7 +67,7 @@ def test_dispositivo_citado_entre_aspas_nao_alerta():
     r = MINUTA.replace("Trata-se de ação...",
                        'A sentença anterior [Doc 93] disse: "julgo improcedente o pedido".')
     docs = {93: "Ante o exposto, julgo improcedente o pedido. Custas pela autora."}
-    assert _alertas(verificar_minuta(r, docs=docs)) == []
+    assert _alertas(verificar_minuta(r, docs=docs, sentencas=[93])) == []
 
 def test_resposta_sem_minuta_redigida_nao_cobra_aviso():
     assert _alertas(verificar_minuta("Antes de redigir, confirme: o processo já foi julgado?")) == []
@@ -103,6 +103,15 @@ def test_citacao_da_sentenca_existente_com_reticencias_nao_alerta():
     r = MINUTA.replace("Trata-se de ação...", 'A sentença [Doc 93] decidiu: "JULGO IMPROCEDENTE o '
                                               'pedido ... resolvendo o mérito da causa".')
     docs = {93: "Ante o exposto, JULGO IMPROCEDENTE o pedido formulado, resolvendo o mérito da causa."}
-    assert _alertas(verificar_minuta(r, docs=docs)) == []
+    assert _alertas(verificar_minuta(r, docs=docs, sentencas=[93])) == []
     outro = {93: "Ante o exposto, JULGO IMPROCEDENTE o pedido formulado."}
-    assert any("decisão de mérito" in m for m in _alertas(verificar_minuta(r, docs=outro)))
+    assert any("decisão de mérito" in m for m in _alertas(verificar_minuta(r, docs=outro, sentencas=[93])))
+
+
+def test_so_a_sentenca_deste_processo_pode_ser_citada_sem_alerta():
+    r = MINUTA.replace("Trata-se de ação...", 'A sentença [Doc 93] decidiu: "JULGO IMPROCEDENTE o '
+                                              'pedido formulado na inicial".')
+    docs = {93: "Ante o exposto, JULGO IMPROCEDENTE o pedido formulado na inicial."}
+    assert _alertas(verificar_minuta(r, docs=docs, sentencas=[93])) == []
+    # O Doc 93 foi lido na conversa, mas é de OUTRO processo: a decisão entre aspas conta como proposta.
+    assert any("decisão de mérito" in m for m in _alertas(verificar_minuta(r, docs=docs)))

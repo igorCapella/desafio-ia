@@ -53,3 +53,19 @@ def test_aspas_do_nao_encontrado_sao_literais_e_as_da_pergunta_ficam_de_fora():
     # O "não encontrado" é resultado de ferramenta: literal. A pergunta é do usuário: fica de fora.
     assert [(x["status"], x["trechos_das_ferramentas"]) for x in aspas] == [
         ("ok", ["Processo não encontrado no banco"])]
+
+
+def test_decisao_de_outro_processo_da_conversa_entre_aspas_alerta():
+    s = _sessao()  # processo NUM, julgado, com a sentença Doc 93 "Julgo improcedente o pedido."
+    outro = "0000001-81.2023.8.99.9011"
+    s.registrar_resultado("obter_dossie", {
+        "encontrado": True,
+        "processo": {"numero": outro, "magistrado": None, "situacao": "Em andamento",
+                     "data_sentenca": None},
+        "documentos": [{"id": 940, "tipo": "Petição Inicial", "texto": "Requer a procedência."}],
+        "movimentacoes": []})
+    s.definir_foco(outro, {"classe": "c", "situacao": "Em andamento"})
+    r = (f"{AVISO}\n\nRELATÓRIO\nTrata-se de ação.\n\nFUNDAMENTAÇÃO\nAnalisa-se.\n\n"
+         'DISPOSITIVO\n"Julgo improcedente o pedido."')
+    res = verificar(r, "Elabore a minuta de sentença", s, houve_sql=False)
+    assert any("decisão de mérito" in x["mensagem"] for x in res["selos"] if x["status"] == "alerta")

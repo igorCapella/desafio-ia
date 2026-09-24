@@ -64,3 +64,11 @@ def test_aspas_que_repetem_a_pergunta_nao_sao_aprovadas_nem_alertadas():
     r = 'Busquei "dano moral por negativação indevida" e nada encontrei.'
     assert [s["status"] for s in verificar_aspas(r, DOCS)] == ["alerta"]
     assert verificar_aspas(r, DOCS, perguntas=perguntas) == []
+
+
+def test_trecho_que_comeca_no_meio_de_uma_palavra_nao_e_literal():
+    docs = {93: "Ante o exposto, JULGO IMPROCEDENTE o pedido formulado na inicial."}
+    trocado = verificar_aspas('Decidiu "procedente o pedido formulado na inicial".', docs)
+    assert [s["status"] for s in trocado] == ["alerta"]  # "procedente" não é literal de "improcedente"
+    certo = verificar_aspas('Decidiu "improcedente o pedido formulado na inicial".', docs)
+    assert [s["status"] for s in certo] == ["ok"]
