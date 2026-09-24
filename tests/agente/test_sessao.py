@@ -127,3 +127,13 @@ def test_registrar_resultado_guarda_texto_do_cadastro_sem_documentos():
         "movimentacoes": []})
     assert "Assunto Muito Específico" in s.textos_das_ferramentas[0]
     assert "TEXTO DO DOCUMENTO" not in s.textos_das_ferramentas[0]
+
+
+def test_texto_das_ferramentas_fica_sem_escape_de_json():
+    s = Sessao()
+    s.registrar_resultado("obter_dossie", {
+        "encontrado": True,
+        "processo": {"numero": "0000001-15.2022.8.99.9012"},
+        "documentos": [], "movimentacoes": [],
+        "alertas": ['Atos assinados por "Juiz(a) de Direito em exercício".']})
+    assert 'por "Juiz(a) de Direito em exercício"' in s.textos_das_ferramentas[0]

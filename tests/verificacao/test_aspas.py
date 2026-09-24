@@ -80,3 +80,9 @@ def test_aspas_desbalanceadas_avisam_que_a_conferencia_pode_estar_incompleta():
          '"isso nunca aconteceu, eu nunca estive no local do fato", conforme consta na petição.')
     alertas = [s for s in verificar_aspas(r, docs) if s["status"] == "alerta"]
     assert any("desbalanceadas" in s["mensagem"] for s in alertas)
+
+
+def test_aspas_internas_simples_ou_duplas_sao_a_mesma_citacao():
+    fonte = ['Atos assinados por "Juiz(a) de Direito em exercício". Sem vínculo confirmado.']
+    r = "O alerta diz: \"Atos assinados por 'Juiz(a) de Direito em exercício'\"."
+    assert [s["status"] for s in verificar_aspas(r, {}, fonte)] == ["ok"]

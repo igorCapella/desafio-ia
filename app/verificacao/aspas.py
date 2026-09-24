@@ -10,7 +10,8 @@ _MIN_CARACTERES = 20
 
 
 def normalizar_trecho(s: str) -> str:
-    s = re.sub(r"[*_`]", "", s).lower().replace("“", '"').replace("”", '"')
+    # Aspas internas: ao citar entre aspas duplas, o modelo troca as de dentro por simples.
+    s = re.sub(r"[“”'‘’]", '"', re.sub(r"[*_`]", "", s).lower())
     return re.sub(r"\s+", " ", s).strip(" .,;:")
 
 

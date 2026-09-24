@@ -1,4 +1,3 @@
-import json
 import re
 import secrets
 import string
@@ -7,6 +6,18 @@ from collections import OrderedDict
 _RX_CNJ = re.compile(r"\d{7}-\d{2}\.\d{4}\.\d\.\d{2}\.\d{4}")
 _RX_CPF_TEXTO = re.compile(r"(?<!\d)\d{3}\.?\d{3}\.?\d{3}-?\d{2}(?!\d)")
 _MAX_CPFS = 20  # CPFs digitados aceitos por conversa (impede testar milhares de candidatos)
+
+
+def _textos(valor) -> list[str]:
+    # Os textos de um resultado como eles são: no json.dumps as aspas internas viravam \" e nenhuma
+    # citação com aspas casava.
+    if isinstance(valor, str):
+        return [valor]
+    if isinstance(valor, dict):
+        return [t for v in valor.values() for t in _textos(v)]
+    if isinstance(valor, (list, tuple)):
+        return [t for v in valor for t in _textos(v)]
+    return [] if valor is None or isinstance(valor, bool) else [str(valor)]
 
 
 class Sessao:
@@ -67,8 +78,8 @@ class Sessao:
         if nome == "obter_dossie":
             if res.get("numero"):  # também o número buscado e não encontrado (a resposta pode citá-lo)
                 self.processos_consultados.add(res["numero"])
-            self.textos_das_ferramentas.append(json.dumps(
-                {k: v for k, v in res.items() if k != "documentos"}, ensure_ascii=False))
+            self.textos_das_ferramentas.append("\n".join(
+                _textos({k: v for k, v in res.items() if k != "documentos"})))
             if res.get("encontrado"):
                 p = res["processo"]
                 self.processos_consultados.add(p["numero"])
@@ -83,12 +94,12 @@ class Sessao:
                                   if "Sentença" in (d.get("tipo") or "")]}
         elif nome == "buscar_processos":
             self.processos_consultados.update(p["numero"] for p in res.get("processos", []))
-            self.textos_das_ferramentas.append(json.dumps(res, ensure_ascii=False))
+            self.textos_das_ferramentas.append("\n".join(_textos(res)))
         elif nome == "consultar_sql":
             for linha in res.get("linhas", []):
                 self.processos_consultados.update(
                     v for v in linha if isinstance(v, str) and _RX_CNJ.fullmatch(v))
-            self.textos_das_ferramentas.append(json.dumps(res, ensure_ascii=False))
+            self.textos_das_ferramentas.append("\n".join(_textos(res)))
 
 
 # Só letras: o log mascara como CPF qualquer sequência de 11 dígitos, e o id hexadecimal às vezes
