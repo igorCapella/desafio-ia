@@ -12,7 +12,7 @@ from app.agente.ciclo import responder
 from app.agente.sessao import nova_sessao, obter_sessao
 from app.auditoria import custo_acumulado, registrar
 from app.config import get_settings
-from app.dados.conexao import abrir_conexao
+from app.dados.conexao import abrir_conexao, abrir_conexao_consulta
 from app.verificacao.citacoes import FERRAMENTAS_DE_CONSULTA
 from app.verificacao.minuta import AVISO, eh_minuta
 from app.verificacao.selos import verificar
@@ -41,7 +41,9 @@ def _validar_banco(caminho: str) -> None:
 @asynccontextmanager
 async def _ciclo_de_vida(_app: FastAPI):
     _validar_banco(get_settings().db_path)
-    with closing(abrir_conexao()):  # as visões sobem sem erro
+    # As visões e a base de consulta do modelo sobem já no arranque: um SQLite sem memdb falha
+    # aqui, com mensagem clara, e não no meio da primeira conversa.
+    with closing(abrir_conexao_consulta()):
         pass
     yield
 

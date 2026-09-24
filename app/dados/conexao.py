@@ -83,6 +83,7 @@ _ACOES_CONSULTA = {sqlite3.SQLITE_SELECT, sqlite3.SQLITE_READ,
                    sqlite3.SQLITE_FUNCTION, sqlite3.SQLITE_RECURSIVE}
 _guardia: sqlite3.Connection | None = None  # mantém a base em memória viva
 _trava = threading.Lock()
+_SQLITE_MINIMO = (3, 36, 0)  # a VFS memdb chegou no SQLite 3.36
 
 
 def _preparar_base_consulta() -> None:
@@ -90,6 +91,9 @@ def _preparar_base_consulta() -> None:
     with _trava:
         if _guardia is not None:
             return
+        if sqlite3.sqlite_version_info < _SQLITE_MINIMO:
+            raise RuntimeError(f"Este Python usa SQLite {sqlite3.sqlite_version}; a base de consulta "
+                               "do modelo precisa de SQLite 3.36 ou mais novo (VFS memdb).")
         guardia = sqlite3.connect(_URI_CONSULTA, uri=True, check_same_thread=False)
         origem = abrir_conexao()
         try:

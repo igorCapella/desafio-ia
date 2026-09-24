@@ -3,7 +3,7 @@ import sqlite3
 import pytest
 from app.dados.conexao import (
     SHA256_ESPERADO, VISOES, py_mascarar_cpf, py_oab_de, py_normalizar,
-    py_advogado_de, verificar_integridade,
+    py_advogado_de, verificar_integridade, abrir_conexao_consulta,
 )
 
 
@@ -61,3 +61,11 @@ def test_conexao_consulta_so_enxerga_visoes(conn_consulta):
     for sql in ("create table x(a)", "delete from v_processo", "pragma query_only = off"):
         with pytest.raises(sqlite3.DatabaseError):
             c.execute(sql)
+
+
+def test_sqlite_sem_memdb_falha_com_mensagem_clara(monkeypatch):
+    monkeypatch.setattr("app.dados.conexao._guardia", None)  # força preparar a base de novo
+    monkeypatch.setattr("sqlite3.sqlite_version_info", (3, 31, 1))
+    monkeypatch.setattr("sqlite3.sqlite_version", "3.31.1")
+    with pytest.raises(RuntimeError, match=r"SQLite 3\.31\.1.*3\.36"):
+        abrir_conexao_consulta()
