@@ -77,7 +77,9 @@ def parse_linha_sse(linha: str, acc: dict) -> list[dict]:
         raise RuntimeError(f"Erro do provedor durante a resposta: {msg}")
     eventos: list[dict] = []
     if obj.get("usage"):
-        eventos.append({"tipo": "uso", "uso": obj["usage"]})
+        # Modelo e provedor efetivos (com fallback podem variar) vão para o log de auditoria.
+        eventos.append({"tipo": "uso", "uso": obj["usage"],
+                        "modelo": obj.get("model"), "provedor": obj.get("provider")})
     for ch in obj.get("choices") or []:
         delta = ch.get("delta") or {}
         if delta.get("content"):
@@ -95,7 +97,8 @@ def parse_linha_sse(linha: str, acc: dict) -> list[dict]:
                 slot["function"]["arguments"] += fn["arguments"]
             if tc.get("id"):
                 slot["id"] = tc["id"]
-        if ch.get("finish_reason"):
+        if ch.get("finish_reason") and not acc["concluiu"]:
+            # O OpenRouter repete o finish_reason no pedaço final (o do uso): só o primeiro vale.
             acc["concluiu"] = True
             if acc["reasoning"]:
                 eventos.append({"tipo": "reasoning",
@@ -112,6 +115,8 @@ def _repetir(status: int) -> bool:
 
 
 async def stream_completion(mensagens: list[dict], tools: list[dict]) -> AsyncIterator[dict]:
+    """Eventos normalizados da resposta. Consuma o gerador até o fim: o evento 'uso'
+    pode chegar depois do 'fim'."""
     s = get_settings()
     corpo = montar_corpo(mensagens, tools)
     headers = {"Authorization": f"Bearer {s.openrouter_api_key}",

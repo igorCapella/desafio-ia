@@ -66,6 +66,22 @@ def test_parse_erro_no_meio_do_stream():
         parse_linha_sse('data: {"error": {"message": "sobrecarga"}}', novo_acumulador())
 
 
+def test_parse_finish_repetido_emite_uma_vez():
+    # O OpenRouter repete o finish_reason no pedaço do uso (visto ao vivo na revisão da T7).
+    acc = novo_acumulador()
+    objs = [
+        {"choices": [{"delta": {"tool_calls": [{"index": 0, "id": "c1", "function": {
+            "name": "somar", "arguments": "{}"}}]}}]},
+        {"choices": [{"delta": {}, "finish_reason": "tool_calls"}]},
+        {"model": "deepseek/deepseek-v4.1-flash", "provider": "Makora",
+         "choices": [{"delta": {}, "finish_reason": "tool_calls"}], "usage": {"cost": 0.0002}},
+    ]
+    eventos = [e for o in objs for e in parse_linha_sse("data: " + json.dumps(o), acc)]
+    assert [e["tipo"] for e in eventos] == ["tool_calls", "fim", "uso"]
+    assert eventos[2]["modelo"] == "deepseek/deepseek-v4.1-flash"
+    assert eventos[2]["provedor"] == "Makora"
+
+
 def _instalar_transporte(monkeypatch, respostas):
     """Cada chamada ao provedor consome a próxima resposta falsa (status, corpo)."""
     chamadas = []
