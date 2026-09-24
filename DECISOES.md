@@ -4,11 +4,12 @@ Este documento registra as decisões do protótipo. Para cada uma, traz o contex
 descartadas e a evidência. Depois responde às cinco perguntas da arguição e lista o que as revisões de segurança
 encontraram.
 
-**Fontes dos números.** Salvo indicação, os números vêm de cinco fontes:
+**Fontes dos números.** Salvo indicação, os números vêm de seis fontes:
 
 - o spike de modelos ([RESULTADOS.md](docs/pesquisa/2026-09-23-spike-modelos/RESULTADOS.md));
 - as três rodadas reais de avaliação ([evals/resultados/](evals/resultados/));
 - o log de auditoria real (`scripts/resumo_logs.py`);
+- a reverificação das respostas gravadas com o verificador de hoje (`evals/reverificar.py`);
 - a suíte de testes;
 - o diário de execução mantido durante a implementação. Cada decisão tomada no caminho foi registrada ali, com o
   achado que a motivou. Este documento as cita como "Ruling N".
@@ -186,8 +187,9 @@ erro é silencioso. A outra foi corrigir o banco, o que é proibido.
 
 **Evidência.** A revisão da camada de dados conferiu três coisas: as visões têm as mesmas contagens da base (menos as
 402 órfãs), `v_partes` não tem nenhum CPF completo e as 4 situações somam 10.000. A extração de advogado e OAB
-acertou 419 de 419 casos no banco real. A máscara processou 11.795 CPFs e 2.838 CNPJs sem falha. Os alertas de qualidade,
-calculados pelo código sobre as visões, reproduziram todas as contagens da spec nos 10.000 processos. Alguns exemplos:
+acertou 419 de 419 casos no banco real. A máscara processou 11.795 CPFs e 2.838 CNPJs sem falha. Os alertas de
+qualidade, calculados pelo código sobre as visões, reproduziram todas as contagens da spec nos 10.000 processos.
+Alguns exemplos:
 6.309 processos sem documentos (63%), 1.044 sem magistrado vinculado, 309 com assinatura divergente e 765 com data de
 audiência divergente.
 
@@ -203,8 +205,8 @@ O texto do modelo não é alterado.
 | Selo | O que confere |
 |---|---|
 | citação | `[Doc n]` lido nesta conversa; `[Mov data – descrição]` entre as movimentações lidas (um período vale se as duas pontas foram lidas); `[SQL]` só se houve consulta no turno |
-| aspas | trecho entre aspas com 20 caracteres ou mais é literal nos documentos ou no texto devolvido pelas ferramentas; confere por fragmentos quando há reticências e exige palavras inteiras nas pontas |
-| norma | "Súmula N" e "art. N" aparecem nos documentos lidos ou vêm marcados com `[verificar]` |
+| aspas | trecho entre aspas com 20 caracteres ou mais é literal nos documentos ou no texto devolvido pelas ferramentas; confere por fragmentos quando há reticências, exige palavras inteiras nas pontas e trata aspas simples, duplas e curvas como o mesmo caractere |
+| norma | "Súmula N" e "art. N" aparecem nos autos lidos (documentos e o que as ferramentas mostraram: movimentações, cadastro, buscas e SQL) ou vêm marcados com `[verificar]`, com ou sem explicação |
 | minuta | decisão de mérito fora dos colchetes, nome do magistrado na assinatura, minuta de processo sem documentos, processo já julgado sem aviso |
 | processo | todo número de processo citado na resposta é o processo em foco ou um processo consultado |
 | dados pessoais | nenhum CPF completo na resposta |
@@ -215,32 +217,58 @@ PROFERIDA", independentemente do que o modelo escreveu.
 **Alternativa descartada.** Reescrever automaticamente a resposta reprovada. A reescrita esconde o erro de quem lê,
 acrescenta cerca de 60 s e pode criar um erro novo.
 
-**Evidência.** Nas três rodadas de avaliação, os selos deram 20, 18 e 7 alertas. Parte dos alertas das duas
-primeiras rodadas vinha de limitações do próprio verificador. Elas foram achadas lendo as respostas reais e
-corrigidas com teste: menção ao magistrado lida como assinatura, reticências numa citação da sentença, pareamento de
-aspas, eco da pergunta, texto da própria ferramenta entre aspas e marcadores com vários documentos. O período de
-movimentações num só marcador passou a ser aceito, e o prompt passou a documentar essa forma. Com o verificador
-atual, as respostas das três rodadas dão 5, 10 e 7 alertas.
+**Evidência.** Nas três rodadas de avaliação, os selos deram 20, 18 e 7 alertas na época. Com o verificador de hoje,
+as mesmas respostas dão 2, 7 e 4. Qualquer pessoa pode reproduzir esses números, sem chamar o modelo:
 
-Na época, os alertas da segunda e da terceira rodadas foram classificados um a um como verdadeiros. Relendo as
-respostas para escrever este documento, a classificação dos alertas de norma se mostrou errada. Eles não eram normas
-citadas de memória:
+```bash
+uv run python -m evals.reverificar evals/resultados/2026-09-24_1527.json   # 20 alertas na época -> 2
+uv run python -m evals.reverificar evals/resultados/2026-09-24_1559.json   # 18 -> 7
+uv run python -m evals.reverificar evals/resultados/2026-09-24_1647.json   # 7 -> 4
+```
 
-- **"art. 40"** (casos C04, C09 e C20) está na descrição de uma movimentação lida: "Arquivamento Provisório (art. 40
-  LEF)". Essa descrição aparece em 1.676 movimentações do banco. Os três casos são do mesmo processo, que não tem
-  documentos, e o verificador de normas só procura nos documentos.
-- **"art. 485"** (C01, 3ª rodada) veio marcado como "[verificar — dispositivo não citado nos autos]". O verificador
-  só reconhece a marca exata "[verificar]".
+O script refaz as consultas gravadas em cada turno, que são determinísticas sobre o banco, remonta a sessão e roda o
+verificador de hoje sobre a resposta gravada. Os relatórios `evals/resultados/*.md` mostram os selos como eram na
+época.
 
-Descontados esses falsos positivos, são verdadeiros 7 dos 10 alertas da segunda rodada e 4 dos 7 da terceira. As
-classes são:
+A queda veio de falsos positivos do próprio verificador. Todos foram achados lendo as respostas reais e corrigidos
+com teste, em três etapas:
 
-- `[SQL]` sem consulta;
-- aspas não literais ("CPC" no lugar de "Código de Processo Civil", "(quinze)" omitido, "do" omitido);
-- aspas de ênfase ou com palavras do próprio modelo.
+1. **Integrações 2 e 3.** As correções foram:
+   - menção ao magistrado lida como assinatura;
+   - reticências numa citação da sentença;
+   - pareamento de aspas;
+   - eco da pergunta;
+   - texto da própria ferramenta entre aspas;
+   - marcadores com vários documentos.
+
+   O período de movimentações num só marcador passou a ser aceito, e o prompt passou a documentar essa forma. Com
+   essas correções, os totais ficaram em 5, 10 e 7.
+2. **Releitura das respostas para escrever esta documentação (Ruling 34).** Os alertas de norma, que tinham sido
+   classificados como "norma citada de memória", eram falsos:
+   - "art. 40" (casos C04, C09 e C20) está na descrição de uma movimentação lida, "Arquivamento Provisório (art. 40
+     LEF)". Essa descrição aparece em 1.676 movimentações do banco, e o verificador só procurava nos documentos.
+   - "art. 485" (C01, 3ª rodada) veio marcado como "[verificar — dispositivo não citado nos autos]", e só a marca
+     exata "[verificar]" valia.
+
+   Com a correção, os totais caíram para 3, 7 e 4.
+3. **Reclassificação dos alertas restantes (Ruling 35).** Na 1ª rodada, o C05 citou literalmente um alerta da
+   ferramenta que tem aspas internas. O texto das ferramentas era guardado em JSON, com as aspas internas escapadas,
+   e o modelo trocou as aspas internas por simples. Com a correção, os totais ficaram em 2, 7 e 4.
+
+Os 13 alertas que restam foram conferidos um a um contra as fontes, e todos são verdadeiros:
+
+| Classe | Onde |
+|---|---|
+| `[Mov ...]` sem data | 1ª rodada, C02 |
+| `[SQL]` marcado sem consulta: o modelo pôs `[SQL]` num resultado de `obter_dossie` | 1ª rodada, C11; 2ª rodada, C11 e C16 |
+| aspas não literais: "CPC" no lugar de "Código de Processo Civil" | 2ª rodada, C02 |
+| aspas não literais: "(quinze)" omitido de "no prazo de 15 (quinze) dias" | 2ª rodada, C14 |
+| aspas não literais: "do" omitido de "do fato, do dano e do nexo de causalidade" | 2ª rodada, C23; 3ª rodada, C23 e C24 |
+| aspas não literais: o campo da ferramenta citado como "polo_inferido: ativo" | 3ª rodada, C21 |
+| aspas de ênfase ou autocitação: "escolher não mostrar", "ordem cronológica possível" e "magistrada da unidade, sem vínculo confirmado com o processo" | 2ª rodada, C16 e C21; 3ª rodada, C05 |
 
 O prompt não foi ajustado para os alertas verdadeiros sumirem. A regra de aspas literais já existia, e o selo é a
-defesa. Os dois falsos positivos de norma ainda não foram corrigidos no código (pergunta 4).
+defesa.
 
 **Limite declarado.** A verificação confere a forma, não o sentido: a fonte existe, o trecho é literal, a norma está
 nos autos. O sentido fica com as avaliações e com a revisão humana. Um exemplo aparece na segunda rodada: o juiz
@@ -329,14 +357,18 @@ que roda sem API. A pontuação tem três camadas:
 
 | Rodada (24/09/2026) | 15:27 | 15:59 | 16:47 |
 |---|---|---|---|
-| Checagens objetivas | 23/25 | 24/25 | 25/25 |
-| Casos críticos | 14/16 | 15/16 | 16/16 |
+| Checagens objetivas, na época | 23/25 | 24/25 | 25/25 |
+| Casos críticos, na época | 14/16 | 15/16 | 16/16 |
 | Juiz: fidelidade (média de 0 a 2) | 1,80 | 1,64 | 1,68 |
 | Juiz: limites | 1,96 | 1,88 | 1,96 |
 | Juiz: utilidade | 1,88 | 1,96 | 1,96 |
-| Alertas dos selos (28 turnos) | 20 | 18 | 7 |
+| Alertas dos selos na época (28 turnos) | 20 | 18 | 7 |
+| Alertas com o verificador de hoje (`evals/reverificar.py`) | 2 | 7 | 4 |
 | Latência mediana por turno | 12,6 s | 14,1 s | 11,7 s |
 | Custo (agente + juiz) | US$ 0,1624 | US$ 0,1795 | US$ 0,1752 |
+
+Os relatórios gravados em `evals/resultados/*.md` mostram os selos como eram na época. Os números de hoje saem de
+`uv run python -m evals.reverificar evals/resultados/<rodada>.json`, que não chama o modelo.
 
 O que cada rodada revelou:
 
@@ -348,6 +380,8 @@ O que cada rodada revelou:
     "assinatura". Agora a assinatura exige o nome numa linha curta ou junto do cargo.
   - No C21, o juiz deu fidelidade 0 porque a janela de dados que ele recebia cortava as partes do processo. A janela
     passou a pegar o começo de cada resultado.
+  - Com o verificador de hoje, dos 20 alertas da época restam 2, ambos verdadeiros: um `[Mov ...]` sem data (C02) e
+    um `[SQL]` marcado para um resultado de `obter_dossie` (C11).
 - **2ª rodada.** O único crítico que falhou (C10) era falso positivo do verificador. A resposta recusou redigir a
   minuta de um processo já julgado e citou a sentença existente com reticências. A citação foi lida como decisão de
   mérito. Outras aspas deram alerta por três motivos:
@@ -355,21 +389,17 @@ O que cada rodada revelou:
   - eco da pergunta do usuário;
   - citação do texto da própria ferramenta ("Processo não encontrado no banco").
 
-  Depois das correções, as 25 respostas foram reverificadas, e os alertas caíram de 18 para 10. Na época, os 10 foram
-  classificados como verdadeiros. Relendo as respostas para este documento, 3 deles, de norma ("art. 40"), são falsos
-  positivos (ver a 3ª rodada).
-- **3ª rodada.** 25 de 25 casos e 16 de 16 críticos. Dos 7 alertas, 4 são verdadeiros:
-  - aspas com palavra omitida (2): "fato, dano e nexo de causalidade", onde o documento diz "do fato, do dano e do
-    nexo de causalidade";
-  - aspas de ênfase (1);
-  - uma inferência do próprio modelo entre aspas (1).
-
-  Os outros 3, de norma, foram classificados como verdadeiros na época. Relendo as respostas para este documento,
-  eles se mostraram falsos positivos do verificador:
-  - dois "art. 40" (C04 e C09) estão na descrição de uma movimentação lida, "Arquivamento Provisório (art. 40 LEF)",
-    e o verificador de normas só procura nos documentos;
-  - o "art. 485" (C01) veio com a marca "[verificar — dispositivo não citado nos autos]", que o verificador não
-    reconhece, porque exige "[verificar]" exato.
+  Depois das correções da integração 3, os alertas da rodada caíram de 18 para 10. Na época, os 10 foram
+  classificados como verdadeiros. A releitura para esta documentação mostrou que 3 deles, de norma ("art. 40"), eram
+  falsos positivos, corrigidos na Ruling 34. Com o verificador de hoje restam 7, todos verdadeiros.
+- **3ª rodada.** 25 de 25 casos e 16 de 16 críticos. Dos 7 alertas da época, os 3 de norma foram classificados como
+  verdadeiros. A releitura para esta documentação mostrou que eram falsos positivos, corrigidos na Ruling 34: dois
+  "art. 40" vinham da movimentação, e o "art. 485" estava marcado com "[verificar — …]". Os 4 que restam são
+  verdadeiros:
+  - "do" omitido entre aspas (C23 e C24): "fato, dano e nexo de causalidade", onde o documento diz "do fato, do dano
+    e do nexo de causalidade";
+  - o campo da ferramenta citado entre aspas como "polo_inferido: ativo" (C21);
+  - uma autocitação do modelo entre aspas (C05).
 
 Nenhum gabarito foi alterado, e nenhuma regra do prompt foi afrouxada para um caso passar. O prompt só ganhou a
 forma de período de movimentações, que o verificador passou a aceitar. As demais correções foram no verificador e no
@@ -417,8 +447,8 @@ escolhido pela complexidade:
 - Opus para a interface e para estes documentos.
 
 As tarefas 1 a 20 passaram por revisão, e as mais arriscadas, por revisão adversarial ou por teste ao vivo com o
-modelo real. As 33 decisões tomadas no caminho ficaram registradas com o achado que motivou cada uma. Da spec ao commit
-anterior a estes documentos foram 41 commits, 16 deles de correção.
+modelo real. As 36 decisões tomadas no caminho ficaram registradas com o achado que motivou cada uma. Da spec ao commit
+`707c603` foram 45 commits, 18 deles de correção.
 
 A IA também atrapalhou, em casos concretos:
 
@@ -427,7 +457,8 @@ A IA também atrapalhou, em casos concretos:
 - defeitos no desenho do próprio controlador;
 - um teste que não discriminava;
 - alertas de segurança falsos;
-- alertas de norma classificados como verdadeiros quando eram falsos positivos;
+- alertas de norma classificados como verdadeiros quando eram falsos positivos (a documentação pegou o erro, e o
+  código foi corrigido);
 - um diário de execução truncado por um script do controlador.
 
 Detalhes e números em [docs/uso-de-ia.md](docs/uso-de-ia.md).
@@ -448,15 +479,13 @@ Detalhes e números em [docs/uso-de-ia.md](docs/uso-de-ia.md).
 
 - **Normas.** O selo confere o número do artigo, não a lei: "art. 5" do CPC e da Constituição parecem iguais. Um único
   `[verificar]` entre duas referências na mesma linha vale para as duas.
-- **Normas fora dos documentos (falso positivo).** O selo só procura normas nos documentos lidos. Por isso, uma norma
-  que está na descrição de uma movimentação gera alerta falso. É o caso de "Arquivamento Provisório (art. 40 LEF)",
-  presente em 1.676 movimentações. O selo também só reconhece a marca exata "[verificar]" e alerta variantes como
-  "[verificar — dispositivo não citado nos autos]".
 - **Eco da pergunta.** Aspas que só repetem a pergunta do usuário não são conferidas, nem aprovadas nem alertadas.
   Aprovar daria o selo "literal" a uma citação plantada. Mas, se o usuário plantar uma citação e o modelo atribuí-la a
   um documento, o selo de aspas não pega (Ruling 29).
 - **SELECT com texto literal.** Um `select 'qualquer texto'` entra no texto das ferramentas, contra o qual as aspas
-  são conferidas. É um caminho para "lavar" um trecho.
+  e as normas são conferidas. É um caminho para "lavar" um trecho ou uma norma.
+- **Aspas equivalentes.** Na conferência de aspas, apóstrofo e aspas simples, duplas ou curvas contam como o mesmo
+  caractere (Ruling 35). Isso não cria um literal falso com palavra diferente.
 - **Dispositivo com reticências.** A detecção não reconhece "julgo ... procedente" com reticências ou palavras no meio.
 - **Dispositivo da própria sentença.** O modelo pode citar entre aspas o dispositivo da sentença que o processo já
   tem, como se fosse a decisão proposta. O selo "o processo já tem sentença e a minuta não avisa" continua valendo.
@@ -479,22 +508,21 @@ Detalhes e números em [docs/uso-de-ia.md](docs/uso-de-ia.md).
 **Limitações da avaliação e da operação.**
 
 - **Avaliação pequena.** São 25 casos, com uma rodada por configuração, e as notas do juiz oscilam entre rodadas. O
-  juiz não vê o prompt, e a estatística de 63% do prompt conflita com a regra de usar só as ferramentas.
+  juiz não vê o prompt, e a estatística de 63% do prompt conflita com a regra de usar só as ferramentas. A
+  reverificação sem custo reconfere só os selos; o juiz e as checagens objetivas precisam de uma rodada nova.
 - **Aderência a instruções de forma.** No teste ao vivo da API, o modelo ignorou o pedido "em três frases".
 - **Teto parcial.** O teto de orçamento conta só o que passa pela API, via log de auditoria. As avaliações ficam de
   fora.
 
 **Próximos passos, em ordem.**
 
-1. Corrigir os dois falsos positivos do selo de normas: procurar também nas movimentações lidas e aceitar
-   variantes da marca `[verificar]`.
-2. Tirar do prompt a estatística de 63%, ou dar a ela uma fonte consultável, e rodar as avaliações de novo.
-3. Conferir normas pelo par artigo e lei, e pôr um teto de memória por conversa.
-4. Ampliar as avaliações: mais casos por risco, repetições para medir a variância e calibração do juiz contra revisão
+1. Tirar do prompt a estatística de 63%, ou dar a ela uma fonte consultável, e rodar as avaliações de novo.
+2. Conferir normas pelo par artigo e lei, e pôr um teto de memória por conversa.
+3. Ampliar as avaliações: mais casos por risco, repetições para medir a variância e calibração do juiz contra revisão
    humana.
-5. Autenticação, controle de acesso por processo e sessões persistentes (pergunta 5).
-6. Busca por trechos e OCR para processos longos.
-7. Modo `max` opcional para minutas, se uma avaliação mostrar ganho.
+4. Autenticação, controle de acesso por processo e sessões persistentes (pergunta 5).
+5. Busca por trechos e OCR para processos longos.
+6. Modo `max` opcional para minutas, se uma avaliação mostrar ganho.
 
 ### 5. O que muda com dados reais, sigilosos e 10.000 vezes mais volume
 

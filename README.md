@@ -8,10 +8,10 @@ minuta de sentença sai sempre como proposta, nunca como sentença proferida.
 
 ![Resposta com selos de verificação e a aba "Como cheguei aqui"](docs/img/interface-resposta-e-selos.png)
 
-*Resposta real do modelo. Abaixo dela ficam os selos da verificação: dois conferidos e dois alertas. Um alerta é de
-citações genéricas de movimentação. O outro é de uma norma que não aparece nos documentos do processo ("art. 485").
-À direita, a aba "Como cheguei aqui" mostra a ferramenta chamada (18 ms), os tokens, o custo (US$ 0,0047), a latência
-(17 s), o modelo e o provedor.*
+*Resposta real do modelo, capturada na revisão ao vivo da interface. Abaixo dela ficam os selos da verificação
+daquele momento: dois conferidos e dois alertas. Um alerta é de citações genéricas de movimentação. O outro diz que a
+norma "art. 485" não foi encontrada nos autos. À direita, a aba "Como cheguei aqui" mostra a ferramenta chamada
+(18 ms), os tokens, o custo (US$ 0,0047), a latência (17 s), o modelo e o provedor.*
 
 | Documento | O que tem |
 |---|---|
@@ -59,7 +59,7 @@ As quatro sugestões da tela são os exemplos do desafio, já preenchidos com pr
 ## Testes
 
 ```bash
-uv run pytest            # 196 testes (191 em tests/ e 5 em evals/), sem chave e sem rede
+uv run pytest            # 202 testes (196 em tests/ e 6 em evals/), sem chave e sem rede
 uv run pytest -W error   # os mesmos testes, com avisos tratados como erro: também passa
 node --test tests/web/nucleo.test.cjs   # 8 testes do núcleo JavaScript (o pytest também os roda se houver Node)
 ```
@@ -86,10 +86,21 @@ As avaliações chamam o agente direto, sem passar pela API. Por isso não entra
 `ORCAMENTO_USD`. Confira o saldo da chave antes de rodar.
 
 O teste `evals/test_smoke.py` roda junto com o `pytest`: ele confere os gabaritos dos 25 casos contra o banco, sem
-chamar a API.
+chamar a API, e remonta todos os turnos de uma rodada gravada.
 
 Na última rodada (24/09/2026, 16:47), os 25 casos passaram nas checagens objetivas, inclusive os 16 críticos. A
 evolução das três rodadas, e o que cada uma revelou, está no [DECISOES.md](DECISOES.md) (pergunta 2).
+
+### Reverificar as respostas gravadas, sem custo
+
+```bash
+uv run python -m evals.reverificar evals/resultados/2026-09-24_1647.json
+```
+
+O script refaz as consultas gravadas em cada turno e roda o verificador de hoje sobre a resposta gravada. Ele não
+chama o modelo e leva cerca de meio segundo por rodada. Serve para medir o efeito de uma mudança no verificador sem
+gastar uma rodada nova. Os relatórios `.md` gravados mostram os selos como eram na época. Com o verificador de hoje,
+as três rodadas passam de 20, 18 e 7 alertas para 2, 7 e 4, todos verdadeiros.
 
 ## Log de auditoria
 
@@ -163,7 +174,7 @@ app/
   verificacao/       citacoes.py · aspas.py · normas.py · minuta.py · processo.py · dados_pessoais.py · selos.py
   web/static/        index.html · app.js · nucleo.js (funções puras, testadas) · estilo.css · vendor/
 data/desafio.sqlite  banco original do desafio, versionado descompactado
-evals/               casos.yaml · rubrica.md · executar.py · resultados/
+evals/               casos.yaml · rubrica.md · executar.py · reverificar.py · resultados/
 scripts/             resumo_logs.py · configurar-git.sh · git-hooks/pre-push
 tests/               testes pytest; tests/web/ tem o teste do núcleo JS
 docs/                uso-de-ia.md · roteiro-demo.md · img/ · pesquisa/ · superpowers/ (spec, plano e mockups)

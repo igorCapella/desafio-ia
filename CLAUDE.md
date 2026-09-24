@@ -1,7 +1,8 @@
 # CLAUDE.md
 
 Convenções deste repositório para quem continuar o trabalho, pessoa ou IA. O [README](README.md) explica como rodar,
-e o [DECISOES.md](DECISOES.md) explica o porquê de cada escolha.
+e o [DECISOES.md](DECISOES.md) explica o porquê de cada escolha. "Ruling N" é uma decisão registrada no diário de
+execução, que fica fora do repositório; o DECISOES.md resume as que importam.
 
 ## Regras que não se negociam
 
@@ -49,6 +50,9 @@ e o [DECISOES.md](DECISOES.md) explica o porquê de cada escolha.
   anterior. Não ajuste prompt nem gabarito para um caso passar.
 - **As avaliações custam dinheiro.** `uv run python -m evals` gasta cerca de US$ 0,17 por rodada completa e não entra
   no teto `ORCAMENTO_USD`. Rode só quando precisar. Para um caso só, use `--casos C01`.
+- **Mudou o verificador?** Rode `uv run python -m evals.reverificar evals/resultados/<rodada>.json` nas três rodadas
+  gravadas e compare com os totais de hoje: 20→2, 18→7 e 7→4. É grátis: o script refaz as consultas gravadas e não
+  chama o modelo. Os relatórios `.md` gravados mostram os selos da época.
 - **Rodar o app:** `uv run uvicorn app.main:app` e abrir <http://localhost:8000>. Em máquina com IPv6 quebrado, como o
   WSL2 da máquina de desenvolvimento, ponha `FORCE_IPV4=true` no `.env`.
 - **Resumo do log:** `uv run python scripts/resumo_logs.py`.
@@ -75,7 +79,7 @@ e o [DECISOES.md](DECISOES.md) explica o porquê de cada escolha.
 | `app/verificacao/` | selos: citações, aspas, normas, minuta, processo em foco, dados pessoais |
 | `app/auditoria.py` | log jsonl com CPF mascarado e sem chaves |
 | `app/web/static/` | interface; `nucleo.js` tem as funções puras testadas pelo Node |
-| `evals/` | casos, rubrica, executor e resultados das rodadas reais |
+| `evals/` | casos, rubrica, executor, reverificação sem custo (`reverificar.py`) e resultados das rodadas reais |
 | `scripts/` | resumo do log, configuração do git, hook anti-GitLab |
 | `tests/` | testes pytest; `tests/web/` tem o teste do núcleo JS |
 | `docs/superpowers/` | spec, plano e mockups aprovados |
@@ -83,7 +87,11 @@ e o [DECISOES.md](DECISOES.md) explica o porquê de cada escolha.
 
 ## Limitações conhecidas
 
-Antes de mexer na verificação, leia a pergunta 4 do [DECISOES.md](DECISOES.md). Duas limitações geram alertas falsos
-hoje. O selo de normas só procura nos documentos: "art. 40" está numa descrição de movimentação e mesmo assim gera
-alerta. Ele também só reconhece a marca exata `[verificar]`. Aspas que repetem a pergunta do usuário não são
-conferidas.
+Antes de mexer na verificação, leia a pergunta 4 do [DECISOES.md](DECISOES.md). Alguns exemplos:
+
+- o selo de normas confere o número do artigo, não a lei;
+- aspas que repetem a pergunta do usuário não são conferidas;
+- um SELECT com texto literal entra no texto das ferramentas, que vale como fonte para aspas e normas.
+
+Os falsos positivos de norma ("art. 40" vindo de movimentação e a marca `[verificar …]` com explicação) já foram
+corrigidos na Ruling 34, e o das aspas internas nos textos das ferramentas, na Ruling 35.

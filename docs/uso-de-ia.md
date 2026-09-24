@@ -1,10 +1,11 @@
 # Uso de IA no desenvolvimento
 
 Este documento conta como o protótipo foi construído com IA. Mostra que modelo fez o quê, como o trabalho foi
-conferido e onde a IA atrapalhou. Os números vêm de três fontes:
+conferido e onde a IA atrapalhou. Os números vêm de quatro fontes:
 
 - o histórico do git;
 - os relatórios de cada tarefa;
+- as rodadas de avaliação gravadas em `evals/resultados/` e a reverificação delas com `evals/reverificar.py`;
 - o diário de execução, que registrou cada decisão tomada no caminho com o achado que a motivou. As decisões são
   citadas como "Ruling N".
 
@@ -14,13 +15,14 @@ O usuário decidiu o design, o escopo e as prioridades. A IA propôs, escreveu, 
 
 | Item | Valor |
 |---|---|
-| Linha do tempo | spec em 23/09/2026, 18:47; plano em 24/09, 09:23; commit anterior a estes documentos (`5eff49a`) em 24/09, 18:23 |
-| Tarefas do plano | 21, em TDD. As tarefas 10 a 14 foram executadas como um lote. Depois vieram 3 rodadas de integração guiadas por dados reais, 1 correção de segurança e 1 revisão conjunta |
-| Decisões registradas | 33 (Ruling 1 a 33) |
-| Commits | 41 da spec ao `5eff49a`, 16 deles de correção (`fix`) |
+| Linha do tempo | spec em 23/09/2026, 18:47; plano em 24/09, 09:23; último commit da implementação antes da documentação (`5eff49a`) em 24/09, 18:23; primeira versão destes documentos (`0c088c1`) às 18:55; reverificação reproduzível (`707c603`) às 19:06 |
+| Tarefas do plano | 21, em TDD. As tarefas 10 a 14 foram executadas como um lote. Depois vieram 3 rodadas de integração guiadas por dados reais, 1 correção de segurança, 1 revisão conjunta e, já durante a documentação, 2 correções do verificador (Rulings 34 e 35) |
+| Decisões registradas | 36 (Ruling 1 a 36) |
+| Commits | 45 da spec ao `707c603`, 18 deles de correção (`fix`) |
 | Rodadas de correção pedidas pela revisão das tarefas | 9, todas encerradas sem pendência aberta: tarefas 2, 3, 6, 7, 8 e 9, lote 10–14 (duas rodadas) e tarefa 15 |
-| Testes | 196 no pytest (191 em `tests/` e 5 em `evals/`) e 8 do núcleo JavaScript no Node |
+| Testes | 202 no pytest (196 em `tests/` e 6 em `evals/`) e 8 do núcleo JavaScript no Node |
 | Rodadas reais de avaliação | 3, com 25 casos cada |
+| Falsos positivos do verificador achados na releitura para esta documentação e na reclassificação que ela motivou | 9 alertas nas três rodadas (Rulings 34 e 35), corrigidos no código e reverificados |
 | Custo de API registrado (OpenRouter) | cerca de US$ 0,65, de uma chave com limite de US$ 4 (detalhe no fim) |
 | Custo do Claude Code | não medido nas fontes deste documento |
 
@@ -56,13 +58,13 @@ A implementação foi dividida assim:
 
 | Implementador | Trabalho | Commits |
 |---|---|---|
-| Haiku 4.5 | tarefas com o código já escrito no plano ou no adendo: 4, 5, 7, 8, lote 10–14, 15, 17 e 20; integração 1; correção de segurança; correção da revisão conjunta | 22 |
+| Haiku 4.5 | tarefas com o código já escrito no plano ou no adendo: 4, 5, 7, 8, lote 10–14, 15, 17 e 20; integração 1; correção de segurança; correção da revisão conjunta; correções das Rulings 34 e 35 | 24 |
 | Sonnet 5 | tarefas com decisão de desenho: 6 (ferramentas e SQL protegido), 9 (laço e prompt), 16 (API), 19 (avaliações); integrações 2 e 3 | 9 |
-| Opus 5.5 | tarefa 18 (a interface da demo) e tarefa 21 (estes documentos) | 1 antes destes documentos |
+| Opus 5.5 | tarefa 18 (a interface da demo) e tarefa 21 (estes documentos e o `evals/reverificar.py`) | 3 até o `707c603`: 1 da tarefa 18 e 2 da tarefa 21 |
 
-Os 41 commits somam 22 com trailer do Haiku 4.5, 9 do Sonnet 5, 5 do Opus 5.5 e 5 do Opus 4.8. Nas tarefas 1 a 3, o
-trailer registra o modelo do controlador, não o do subagente. A regra de registrar o modelo de quem fez o commit veio
-com a Ruling 7.
+Os 45 commits até o `707c603` somam 24 com trailer do Haiku 4.5, 9 do Sonnet 5, 7 do Opus 5.5 e 5 do Opus 4.8. Nas
+tarefas 1 a 3, o trailer registra o modelo do controlador, não o do subagente. A regra de registrar o modelo de quem
+fez o commit veio com a Ruling 7.
 
 ## O fluxo
 
@@ -83,7 +85,8 @@ com a Ruling 7.
    5. *Correção.* Uma nova rodada acontece quando a revisão acha algo importante ou crítico.
    6. *Registro.* A decisão vai para o diário, com o achado que a motivou e o custo se ela estiver errada.
 5. **Integrações guiadas por dados reais.** O log da revisão ao vivo e as três rodadas de avaliação viraram
-   correções, cada uma com teste.
+   correções, cada uma com teste. O efeito de cada mudança no verificador é medido reverificando as respostas
+   gravadas (`evals/reverificar.py`), sem chamar o modelo.
 6. **Revisão conjunta e revisão final.** A revisão final, com Opus, vem depois destes documentos.
 
 ## Onde a IA atrapalhou
@@ -137,15 +140,20 @@ com a Ruling 7.
   possível typosquat, e uma dessas vezes como risco alto. A verificação conferiu os metadados do Starlette, o
   repositório, o hash do lock e o código instalado, e concluiu que era falso positivo (detalhes no
   [DECISOES.md](../DECISOES.md), Parte 3). Levar o alerta a sério custou tempo; ignorá-lo sem conferir seria pior.
-- **Alertas classificados errado.** Nas integrações, o controlador e o implementador da integração 3 classificaram
-  os alertas de norma "art. 40" como "norma citada de memória". Relendo as respostas para escrever estes documentos, apareceu a
-  causa real: a norma está na descrição de uma movimentação lida, "Arquivamento Provisório (art. 40 LEF)", e o
-  verificador de normas só procura nos documentos. Um alerta de "art. 485" também era falso: o modelo tinha marcado a
-  norma com uma variante da marca `[verificar]`. A classificação foi corrigida nos documentos; o código do
-  verificador, ainda não ([DECISOES.md](../DECISOES.md), perguntas 2 e 4).
+- **Alertas classificados errado.** O controlador classificou como verdadeiros, em duas rulings (29 e 33), os
+  alertas de norma "art. 40", como "norma citada de memória". O relatório da integração 3 fez o mesmo. Relendo as
+  respostas para escrever estes documentos, apareceu a causa real. A norma está na descrição de uma movimentação
+  lida, "Arquivamento Provisório (art. 40 LEF)", e o verificador só procurava nos documentos. Um alerta de "art. 485"
+  também era falso: o modelo tinha marcado a norma com uma variante da marca `[verificar]`. O código foi corrigido
+  (Ruling 34). Ao reclassificar os alertas restantes, o controlador achou mais um falso positivo: uma citação literal
+  de um alerta da ferramenta, com aspas internas (Ruling 35). Depois, todas as respostas gravadas das três rodadas
+  (25 casos por rodada, 84 turnos no total) foram reverificadas com um script que agora está no repositório,
+  `evals/reverificar.py`. Os alertas caíram de 20, 18 e 7 na época para 2, 7 e 4, e os 13 que restam são verdadeiros
+  ([DECISOES.md](../DECISOES.md), decisão 8).
 - **O LLM-juiz também erra.** Na primeira rodada, o juiz deu fidelidade 0 a uma resposta que citava uma parte real
-  do processo, porque a janela de dados que recebia cortava as partes. O defeito era do arcabouço de avaliação. Na terceira rodada, o
-  juiz deu 0 a duas respostas por causa de uma estatística verdadeira que vem do prompt, que ele não vê.
+  do processo, porque a janela de dados que recebia cortava as partes. O defeito era do arcabouço de avaliação. Na
+  terceira rodada, o juiz deu 0 a duas respostas por causa de uma estatística verdadeira que vem do prompt, que ele
+  não vê.
 - **O classificador de segurança do modelo interrompeu a sessão.** O classificador do Claude Opus 5.5 interrompeu o
   trabalho enquanto a sessão reprocessava as transcrições do spike. A sessão seguiu com o Claude Opus 4.8, que fez o
   plano e as tarefas 1 e 2, e voltou ao Opus 5.5 depois de compactar o contexto.
@@ -176,6 +184,7 @@ com a Ruling 7.
 | Três rodadas de avaliação (agente e juiz) | US$ 0,5171 | `evals/resultados/` |
 | **Total registrado** | **cerca de US$ 0,65** | |
 
-São os valores registrados nas fontes do projeto. As sondagens de provedores feitas no spike não têm custo
-registrado. O painel do OpenRouter é a fonte definitiva e não foi consultado para este documento. O custo do próprio
-Claude Code, isto é, dos modelos que escreveram e revisaram o código, não foi medido.
+São os valores registrados nas fontes do projeto. A reverificação das respostas gravadas não chama o modelo e não
+tem custo. As sondagens de provedores feitas no spike não têm custo registrado. O painel do OpenRouter é a fonte
+definitiva e não foi consultado para este documento. O custo do próprio Claude Code, isto é, dos modelos que
+escreveram e revisaram o código, não foi medido.

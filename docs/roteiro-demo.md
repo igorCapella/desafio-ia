@@ -34,10 +34,10 @@ A resposta leva de 13,6 a 16,5 s e custa cerca de US$ 0,004. O que mostrar:
 - A contradição que o modelo aponta. A decisão de saneamento (Doc 91) afastou a preliminar de ilegitimidade passiva.
   Já a sentença (Doc 93) diz que assiste razão à ré quanto à ilegitimidade e mesmo assim julga o mérito (art. 487, I,
   do CPC). A sentença também menciona audiência de instrução e prova pericial que não aparecem nas movimentações.
-- Os selos abaixo da resposta. Se o modelo citar um artigo que não está nos documentos, o selo de norma alerta. Foi o
-  que aconteceu com "art. 485" na revisão ao vivo da interface (é a captura do README). Numa das avaliações, porém,
-  o modelo tinha marcado a norma com "[verificar — dispositivo não citado nos autos]", e o alerta era falso: o
-  verificador só reconhece a marca exata "[verificar]".
+- Os selos abaixo da resposta. Se o modelo citar de memória uma norma que não está nos autos lidos, sem
+  `[verificar]`, o selo de norma alerta, e o alerta é verdadeiro. A marca vale com ou sem explicação, como em
+  "[verificar — dispositivo não citado nos autos]". A captura do README mostra um alerta de norma ("art. 485") com o
+  verificador daquele momento.
 
 Dizer: não existe um selo de "contradição". Quem aponta a contradição é o modelo, citando as duas fontes. Os selos
 conferem a forma (citações, aspas, normas); o sentido fica com o modelo, com as avaliações e com a revisão humana.
@@ -84,10 +84,12 @@ A resposta leva de 6,5 a 8,4 s e custa cerca de US$ 0,002. O que mostrar:
 - O agente diz que não há documentos e o que fica indisponível: fatos, pedidos, fundamentos, decisões e advogados.
   O limite vem de um alerta gerado pelo código. Nas avaliações, o dossiê deste processo veio com 0 documentos e 2
   alertas. No banco, 63% dos processos não têm documentos.
-- **Alerta falso esperado.** Nas três rodadas, este passo gerou um alerta de norma para "art. 40". É um falso
-  positivo conhecido. A norma está na descrição de uma movimentação do processo, "Arquivamento Provisório (art. 40
-  LEF)", e o verificador de normas só procura nos documentos. Se aparecer, explicar: a verificação marca e não
-  esconde, e esta é uma das limitações registradas no DECISOES.md.
+- **Selo de norma.** O verificador procura as normas nos documentos e também no que as ferramentas mostraram. A
+  movimentação "Arquivamento Provisório (art. 40 LEF)" deste processo conta como fonte, então citar o art. 40 a
+  partir dela não gera alerta. Na época, as três rodadas deram aqui um alerta de "art. 40". Era falso positivo,
+  achado ao escrever a documentação e corrigido (DECISOES.md, decisão 8). Reverificadas com o verificador de hoje,
+  as respostas deste caso não têm nenhum alerta. Se o modelo ao vivo citar de memória uma norma que não está nos
+  autos, sem `[verificar]`, o alerta aparece, e é verdadeiro.
 
 ### 5. Julgados em Joinville (1 min)
 
@@ -154,6 +156,12 @@ jurisprudência de tribunais, e o agente não responde como se soubesse.
   ```
   Resuma o processo 0000001-16.2022.8.99.9012.
   ```
+- Reverificação reproduzível, no terminal, sem chamar o modelo (cerca de meio segundo). Termina com "Total: 7
+  alerta(s) na época -> 4 com o verificador atual".
+
+  ```
+  uv run python -m evals.reverificar evals/resultados/2026-09-24_1647.json
+  ```
 
 ## Plano B
 
@@ -161,10 +169,12 @@ jurisprudência de tribunais, e o agente não responde como se soubesse.
   preciso, usa o modelo reserva (V4 Pro 0813, mais lento). Enquanto espera, mostrar as abas da resposta anterior.
 - **Sem rede ou sem saldo.** Mostrar as respostas reais da 3ª rodada de avaliação em
   `evals/resultados/2026-09-24_1647.md`. Ali estão as perguntas dos passos 1 e 3 a 7, e a do passo 2 na forma do caso
-  C02. Mostrar também a captura `docs/img/interface-resposta-e-selos.png`.
+  C02. Os selos desse relatório são os da época. Para os de hoje, rodar `uv run python -m evals.reverificar
+  evals/resultados/2026-09-24_1647.json`, que não precisa de rede nem de chave. Mostrar também a captura
+  `docs/img/interface-resposta-e-selos.png`.
 - **Chamadas travando na máquina com WSL2.** Pôr `FORCE_IPV4=true` no `.env` e reiniciar.
 - **Teto de orçamento atingido.** Aumentar `ORCAMENTO_USD` no `.env` e reiniciar.
-- **Alerta na tela.** Ler o alerta com a banca: a verificação marca e não esconde. Se for o falso positivo de norma do
-  passo 4, dizer que é uma limitação conhecida.
+- **Alerta na tela.** Ler o alerta com a banca: a verificação marca e não esconde. O modelo ao vivo ainda pode
+  produzir alertas verdadeiros, como uma norma citada de memória sem `[verificar]` ou aspas que não são literais.
 - **Vídeo curto da demonstração.** A spec prevê o vídeo como plano B, mas ele ainda precisa ser gravado antes da
   apresentação.
