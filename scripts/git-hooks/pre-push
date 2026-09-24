@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+# Bloqueia push para qualquer host GitLab (regra do projeto: este código nunca vai para GitLab).
+remoto_nome="$1"
+remoto_url="$2"
+if printf '%s' "$remoto_url" | grep -qi 'gitlab'; then
+  echo "ERRO: push para GitLab bloqueado por política deste repositório ($remoto_nome → $remoto_url)." >&2
+  exit 1
+fi
+exit 0
