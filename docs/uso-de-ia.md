@@ -15,10 +15,10 @@ O usuário decidiu o design, o escopo e as prioridades. A IA propôs, escreveu, 
 
 | Item | Valor |
 |---|---|
-| Linha do tempo | spec em 23/09/2026, 18:47; plano em 24/09, 09:23; último commit da implementação antes da documentação (`5eff49a`) em 24/09, 18:23; primeira versão destes documentos (`0c088c1`) às 18:55; reverificação reproduzível (`707c603`) às 19:06 |
+| Linha do tempo | spec em 23/09/2026, 18:47; plano em 24/09, 09:23; último commit da implementação antes da documentação (`c567b16`) em 24/09, 18:23; primeira versão destes documentos (`0c088c1`) às 18:55; reverificação reproduzível (`eb545cf`) às 19:06 |
 | Tarefas do plano | 21, em TDD. As tarefas 10 a 14 foram executadas como um lote. Depois vieram 3 rodadas de integração guiadas por dados reais, 1 correção de segurança, 1 revisão conjunta e, já durante a documentação, 2 correções do verificador (Rulings 34 e 35) |
 | Decisões registradas | 39 (Ruling 1 a 39) |
-| Commits | 45 da spec ao `707c603`, 18 deles de correção (`fix`) |
+| Commits | 45 da spec ao `eb545cf`, 18 deles de correção (`fix`) |
 | Rodadas de correção pedidas pela revisão das tarefas | 9, todas encerradas sem pendência aberta: tarefas 2, 3, 6, 7, 8 e 9, lote 10–14 (duas rodadas) e tarefa 15 |
 | Testes | 210 no pytest (204 em `tests/` e 6 em `evals/`) e 9 do núcleo JavaScript no Node |
 | Rodadas reais de avaliação | 3, com 25 casos cada |
@@ -48,8 +48,8 @@ O usuário decidiu o design, o escopo e as prioridades. A IA propôs, escreveu, 
 
 | Papel | Modelo | Evidência |
 |---|---|---|
-| Design: brainstorming, spike e spec | Claude Opus 5.5 | commits `a0efef4` e `ca81b80` |
-| Plano, e controlador das tarefas 1 e 2 | Claude Opus 4.8 | commit `f81d9af` e diário |
+| Design: brainstorming, spike e spec | Claude Opus 5.5 | commits `0ce83a5` e `62e8a85` |
+| Plano, e controlador das tarefas 1 e 2 | Claude Opus 4.8 | commit `bdbd02f` e diário |
 | Controlador da tarefa 3 em diante | Claude Opus 5.5 | diário |
 | Implementação | Haiku 4.5, Sonnet 5 ou Opus 5.5, conforme a complexidade | trailers `Co-Authored-By` dos commits |
 | Revisão | Sonnet por padrão; Opus nas revisões adversariais (tarefas 6 e 9) e na revisão final, prevista para depois destes documentos; Haiku nas mais simples (tarefas 15 e 17, integração 1) | diário |
@@ -60,9 +60,9 @@ A implementação foi dividida assim:
 |---|---|---|
 | Haiku 4.5 | tarefas com o código já escrito no plano ou no adendo: 4, 5, 7, 8, lote 10–14, 15, 17 e 20; integração 1; correção de segurança; correção da revisão conjunta; correções das Rulings 34 e 35 | 24 |
 | Sonnet 5 | tarefas com decisão de desenho: 6 (ferramentas e SQL protegido), 9 (laço e prompt), 16 (API), 19 (avaliações); integrações 2 e 3 | 9 |
-| Opus 5.5 | tarefa 18 (a interface da demo) e tarefa 21 (estes documentos e o `evals/reverificar.py`) | 3 até o `707c603`: 1 da tarefa 18 e 2 da tarefa 21 |
+| Opus 5.5 | tarefa 18 (a interface da demo) e tarefa 21 (estes documentos e o `evals/reverificar.py`) | 3 até o `eb545cf`: 1 da tarefa 18 e 2 da tarefa 21 |
 
-Os 45 commits até o `707c603` somam 24 com trailer do Haiku 4.5, 9 do Sonnet 5, 7 do Opus 5.5 e 5 do Opus 4.8. Nas
+Os 45 commits até o `eb545cf` somam 24 com trailer do Haiku 4.5, 9 do Sonnet 5, 7 do Opus 5.5 e 5 do Opus 4.8. Nas
 tarefas 1 a 3, o trailer registra o modelo do controlador, não o do subagente. A regra de registrar o modelo de quem
 fez o commit veio com a Ruling 7.
 

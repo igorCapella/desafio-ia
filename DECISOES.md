@@ -453,7 +453,7 @@ escolhido pela complexidade:
 
 As tarefas 1 a 20 passaram por revisão, e as mais arriscadas, por revisão adversarial ou por teste ao vivo com o
 modelo real. As 39 decisões tomadas no caminho ficaram registradas com o achado que motivou cada uma. Da spec ao commit
-`707c603` foram 45 commits, 18 deles de correção.
+`eb545cf` foram 45 commits, 18 deles de correção.
 
 A IA também atrapalhou, em casos concretos:
 
