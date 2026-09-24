@@ -47,7 +47,8 @@ def test_dossie_do_foco_atual_fica_inteiro():
     assert len(s.historico[0]["content"]) == 5000
 
 
-def test_obter_sessao_reusa_e_ignora_id_invalido():
+def test_obter_sessao_reusa_e_ignora_id_invalido(monkeypatch):
+    monkeypatch.setattr(S, "SESSOES", S.OrderedDict())
     sid = nova_sessao()
     assert obter_sessao(sid) is obter_sessao(sid)
     avulsa = obter_sessao("não-é-um-id")

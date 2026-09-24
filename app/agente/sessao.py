@@ -29,8 +29,7 @@ class Sessao:
             num = m.get("_numero")
             if (m.get("role") == "tool" and m.get("name") == "obter_dossie"
                     and num and num != self.processo_em_foco and not m.get("_compactado")):
-                m["content"] = (f"[dossiê de {num} omitido para poupar contexto; "
-                                f"chame obter_dossie de novo se precisar]")
+                m["content"] = f"[dossiê de {num} omitido; chame obter_dossie de novo se precisar]"
                 m["_compactado"] = True
 
 
