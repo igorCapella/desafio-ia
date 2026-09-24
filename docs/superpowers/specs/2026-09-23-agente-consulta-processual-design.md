@@ -35,7 +35,7 @@ Exigência específica do desafio: a minuta de sentença deve se basear nos elem
 | Arquitetura do agente | Ferramentas de domínio + SQL protegido + **camada de verificação** | Só gerar SQL (armadilhas: 168 × 190); RAG (o dossiê cabe no contexto); fluxo fixo (não é autônomo); framework de agentes (esconde o ciclo) | Spike |
 | Linguagem | **Python 3.12** | Go: o gargalo é o LLM | Código 0,3 a 2 ms × LLM 18,5 s (mediana) |
 | Web | **FastAPI** com SSE nativo (`fastapi.sse`) + interface própria em HTML/JS sem build | Chainlit (visual genérico); Next.js (dois ecossistemas) | — |
-| Cliente LLM | SDK oficial `openai` com `base_url` configurável | SDKs por provedor | Trocar para vLLM on-premises = trocar a URL |
+| Cliente LLM | Cliente HTTP próprio (httpx, cerca de 80 linhas) no protocolo compatível com OpenAI, com `base_url` configurável | SDK `openai` (a v3.19 é recente e a documentação consultável vai só até a v2.11); SDKs por provedor | Controle total dos campos do OpenRouter (`cost`, `provider`, `reasoning_details`); trocar para vLLM on-premises = trocar a URL |
 | Verificação | **Marca, não corrige** | Reescrita automática (esconde o erro, +60 s, pode criar erro novo) | — |
 | Privacidade | Provedores sem treino com dados, quantização fp8 ou mais precisa (sem 4 bits), CPF mascarado | — | Filtro da conta remove o provedor oficial da DeepSeek |
 
@@ -73,10 +73,11 @@ Princípios:
 
 ## 4. Camada de dados (`app/dados`)
 
-### 4.1 Preparação do banco
+### 4.1 O banco no repositório
 
-- O repositório versiona `data/desafio.sqlite.zip`. O script `scripts/preparar_banco.py` confere o SHA-256 (`ae0abb8845c854ea7358b7a1bcb4d945c10541d58c99db50d7a7cfbeb750056a`) e extrai para `data/desafio.sqlite`, que fica no `.gitignore`.
-- A aplicação também roda a preparação na inicialização, se o `.sqlite` não existir.
+- O SQLite fica versionado **descompactado** em `data/desafio.sqlite` (41.811.968 bytes, abaixo do limite de aviso de 50 MB por arquivo do GitHub). Não há etapa de extração (decisão do usuário em 24/09/2026).
+- **Integridade:** um teste confere o SHA-256 do arquivo (`8a90b47cdc3b07bcb395ffe0e81c3d56dd33946fa047dec7dc86499767690c43`), provando que o banco original nunca foi alterado. O ZIP baixado do desafio (SHA-256 `ae0abb8845c854ea7358b7a1bcb4d945c10541d58c99db50d7a7cfbeb750056a`) não é versionado.
+- Na inicialização, a aplicação confere que o arquivo existe e tem as 7 tabelas esperadas. Se não, falha com mensagem clara.
 
 ### 4.2 Conexão
 
@@ -112,7 +113,7 @@ Regras de alta precisão, calculadas por processo e devolvidas no dossiê:
 | Sem documentos | nenhum documento; lista o que fica indisponível: fatos, pedidos, fundamentos, decisões, advogados | 6.309 |
 | Sem magistrado vinculado | `magistrado_id` nulo. Traz os magistrados da mesma unidade, marcados **"sem vínculo confirmado com o processo"**, e informa se os atos foram assinados por "Juiz(a) de Direito em exercício" | 1.044 |
 | Tipo cadastral × polo | `parte.tipo` = autor no polo passivo, ou réu no polo ativo | 1.633 |
-| Valor da causa | ausente, zero, ≥ 9.999.999.999, ou diferente do "valor de R$ X" da petição inicial (tolerância de R$ 0,01) | 598 · 288 · 1 · 106 |
+| Valor da causa | ausente (598, dos quais 219 com valor na petição); zero (288, dos quais 106 com valor na petição); atípico ≥ 9.999.999.999 (1); cadastro preenchido e diferente do "valor de R$ X" da petição inicial, com tolerância de R$ 0,01 (regra genérica, 0 casos neste banco). Quando a petição traz o valor, o alerta o informa | 598 · 288 · 1 · 0 |
 | "Julgado" sem data de sentença | situação normalizada Julgado e `data_sentenca` nula; informa a data provável pela movimentação de sentença, se houver | 43 |
 | Assinatura divergente | documento com autor `— OAB/` cuja assinatura final tem outra OAB **e** cuja OAB do autor não aparece no texto (assim exclui petições de acordo, assinadas pelas duas partes) | 309 |
 | Data da audiência divergente | data da ata de audiência (igual à data no texto) ausente das datas das movimentações "Audiência … Realizada" do processo, quando essas existem | 765 |
@@ -147,7 +148,7 @@ Regras comuns:
 
 ### 5.2 Cliente LLM
 
-- SDK `openai` (assíncrono) com `base_url` e chave do `.env`.
+- Cliente próprio sobre `httpx.AsyncClient`: `POST {base_url}/chat/completions` com `stream: true`, lendo as linhas SSE `data:` até `[DONE]`. A chave vem do `.env`.
 - Cliente httpx com opção de **forçar IPv4** (`FORCE_IPV4`): nesta máquina WSL2 o IPv6 está quebrado e trava as chamadas.
 - `extra_body` para o OpenRouter:
   - `provider`: `{"quantizations": ["fp8", "mxfp8", "bf16", "fp16"], "require_parameters": true, "data_collection": "deny", "allow_fallbacks": true}`
@@ -341,16 +342,16 @@ desafio-ia/
 │   └── web/static/   index.html · app.js · estilo.css · vendor/ (marked, DOMPurify)
 ├── tests/
 ├── evals/            casos.yaml · rubrica.md · executar.py · resultados/
-├── data/desafio.sqlite.zip
-├── scripts/          preparar_banco.py · resumo_logs.py · configurar-git.sh · git-hooks/pre-push
+├── data/desafio.sqlite        banco original, versionado descompactado (SHA-256 conferido nos testes)
+├── scripts/          resumo_logs.py · configurar-git.sh · git-hooks/pre-push
 └── docs/             uso-de-ia.md · roteiro-demo.md · pesquisa/ · superpowers/{specs,plans}/
 ```
 
-O ZIP hoje na raiz é movido para `data/`. O `.gitignore` cobre `.env`, `data/desafio.sqlite`, `logs/` e `.superpowers/`.
+O SQLite, hoje na raiz, é movido para `data/`. O `.gitignore` cobre `.env`, `logs/`, `.superpowers/` e o ZIP original (`*.zip`).
 
 ### 10.3 Documentos
 
-- **README.md:** requisitos (Python 3.12, uv), preparação (`uv sync`, `.env`, banco), execução, testes, avaliações, tabela de configuração e solução de problemas (IPv6 no WSL2).
+- **README.md:** requisitos (Python 3.12, uv), preparação (`uv sync` e `.env`; o banco já vem no repositório), execução, testes, avaliações, tabela de configuração e solução de problemas (IPv6 no WSL2).
 - **DECISOES.md:** cada decisão com contexto, escolha, alternativas e evidência. Inclui:
   - modelo, com o spike;
   - arquitetura;
