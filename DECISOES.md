@@ -492,6 +492,9 @@ Detalhes e números em [docs/uso-de-ia.md](docs/uso-de-ia.md).
 - **Aspas equivalentes.** Na conferência de aspas, apóstrofo e aspas simples, duplas ou curvas contam como o mesmo
   caractere (Ruling 35). Isso não cria um literal falso com palavra diferente.
 - **Dispositivo com reticências.** A detecção não reconhece "julgo ... procedente" com reticências ou palavras no meio.
+- **Decisões preliminares também alertam.** A checagem do dispositivo reconhece "condeno", "decreto", "acolho", "rejeito" e
+  "homologo" em primeira pessoa; por isso "rejeito a preliminar de incompetência", numa fundamentação, também gera o alerta
+  de decisão. Aceito: decidir, inclusive uma preliminar, cabe ao magistrado.
 - **Dispositivo da própria sentença.** O modelo pode citar entre aspas o dispositivo da sentença que o processo já
   tem, como se fosse a decisão proposta. O selo "o processo já tem sentença e a minuta não avisa" continua valendo.
 - **Formatos não detectados.** Número de processo sem pontuação e CPF com espaços, dentro da resposta.

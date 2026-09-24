@@ -263,3 +263,16 @@ def test_custo_da_sessao_no_fim_e_o_deste_turno(cliente, monkeypatch):
     sid = _sid(cliente)
     fim = [d for n, d in _chat(cliente, sid) if n == "fim"][0]
     assert fim["custo_sessao"] == 0.001
+
+
+def test_falha_na_verificacao_tambem_atualiza_o_turno_de_minuta(cliente, monkeypatch):
+    monkeypatch.setattr(main, "responder", _fake({"tipo": "texto", "delta": "oi"}, FIM))
+
+    def quebra(*a, **k):
+        raise TypeError("boom")
+
+    monkeypatch.setattr(main, "verificar", quebra)
+    sid = _sid(cliente)
+    main.obter_sessao(sid).ultimo_turno_minuta = True  # o turno anterior foi de minuta
+    _chat(cliente, sid)
+    assert main.obter_sessao(sid).ultimo_turno_minuta is False  # "oi" não é minuta redigida

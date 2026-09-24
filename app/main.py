@@ -157,6 +157,7 @@ async def chat(p: Pergunta) -> AsyncIterable[ServerSentEvent]:
             erros.append({"mensagem": "Falha na verificação.",
                           "detalhe": f"{type(e).__name__}: {e}"[:300]})
         selos, minuta = ver["selos"], ver["eh_minuta"]
+        sessao.ultimo_turno_minuta = minuta  # também quando a verificação falhou
         gravar(interrompida=False)  # antes do fim: a resposta só termina depois de registrada
         custo_sessao = round(sessao.custo_total, 4)  # lido antes de liberar a conversa
         _EM_ANDAMENTO.discard(p.sessao_id)  # e a conversa já aceita a próxima pergunta
