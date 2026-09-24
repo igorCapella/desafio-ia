@@ -8,6 +8,8 @@ SHA256_ESPERADO = "8a90b47cdc3b07bcb395ffe0e81c3d56dd33946fa047dec7dc86499767690
 
 _RX_OAB = re.compile(r"OAB/[A-Z]{2}\s+[\d.]+")
 _RX_ADV = re.compile(r"^(Dra?\.\s+.+?)\s+—\s+OAB/[A-Z]{2}\s+[\d.]+")
+_RX_CNPJ = re.compile(r"\d{2}\.?\d{3}\.?\d{3}/?\d{4}-?\d{2}")
+_RX_CPF = re.compile(r"\d{3}\.?(\d{3})\.?(\d{3})-?\d{2}")
 
 
 def py_normalizar(s: str | None) -> str | None:
@@ -28,12 +30,18 @@ def py_advogado_de(s: str | None) -> str | None:
 
 
 def py_mascarar_cpf(s: str | None) -> str | None:
+    # Fail-closed: só CNPJ reconhecido passa intacto (não é dado pessoal na LGPD);
+    # CPF (formatado ou só dígitos) vira ***.xxx.xxx-**; qualquer outro formato
+    # tem todos os dígitos mascarados.
     if not s:
         return s
-    # CPF: 999.550.862-21 -> ***.550.862-**  (CNPJ, com "/", não é mascarado)
-    if "/" in s:
-        return s
-    return re.sub(r"^\d{3}\.(\d{3}\.\d{3})-\d{2}$", r"***.\1-**", s.strip())
+    v = s.strip()
+    if _RX_CNPJ.fullmatch(v):
+        return v
+    m = _RX_CPF.fullmatch(v)
+    if m:
+        return f"***.{m.group(1)}.{m.group(2)}-**"
+    return re.sub(r"\d", "*", v)
 
 
 def verificar_integridade(db_path: str) -> bool:
