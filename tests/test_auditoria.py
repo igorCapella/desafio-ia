@@ -33,3 +33,24 @@ def test_linha_corrompida_nao_derruba_o_custo(tmp_path):
         f.write('{"custo": 0.0\n')  # gravação interrompida
     registrar({"custo": 0.003}, caminho=str(p))
     assert abs(custo_acumulado(str(p)) - 0.005) < 1e-9
+
+def test_chaves_de_dict_objetos_e_cpf_com_espacos_tambem_sao_limpos(tmp_path):
+    class Objeto:
+        def __str__(self):
+            return "CPF 999.550.862-21"
+
+    p = tmp_path / "aud.jsonl"
+    registrar({"args": {"999.550.862-21": "x"}, "extra": Objeto(), "espacos": "999 550 862 21"},
+              caminho=str(p))
+    texto = p.read_text(encoding="utf-8")
+    assert "550.862-21" not in texto and "550 862 21" not in texto and "999.550" not in texto
+
+
+def test_remove_bearer_e_o_valor_real_de_segredos(tmp_path, monkeypatch):
+    monkeypatch.setenv("OUTRO_TOKEN", "segredo-muito-secreto-123")
+    p = tmp_path / "aud.jsonl"
+    registrar({"erros": ["Authorization: Bearer abc.def.ghi",
+                         "falhou com token=segredo-muito-secreto-123"]}, caminho=str(p))
+    texto = p.read_text(encoding="utf-8")
+    assert "abc.def.ghi" not in texto and "segredo-muito-secreto-123" not in texto
+    assert texto.count("[chave removida]") == 2
