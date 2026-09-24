@@ -1,5 +1,8 @@
+import asyncio
+import copy
 import json
 import threading
+import time
 
 import pytest
 
@@ -191,7 +194,129 @@ async def test_falha_do_modelo_vira_erro():
 
     eventos = [e async for e in ciclo.responder(Sessao(), "oi", stream_fn=quebra)]
     assert eventos[-1]["tipo"] == "erro"
-    assert "Falha ao consultar o modelo" in eventos[-1]["mensagem"]
+    assert "Não foi possível obter a resposta do modelo" in eventos[-1]["mensagem"]
+
+
+def _assert_pares_validos(historico):
+    pendentes: list[str] = []
+    for m in historico:
+        if m["role"] == "tool":
+            assert m["tool_call_id"] in pendentes, m["tool_call_id"]
+            pendentes.remove(m["tool_call_id"])
+        else:
+            assert not pendentes, f"chamadas sem resposta: {pendentes}"
+            pendentes = [tc["id"] for tc in m.get("tool_calls") or []]
+    assert not pendentes, f"chamadas sem resposta: {pendentes}"
+
+
+@pytest.mark.anyio
+async def test_conexao_encerrada_no_meio_deixa_historico_valido():
+    roteiro = [[_chamada("obter_dossie", {"numero": NUM}), *_fim("tool_calls")],
+               [{"tipo": "texto", "delta": "ok"}, *_fim()]]
+    s = Sessao()
+    gen = ciclo.responder(s, "resuma " + NUM, stream_fn=_fake_stream(roteiro))
+    async for ev in gen:
+        if ev["tipo"] == "processo":
+            break
+    await gen.aclose()
+    _assert_pares_validos(s.historico)
+    assert s.historico[-1]["role"] == "assistant" and not s.historico[-1].get("tool_calls")
+
+
+@pytest.mark.anyio
+async def test_cancelamento_durante_ferramenta_deixa_historico_valido(monkeypatch):
+    def sql_lento(sql):
+        time.sleep(0.3)
+        return {"sql": sql, "colunas": ["x"], "linhas": [[1]], "truncado": False}
+
+    monkeypatch.setitem(ciclo.IMPL, "consultar_sql", sql_lento)
+    roteiro = [[_chamada("consultar_sql", {"sql": "select 1"}), *_fim("tool_calls", custo=0.004)],
+               [{"tipo": "texto", "delta": "1"}, *_fim()]]
+    s = Sessao()
+
+    async def consumir():
+        async for _ in ciclo.responder(s, "conta", stream_fn=_fake_stream(roteiro)):
+            pass
+
+    tarefa = asyncio.create_task(consumir())
+    await asyncio.sleep(0.1)
+    tarefa.cancel()
+    with pytest.raises(asyncio.CancelledError):
+        await tarefa
+    _assert_pares_validos(s.historico)
+    assert s.custo_total == pytest.approx(0.004)
+
+
+@pytest.mark.anyio
+async def test_falha_em_passo_posterior_guarda_texto_parcial_e_custo():
+    turnos = iter([[_chamada("consultar_sql", {"sql": "select 1"}),
+                    *_fim("tool_calls", custo=0.003)]])
+
+    async def stream_fn(mensagens, tools):
+        turno = next(turnos, None)
+        if turno is None:
+            yield {"tipo": "texto", "delta": "Resposta pela met"}
+            raise RuntimeError('HTTP 502: {"error": "bad gateway"}')
+        for ev in turno:
+            yield ev
+
+    s = Sessao()
+    eventos = [e async for e in ciclo.responder(s, "conta", stream_fn=stream_fn)]
+    assert eventos[-1]["tipo"] == "erro" and "HTTP" not in eventos[-1]["mensagem"]
+    assert "502" in eventos[-1]["detalhe"]
+    assert s.historico[-1] == {"role": "assistant", "content": "Resposta pela met"}
+    _assert_pares_validos(s.historico)
+    assert s.custo_total == pytest.approx(0.003)
+
+
+@pytest.mark.anyio
+async def test_reasoning_volta_ao_modelo_no_passo_seguinte():
+    capturadas = []
+    bloco = [{"type": "reasoning.text", "index": 0, "text": "pensando"}]
+    roteiro = [[{"tipo": "reasoning", "reasoning_details": bloco},
+                _chamada("consultar_sql", {"sql": "select 1"}), *_fim("tool_calls")],
+               [{"tipo": "texto", "delta": "ok"}, *_fim()]]
+    await _rodar(Sessao(), "x", roteiro, capturadas)
+    assistente = next(m for m in capturadas[1] if m["role"] == "assistant")
+    assert assistente["reasoning_details"] == bloco
+
+
+@pytest.mark.anyio
+async def test_chamada_sem_id_recebe_id_e_par_valido():
+    sem_id = {"tipo": "tool_calls", "tool_calls": [
+        {"id": None, "type": "function",
+         "function": {"name": "consultar_sql", "arguments": json.dumps({"sql": "select 1"})}}]}
+    roteiro = [[sem_id, *_fim("tool_calls")], [{"tipo": "texto", "delta": "ok"}, *_fim()]]
+    s = Sessao()
+    await _rodar(s, "x", roteiro)
+    _assert_pares_validos(s.historico)
+    assert all(tc["id"] for m in s.historico for tc in m.get("tool_calls") or [])
+
+
+@pytest.mark.anyio
+async def test_limite_de_chamadas_por_passo():
+    muitas = {"tipo": "tool_calls", "tool_calls": [
+        {"id": f"c{i}", "type": "function",
+         "function": {"name": "consultar_sql", "arguments": json.dumps({"sql": "select 1"})}}
+        for i in range(ciclo.MAX_CHAMADAS_POR_PASSO + 2)]}
+    roteiro = [[muitas, *_fim("tool_calls")], [{"tipo": "texto", "delta": "ok"}, *_fim()]]
+    s = Sessao()
+    eventos = await _rodar(s, "x", roteiro)
+    resumos = [e["resumo"] for e in eventos if e["tipo"] == "ferramenta"]
+    assert sum(r.startswith("erro: Limite") for r in resumos) == 2
+    _assert_pares_validos(s.historico)
+
+
+@pytest.mark.anyio
+async def test_reabrir_o_processo_em_foco_mantem_uma_copia():
+    roteiro = [[_chamada("obter_dossie", {"numero": NUM}), *_fim("tool_calls")],
+               [{"tipo": "texto", "delta": "ok"}, *_fim()]]
+    s = Sessao()
+    await _rodar(s, "resuma " + NUM, copy.deepcopy(roteiro))
+    eventos = await _rodar(s, "de novo", copy.deepcopy(roteiro))
+    inteiras = [m for m in _tool_msgs(s) if not m.get("_compactado")]
+    assert len(inteiras) == 1
+    assert not any(e["tipo"] == "processo" for e in eventos)  # o foco não mudou
 
 
 def test_prompt_cobre_os_itens_da_spec():

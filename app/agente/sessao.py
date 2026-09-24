@@ -4,6 +4,7 @@ from collections import OrderedDict
 
 _RX_CNJ = re.compile(r"\d{7}-\d{2}\.\d{4}\.\d\.\d{2}\.\d{4}")
 _RX_CPF_TEXTO = re.compile(r"(?<!\d)\d{3}\.?\d{3}\.?\d{3}-?\d{2}(?!\d)")
+_MAX_CPFS = 20  # CPFs digitados aceitos por conversa (impede testar milhares de candidatos)
 
 
 class Sessao:
@@ -35,16 +36,22 @@ class Sessao:
                 f"({r.get('classe', '?')}, {r.get('situacao', '?')}).")
 
     def compactar_dossies_antigos(self, ate: int | None = None) -> None:
-        # `ate`: só mensagens anteriores a esse índice (as do turno atual ficam inteiras).
+        # Sem `ate`: compacta os dossiês que não são do processo em foco. Com `ate`: compacta
+        # todos os anteriores a esse índice — o turno atual acabou de abrir um dossiê, que
+        # substitui as cópias antigas (inclusive a do mesmo processo).
         for m in self.historico[:ate]:
             num = m.get("_numero")
-            if (m.get("role") == "tool" and m.get("name") == "obter_dossie"
-                    and num and num != self.processo_em_foco and not m.get("_compactado")):
+            antigo = ate is not None or num != self.processo_em_foco
+            if (m.get("role") == "tool" and m.get("name") == "obter_dossie" and num and antigo
+                    and not m.get("_compactado")):
                 m["content"] = f"[dossiê de {num} omitido; chame obter_dossie de novo se precisar]"
                 m["_compactado"] = True
 
     def registrar_pergunta(self, pergunta: str) -> None:
-        self.cpfs_do_usuario.update(re.sub(r"\D", "", m) for m in _RX_CPF_TEXTO.findall(pergunta))
+        for m in _RX_CPF_TEXTO.findall(pergunta):
+            if len(self.cpfs_do_usuario) >= _MAX_CPFS:
+                break
+            self.cpfs_do_usuario.add(re.sub(r"\D", "", m))
 
     def registrar_resultado(self, nome: str, res: dict) -> None:
         if nome == "obter_dossie" and res.get("encontrado"):

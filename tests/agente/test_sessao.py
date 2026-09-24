@@ -92,3 +92,9 @@ def test_registrar_resultado_acumula_fontes_da_conversa():
     assert s.processos_consultados == {"0000001-15.2022.8.99.9012",
                                        "0000002-97.2022.8.99.9012",
                                        "0000003-78.2023.8.99.9002"}
+
+
+def test_registrar_pergunta_limita_cpfs_por_conversa():
+    s = Sessao()
+    s.registrar_pergunta(" ".join(f"{i:011d}" for i in range(1, 26)))
+    assert len(s.cpfs_do_usuario) == 20
