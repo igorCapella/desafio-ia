@@ -13,7 +13,8 @@ execução, que fica fora do repositório; o DECISOES.md resume as que importam.
    teste confere o SHA-256 do arquivo.
 3. **Segredos só no `.env`.** Nunca em código, log, commit ou saída de terminal. O log de auditoria remove chaves.
 4. **CPF sempre mascarado**, nas visões, no log e na resposta. O CNPJ não é mascarado, porque não é dado pessoal. A
-   busca por CPF só aceita um número que o próprio usuário digitou. Não exponha `cpfs_do_usuario` no esquema das
+   busca por CPF só aceita um número que o próprio usuário digitou, e esse número é a única exceção na resposta: o
+   agente pode repeti-lo para confirmar a busca (caso C25). O log mascara sempre. Não exponha `cpfs_do_usuario` no esquema das
    ferramentas, porque o modelo poderia se autoautorizar.
 5. **O SQL do modelo só enxerga as visões.** Ele roda numa cópia em memória com o CPF já mascarado
    (`abrir_conexao_consulta`). Nunca dê ao modelo acesso às tabelas base. Não troque a cópia por um authorizer sobre
@@ -28,7 +29,7 @@ execução, que fica fora do repositório; o DECISOES.md resume as que importam.
 - **Situação.** Compare sempre pelo valor normalizado de `v_processo.situacao`, que tem 4 valores, nunca por
   `situacao_original`.
 - **Comarca.** Vem de `unidade.comarca`, que é o que `v_processo.comarca` já traz. O campo `processo.comarca` tem 230
-  grafias para 104 comarcas.
+  grafias para 60 comarcas (normalizar acento, caixa e espaço só chega a 64: sobram abreviações como "S. José").
 - **Papel da parte.** Vem de `processo_parte.polo` (em `v_partes.polo`), não de `parte.tipo`.
 - **Texto.** Para comparar, use a função `normalizar()`, registrada no SQL e espelhada em Python.
 

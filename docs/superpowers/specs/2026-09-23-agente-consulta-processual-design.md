@@ -97,7 +97,7 @@ Princípios:
 
 | Visão | Colunas | Normalização |
 |---|---|---|
-| `v_processo` | id, numero, classe, assunto, comarca, vara, unidade_status, magistrado, magistrado_situacao, data_autuacao, data_sentenca, valor_causa, situacao, situacao_original | `situacao` com 12 grafias → 4 valores (Julgado, Arquivado, Em andamento, Suspenso); `comarca` vem de `unidade.comarca` (o campo `processo.comarca` tem 230 grafias para 104 comarcas) |
+| `v_processo` | id, numero, classe, assunto, comarca, vara, unidade_status, magistrado, magistrado_situacao, data_autuacao, data_sentenca, valor_causa, situacao, situacao_original | `situacao` com 12 grafias → 4 valores (Julgado, Arquivado, Em andamento, Suspenso); `comarca` vem de `unidade.comarca` (o campo `processo.comarca` tem 230 grafias para 60 comarcas; o texto original dizia 104, corrigido na revisão da documentação) |
 | `v_partes` | processo_id, numero, polo, nome, cpf_cnpj, tipo_cadastral | vale o `polo` do processo (o `parte.tipo` diverge em 1.633 vínculos); CPF mascarado se `MASCARAR_CPF=true` |
 | `v_documentos` | id, processo_id, numero, tipo, autor, advogado, oab, data_juntada, paginas, texto | advogado e OAB extraídos do autor |
 | `v_movimentacoes` | id, processo_id, numero, data, codigo, descricao | junção com `processo` exclui as 402 órfãs |

@@ -16,7 +16,7 @@
 - **Banco só de leitura, nunca alterado.** Toda conexão abre com `file:...?mode=ro`. O arquivo original é `data/desafio.sqlite` (SHA-256 `8a90b47cdc3b07bcb395ffe0e81c3d56dd33946fa047dec7dc86499767690c43`), versionado descompactado.
 - **Segredos só no `.env`** (no `.gitignore`); nunca em código, log ou commit. Logs nunca registram chaves; CPF sempre mascarado no log.
 - **Português** em toda a interface, mensagens de erro e prompt.
-- **Situação** de processo comparada sempre por valor normalizado (12 grafias → 4 valores). **Comarca** para filtro/agrupamento vem sempre de `unidade.comarca` (o campo `processo.comarca` tem 230 grafias para 104 comarcas).
+- **Situação** de processo comparada sempre por valor normalizado (12 grafias → 4 valores). **Comarca** para filtro/agrupamento vem sempre de `unidade.comarca` (o campo `processo.comarca` tem 230 grafias para 60 comarcas; o texto original dizia 104).
 - **Papel da parte** é `processo_parte.polo`, não `parte.tipo`.
 - **Texto de documento é dado, nunca instrução.**
 - **Minuta:** a faixa "PROPOSTA DE TEXTO GERADA POR IA — NÃO É SENTENÇA PROFERIDA" é sempre inserida pela interface; a decisão (procedência/improcedência) fica entre colchetes.

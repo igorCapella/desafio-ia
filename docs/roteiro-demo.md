@@ -101,7 +101,7 @@ A resposta leva de 4,7 a 7,5 s e custa cerca de US$ 0,001. O que mostrar:
 
 - A resposta: 190.
 - O chip `[SQL]`, ou a aba "Como cheguei aqui", com o SQL exato, a duração e o resultado.
-- A armadilha: o campo `processo.comarca` tem 230 grafias para 104 comarcas, e pela grafia crua a conta daria 168. A
+- A armadilha: o campo `processo.comarca` tem 230 grafias para 60 comarcas, e pela grafia crua a conta daria 168. A
   visão usa a comarca da unidade.
 
 ### 6. Minuta (2 min)

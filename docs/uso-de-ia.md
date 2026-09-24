@@ -94,7 +94,8 @@ fez o commit veio com a Ruling 7.
 ### No design
 
 - **Comarca interpretada errado.** O primeiro perfil dos dados contou "1.024 processos com comarca divergente da
-  unidade". Eram diferenças de grafia, não divergência real: o campo tem 230 grafias para 104 comarcas. Com a leitura
+  unidade". Eram diferenças de grafia, não divergência real: o campo tem 230 grafias para 60 comarcas (o relatório do spike
+  chegou a registrar 104, errado; a revisão da documentação conferiu no banco). Com a leitura
   certa, a comarca passou a vir da unidade.
 - **Mockup com advogados no lugar das partes.** Um mockup da interface trouxe os advogados onde deviam estar as
   partes.

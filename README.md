@@ -128,7 +128,7 @@ O modelo do arquivo é o `.env.example`.
 | `REASONING_EFFORT` | `high` | nível de raciocínio |
 | `FORCE_IPV4` | `false` | `true` em máquinas com IPv6 quebrado (ver "Solução de problemas") |
 | `ORCAMENTO_USD` | `3.0` | teto de gasto do app; no teto, novas perguntas são recusadas |
-| `MASCARAR_CPF` | `true` | CPF mascarado nas visões, nas respostas e no log (LGPD) |
+| `MASCARAR_CPF` | `true` | CPF mascarado nas visões, no log e nas respostas, salvo o que o próprio usuário digitou (LGPD) |
 | `DB_PATH` | `data/desafio.sqlite` | banco |
 
 ## Arquitetura

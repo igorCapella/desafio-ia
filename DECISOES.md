@@ -176,7 +176,7 @@ ser alterado.
 | Armadilha no banco | Tratamento na visão |
 |---|---|
 | `situacao` com 12 grafias | normalizada em 4 valores (Julgado, Arquivado, Em andamento, Suspenso); a grafia original fica em `situacao_original` |
-| `processo.comarca` com 230 grafias para 104 comarcas | a comarca vem de `unidade.comarca` |
+| `processo.comarca` com 230 grafias para 60 comarcas (normalizar acento e caixa só chega a 64) | a comarca vem de `unidade.comarca` |
 | `parte.tipo` diverge do polo em 1.633 vínculos | o papel da parte vem de `processo_parte.polo` |
 | 402 movimentações órfãs | excluídas pela junção com `processo` |
 | advogado e OAB dentro do texto de `documento.autor` | extraídos para as colunas `advogado` e `oab` |
@@ -209,7 +209,7 @@ O texto do modelo não é alterado.
 | norma | "Súmula N" e "art. N" aparecem nos autos lidos (documentos e o que as ferramentas mostraram: movimentações, cadastro, buscas e SQL) ou vêm marcados com `[verificar]`, com ou sem explicação |
 | minuta | decisão de mérito fora dos colchetes, nome do magistrado na assinatura, minuta de processo sem documentos, processo já julgado sem aviso |
 | processo | todo número de processo citado na resposta é o processo em foco ou um processo consultado |
-| dados pessoais | nenhum CPF completo na resposta |
+| dados pessoais | nenhum CPF completo na resposta, exceto o que o próprio usuário digitou |
 
 Quando a resposta é uma minuta, a interface sempre mostra a faixa "PROPOSTA DE TEXTO GERADA POR IA — NÃO É SENTENÇA
 PROFERIDA", independentemente do que o modelo escreveu.
@@ -286,7 +286,9 @@ pegou uma afirmação sem base, que nenhum selo pegaria (pergunta 2).
   - As visões mostram o CPF mascarado, e a máscara é fail-closed: um valor fora do padrão tem todos os dígitos
     trocados.
   - O SQL do modelo só alcança a cópia mascarada.
-  - A busca por CPF só aceita um número que o próprio usuário digitou.
+  - A busca por CPF só aceita um número que o próprio usuário digitou. A resposta pode repetir esse número para
+    confirmar a busca: é o único CPF completo que ela pode conter (nas avaliações, o CPF sintético 999.550.862-21
+    do caso C25 aparece assim nos relatórios). O log mascara inclusive esse.
   - O selo de dados pessoais confere a resposta.
   - O log mascara CPF em todo campo de texto e remove chaves.
 - **Documentos.** O painel só serve documentos lidos na conversa.
@@ -545,7 +547,7 @@ O resto muda assim:
 | SQL do modelo | cópia em memória só com as visões e CPF mascarado (+35 MB de RAM, 0,18 s na subida) | papel de consulta que só enxerga as visões mascaradas da réplica, com timeout e limite de linhas; a cópia em memória não escala |
 | Documentos | dossiê inteiro no contexto | busca por trechos (FTS ou vetorial) e OCR das peças digitalizadas; a verificação de aspas continua conferindo contra os trechos lidos |
 | Acesso | localhost sem autenticação | autenticação e controle de acesso por processo (sigilo e segredo de justiça), aplicado nas visões, não no prompt |
-| Dados pessoais | CPF mascarado nas visões, na resposta e no log | o mesmo, mais política de LGPD (base legal, retenção, direitos do titular) e revisão de outros dados pessoais além do CPF |
+| Dados pessoais | CPF mascarado nas visões, no log e na resposta (salvo o que o próprio usuário digitou) | o mesmo, mais política de LGPD (base legal, retenção, direitos do titular) e revisão de outros dados pessoais além do CPF |
 | Auditoria | arquivo jsonl local | log central imutável, com retenção definida e acesso por papel |
 | Sessões | memória, até 1.000 | Redis ou PostgreSQL, sem mudar o resto |
 | Avaliação | 25 casos sintéticos | conjunto curado com a área usuária, revisão humana das minutas e avaliação a cada mudança de prompt ou de modelo |

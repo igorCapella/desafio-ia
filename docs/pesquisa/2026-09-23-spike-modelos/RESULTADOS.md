@@ -79,7 +79,7 @@ Implicação: o leitor trata aspas como texto literal, então o produto precisa 
 
 ## Achados de dados (corrigindo o perfil inicial)
 
-- `processo.comarca` tem 230 grafias para 104 comarcas (caixa, espaços, acentos, abreviações como "S. José"). Os "1.024 processos com comarca divergente da unidade" do perfil inicial eram **grafia**, não divergência real. Usar `unidade.comarca`.
+- `processo.comarca` tem 230 grafias para 60 comarcas [corrigido em 2026-09-24: o texto original dizia 104; conferido no banco — 60 comarcas em `unidade`, 64 valores depois de normalizar acento, caixa e espaço] (caixa, espaços, acentos, abreviações como "S. José"). Os "1.024 processos com comarca divergente da unidade" do perfil inicial eram **grafia**, não divergência real. Usar `unidade.comarca`.
 - Processo 357, Doc 946: o autor cadastrado difere da assinatura no texto.
 - Processo 357: a data da audiência diverge entre a ata e as movimentações.
 
