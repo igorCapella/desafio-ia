@@ -1,6 +1,8 @@
 import hashlib
+import sqlite3
+import pytest
 from app.dados.conexao import (
-    abrir_conexao, SHA256_ESPERADO, py_mascarar_cpf, py_oab_de, py_normalizar,
+    abrir_conexao, abrir_conexao_consulta, SHA256_ESPERADO, VISOES, py_mascarar_cpf, py_oab_de, py_normalizar,
     py_advogado_de, verificar_integridade,
 )
 
@@ -50,3 +52,12 @@ def test_advogado_de():
     assert py_advogado_de("Dr. Sebastião Krüger — OAB/SC 99.651") == "Dr. Sebastião Krüger"
     assert py_advogado_de("Dr. Mário Pacheco Heusi — Promotor(a) de Justiça") is None
     assert py_advogado_de(None) is None
+
+
+def test_conexao_consulta_so_enxerga_visoes():
+    c = abrir_conexao_consulta()
+    nomes = {r[0] for r in c.execute("select name from sqlite_master")}
+    assert nomes == set(VISOES)
+    for sql in ("create table x(a)", "delete from v_processo", "pragma query_only = off"):
+        with pytest.raises(sqlite3.DatabaseError):
+            c.execute(sql)
