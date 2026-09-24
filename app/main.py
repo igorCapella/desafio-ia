@@ -13,6 +13,7 @@ from app.agente.sessao import nova_sessao, obter_sessao
 from app.auditoria import custo_acumulado, registrar
 from app.config import get_settings
 from app.dados.conexao import abrir_conexao
+from app.verificacao.citacoes import FERRAMENTAS_DE_CONSULTA
 from app.verificacao.minuta import AVISO, eh_minuta
 from app.verificacao.selos import verificar
 
@@ -119,7 +120,7 @@ async def chat(p: Pergunta) -> AsyncIterable[ServerSentEvent]:
                     resposta += ev["delta"]
                     yield _sse("texto", {"delta": ev["delta"]})
                 elif tipo == "ferramenta":
-                    houve_sql = houve_sql or ev["nome"] == "consultar_sql"
+                    houve_sql = houve_sql or ev["nome"] in FERRAMENTAS_DE_CONSULTA
                     ferramentas.append({k: ev.get(k) for k in ("nome", "args", "duracao_ms", "resumo")})
                     yield _sse("ferramenta", {k: v for k, v in ev.items() if k != "tipo"})
                 elif tipo == "status":

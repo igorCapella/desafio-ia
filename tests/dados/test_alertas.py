@@ -1,11 +1,4 @@
-import pytest
-from app.dados.conexao import abrir_conexao
 from app.dados.alertas import alertas_do_processo
-
-
-@pytest.fixture
-def conn():
-    return abrir_conexao()
 
 
 def _id(conn, numero):

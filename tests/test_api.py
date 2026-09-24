@@ -220,3 +220,12 @@ def test_perguntas_recusadas_tambem_sao_registradas(cliente, monkeypatch):
 def test_id_de_sessao_grande_demais_422(cliente):
     r = cliente.post("/api/chat", json={"sessao_id": "x" * 65, "pergunta": "oi"})
     assert r.status_code == 422
+
+
+def test_sql_marcado_apos_busca_conta_como_consulta(cliente, monkeypatch):
+    monkeypatch.setattr(main, "responder", _fake(
+        {"tipo": "ferramenta", "nome": "buscar_processos", "args": {"parte": "Financeira"},
+         "duracao_ms": 3.0, "resumo": "527 encontrado(s)"},
+        {"tipo": "texto", "delta": "São 527 processos [SQL]."}, FIM))
+    eventos = dict(_chat(cliente, _sid(cliente)))
+    assert ("citacao", "ok") in {(s["tipo"], s["status"]) for s in eventos["verificacao"]["selos"]}

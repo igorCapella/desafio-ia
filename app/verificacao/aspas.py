@@ -1,6 +1,8 @@
 import re
 
 _RX_ASPAS = re.compile(r'[“"]([^”"\n]{20,}?)[”"]')
+_RX_CODIGO = re.compile(r'`{3}.*?`{3}|`[^`\n]*`', re.S)  # código não é citação dos autos
+
 
 
 def normalizar_trecho(s: str) -> str:
@@ -11,7 +13,7 @@ def normalizar_trecho(s: str) -> str:
 def verificar_aspas(resposta: str, docs: dict[int, str]) -> list[dict]:
     textos = {i: normalizar_trecho(t or "") for i, t in docs.items()}
     literais, fontes, suspeitos = [], [], []
-    for trecho in _RX_ASPAS.findall(resposta):
+    for trecho in _RX_ASPAS.findall(_RX_CODIGO.sub(" ", resposta)):
         frags = [normalizar_trecho(x) for x in re.split(r"\.\.\.|…|\[\.\.\.\]", trecho)
                  if len(normalizar_trecho(x)) >= 15]
         if not frags:

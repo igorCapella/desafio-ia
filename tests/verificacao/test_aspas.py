@@ -34,3 +34,7 @@ def test_parafrase_entre_aspas_curvas_alerta():
     r = "A juíza disse que “a autora não provou nada do que alegou na inicial”."
     assert any(s["status"] == "alerta" for s in verificar_aspas(r, DOCS))
 
+def test_aspas_dentro_de_codigo_nao_sao_citacao():
+    r = 'Consultei `buscar_processos(cpf_cnpj="123.456.789-09")` e nada foi encontrado.'
+    assert verificar_aspas(r, DOCS) == []
+

@@ -8,6 +8,8 @@ _RX_DOC = re.compile(r"[\[(]Docs?\.?\s*(\d+(?![\d/])(?:\s*(?:,|;|\be\b)\s*\d+(?!
 _RX_MOV = re.compile(r"\[Mov\.?\s*([^\]]*)\]", re.I)
 _RX_DATA = re.compile(r"(\d{2})/(\d{2})/(\d{4})|(\d{4})-(\d{2})-(\d{2})")
 _RX_SQL = re.compile(r"\[SQL", re.I)
+# Ferramentas cujo resultado pode ser marcado [SQL] (consulta ao banco neste turno).
+FERRAMENTAS_DE_CONSULTA = frozenset({"consultar_sql", "buscar_processos"})
 
 
 def _norm(s: str) -> str:

@@ -142,7 +142,7 @@ def _erro_sql(e: Exception) -> str:
         return "Envie um único comando SQL por vez."
     if "interrupted" in msg:
         return "Consulta interrompida por passar de 5 s; restrinja os filtros ou agregue."
-    if "too big" in msg or "too long" in msg:
+    if "too big" in msg or "too long" in msg or "too large" in msg:
         return ("Valor ou comando grande demais (limite de 1 MB por célula); agregue menos "
                 "ou use obter_dossie para a íntegra de um processo.")
     if "not authorized" in msg or "prohibited" in msg:
@@ -156,7 +156,7 @@ def _celula(v):
     if isinstance(v, bytes):
         return f"<blob de {len(v)} bytes>"
     if isinstance(v, str) and len(v) > _MAX_CELULA:
-        return v[:_MAX_CELULA] + f" … [cortado: {len(v)} caracteres no total]"
+        return v[:_MAX_CELULA] + f" ... [cortado: {len(v)} caracteres no total]"
     return v
 
 

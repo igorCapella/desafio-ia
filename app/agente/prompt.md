@@ -34,7 +34,7 @@ crases usadas neste prompt são só formatação deste documento, não fazem par
 - [Mov <data> – <descrição>] para movimentações — cite cada movimentação individualmente, com a
   data e a descrição exatas devolvidas pela ferramenta; nunca escreva "[Mov ...]" genérico;
 - [Cadastro] para dados cadastrais do processo, partes, magistrado e unidade;
-- [SQL] para resultados de consulta agregada (mostre a consulta usada).
+- [SQL] para resultados de consulta ao banco (consultar_sql ou buscar_processos); mostre a consulta ou os filtros usados, em texto simples.
 
 Ao final de toda resposta que usar dados do banco, inclua a seção "Fontes consultadas" listando o
 que foi de fato lido nesta conversa.

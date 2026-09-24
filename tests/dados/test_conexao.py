@@ -2,7 +2,7 @@ import hashlib
 import sqlite3
 import pytest
 from app.dados.conexao import (
-    abrir_conexao, abrir_conexao_consulta, SHA256_ESPERADO, VISOES, py_mascarar_cpf, py_oab_de, py_normalizar,
+    SHA256_ESPERADO, VISOES, py_mascarar_cpf, py_oab_de, py_normalizar,
     py_advogado_de, verificar_integridade,
 )
 
@@ -13,8 +13,8 @@ def test_banco_integro():
     assert digest == SHA256_ESPERADO
 
 
-def test_conexao_e_readonly():
-    c = abrir_conexao()
+def test_conexao_e_readonly(conn):
+    c = conn
     try:
         c.execute("create table x(a)")
         assert False, "deveria ser somente leitura"
@@ -22,8 +22,8 @@ def test_conexao_e_readonly():
         assert "readonly" in str(e).lower() or "read-only" in str(e).lower()
 
 
-def test_funcoes_sql():
-    c = abrir_conexao()
+def test_funcoes_sql(conn):
+    c = conn
     assert c.execute("select normalizar('  SÃO  José ')").fetchone()[0] == "sao jose"
     assert c.execute("select oab_de('Dr. X — OAB/SC 99.651')").fetchone()[0] == "OAB/SC 99.651"
     assert c.execute("select mascarar_cpf('999.550.862-21')").fetchone()[0] == "***.550.862-**"
@@ -54,8 +54,8 @@ def test_advogado_de():
     assert py_advogado_de(None) is None
 
 
-def test_conexao_consulta_so_enxerga_visoes():
-    c = abrir_conexao_consulta()
+def test_conexao_consulta_so_enxerga_visoes(conn_consulta):
+    c = conn_consulta
     nomes = {r[0] for r in c.execute("select name from sqlite_master")}
     assert nomes == set(VISOES)
     for sql in ("create table x(a)", "delete from v_processo", "pragma query_only = off"):

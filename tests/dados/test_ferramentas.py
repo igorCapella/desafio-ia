@@ -142,3 +142,7 @@ def test_ferramentas_fecham_a_conexao_que_abrem():
         F.buscar_processos(parte="Krüger")
         gc.collect()
     assert not [a for a in avisos if issubclass(a.category, ResourceWarning)]
+
+
+def test_sql_comando_grande_demais_tem_mensagem_em_portugues():
+    assert "grande demais" in F.consultar_sql("select 1" + " " * 200_000)["erro"]
