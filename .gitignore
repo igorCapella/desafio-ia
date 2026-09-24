@@ -3,9 +3,18 @@
 .env.*
 !.env.example
 
-# Banco extraído (41 MB); o ZIP original fica como fonte
-desafio.sqlite
+# O banco (data/desafio.sqlite) é versionado DESCOMPACTADO. Ignoramos só o ZIP e journals.
+*.zip
 *.sqlite-journal
+*.sqlite-wal
 
-# Mockups do brainstorming (companheiro visual)
+# Logs de auditoria (gerados em runtime)
+logs/
+
+# Ambientes e caches
+.venv/
+__pycache__/
+*.pyc
+
+# Mockups do brainstorming e workspace do SDD (companheiro visual / execução)
 .superpowers/
