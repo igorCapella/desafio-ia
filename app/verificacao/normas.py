@@ -6,6 +6,7 @@ _LISTA = r"(\d+(?:\s*(?:,|\be\b)\s*\d+)*)"  # "485", "485 e 487", "485, 487"
 _RX_SUMULA = re.compile(_PREFIXO_SUMULA + _LISTA, re.I)
 _RX_ART = re.compile(_PREFIXO_ART + _LISTA, re.I)
 _JANELA_VERIFICAR = 80  # "[verificar]" vale até 80 caracteres antes ou depois, na mesma linha
+_RX_MARCA = re.compile(r"\[verificar\b", re.I)  # também "[verificar — não citado nos autos]"
 
 
 def _norm(s: str) -> str:
@@ -15,7 +16,7 @@ def _norm(s: str) -> str:
 def _marcada(resposta: str, ini: int, fim: int) -> bool:
     antes = resposta[max(0, ini - _JANELA_VERIFICAR):ini].split("\n")[-1]
     depois = resposta[fim:fim + _JANELA_VERIFICAR].split("\n")[0]
-    return "[verificar]" in (antes + depois).lower()
+    return _RX_MARCA.search(antes + depois) is not None
 
 
 def _nos_autos(corpus: str, prefixo: str, n: str) -> bool:
@@ -24,8 +25,11 @@ def _nos_autos(corpus: str, prefixo: str, n: str) -> bool:
     return re.search(rf"{prefixo}(?:\d+\s*(?:,|\be\b)\s*)*{n}(?!\d)", corpus) is not None
 
 
-def verificar_normas(resposta: str, docs: dict[int, str]) -> list[dict]:
-    corpus = _norm(" ".join(t or "" for t in docs.values()))
+def verificar_normas(resposta: str, docs: dict[int, str],
+                     textos_ferramentas: list[str] = ()) -> list[dict]:
+    # Autos = documentos lidos e o que as ferramentas mostraram (movimentações, cadastro, buscas, SQL):
+    # "Arquivamento Provisório (art. 40 LEF)" é descrição de movimentação, não de documento.
+    corpus = _norm(" ".join([*(t or "" for t in docs.values()), *textos_ferramentas]))
     externas = []
     for rx, prefixo, rotulo in ((_RX_SUMULA, _PREFIXO_SUMULA, "Súmula"),
                                 (_RX_ART, _PREFIXO_ART, "art.")):

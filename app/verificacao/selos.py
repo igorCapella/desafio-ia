@@ -14,7 +14,7 @@ def verificar(resposta: str, pergunta: str, sessao: Sessao, *, houve_sql: bool,
     selos += verificar_citacoes(resposta, sessao.docs_vistos, sessao.movs_vistas, houve_sql)
     selos += verificar_aspas(resposta, sessao.docs_vistos, sessao.textos_das_ferramentas,
                              sessao.perguntas)
-    selos += verificar_normas(resposta, sessao.docs_vistos)
+    selos += verificar_normas(resposta, sessao.docs_vistos, sessao.textos_das_ferramentas)
     conhecidos = sessao.processos_consultados | set(RX_CNJ.findall(pergunta or ""))
     selos += verificar_processo_foco(resposta, sessao.processo_em_foco, conhecidos)
     selos += verificar_dados_pessoais(resposta, mascarar_cpf, sessao.cpfs_do_usuario)

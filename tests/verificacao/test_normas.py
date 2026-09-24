@@ -42,3 +42,16 @@ def test_verificar_antes_da_referencia_vale():
     selos = verificar_normas("Conforme [verificar] a Súmula 403 do STJ.", DOCS)
     assert all(s["status"] != "alerta" for s in selos)
 
+
+def test_norma_que_esta_nas_movimentacoes_nao_alerta():
+    mov = ['{"movimentacoes": [{"data": "2024-01-10", '
+           '"descricao": "Arquivamento Provisório (art. 40 LEF)"}]}']
+    r = "O processo foi arquivado provisoriamente com base no art. 40 da LEF."
+    assert [s["status"] for s in verificar_normas(r, DOCS)] == ["alerta"]
+    assert [s["status"] for s in verificar_normas(r, DOCS, mov)] == ["ok"]
+
+
+def test_marca_verificar_com_explicacao_tambem_vale():
+    r = "Aplicável o art. 485 do CPC [verificar — dispositivo não citado nos autos]."
+    assert all(s["status"] != "alerta" for s in verificar_normas(r, DOCS))
+    assert any(s["status"] == "alerta" for s in verificar_normas("Aplicável o art. 485 do CPC.", DOCS))

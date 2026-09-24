@@ -69,3 +69,16 @@ def test_decisao_de_outro_processo_da_conversa_entre_aspas_alerta():
          'DISPOSITIVO\n"Julgo improcedente o pedido."')
     res = verificar(r, "Elabore a minuta de sentença", s, houve_sql=False)
     assert any("decisão de mérito" in x["mensagem"] for x in res["selos"] if x["status"] == "alerta")
+
+
+def test_norma_citada_das_movimentacoes_confere():
+    s = Sessao()
+    s.registrar_resultado("obter_dossie", {
+        "encontrado": True,
+        "processo": {"numero": NUM, "magistrado": None, "situacao": "Suspenso", "data_sentenca": None},
+        "documentos": [{"id": 31, "tipo": "Petição Inicial", "texto": "Execução fiscal de ISS."}],
+        "movimentacoes": [{"data": "2024-03-01",
+                           "descricao": "Arquivamento Provisório (art. 40 LEF)"}]})
+    res = verificar("Arquivado provisoriamente com base no art. 40 da LEF.", "Resuma", s,
+                    houve_sql=False)
+    assert [x["status"] for x in res["selos"] if x["tipo"] == "norma"] == ["ok"]
