@@ -3,6 +3,7 @@ import sqlite3
 import unicodedata
 
 from app.config import get_settings
+from app.dados.visoes import criar_visoes
 
 SHA256_ESPERADO = "8a90b47cdc3b07bcb395ffe0e81c3d56dd33946fa047dec7dc86499767690c43"
 
@@ -58,9 +59,5 @@ def abrir_conexao(db_path: str | None = None) -> sqlite3.Connection:
     c.create_function("advogado_de", 1, py_advogado_de, deterministic=True)
     c.create_function("oab_de", 1, py_oab_de, deterministic=True)
     c.create_function("mascarar_cpf", 1, py_mascarar_cpf, deterministic=True)
-    try:
-        from app.dados.visoes import criar_visoes
-        criar_visoes(c, mascarar=get_settings().mascarar_cpf)
-    except ImportError:
-        pass
+    criar_visoes(c, mascarar=get_settings().mascarar_cpf)
     return c
