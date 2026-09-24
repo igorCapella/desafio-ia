@@ -125,8 +125,8 @@ def test_registrar_resultado_guarda_texto_do_cadastro_sem_documentos():
         "processo": {"numero": "0000001-15.2022.8.99.9012", "assunto": "Assunto Muito Específico"},
         "documentos": [{"id": 86, "tipo": "Petição Inicial", "texto": "TEXTO DO DOCUMENTO"}],
         "movimentacoes": []})
-    assert "Assunto Muito Específico" in s.textos_das_ferramentas[0]
-    assert "TEXTO DO DOCUMENTO" not in s.textos_das_ferramentas[0]
+    assert "Assunto Muito Específico" in s.textos_das_ferramentas
+    assert not any("TEXTO DO DOCUMENTO" in t for t in s.textos_das_ferramentas)
 
 
 def test_texto_das_ferramentas_fica_sem_escape_de_json():
@@ -136,4 +136,4 @@ def test_texto_das_ferramentas_fica_sem_escape_de_json():
         "processo": {"numero": "0000001-15.2022.8.99.9012"},
         "documentos": [], "movimentacoes": [],
         "alertas": ['Atos assinados por "Juiz(a) de Direito em exercício".']})
-    assert 'por "Juiz(a) de Direito em exercício"' in s.textos_das_ferramentas[0]
+    assert 'Atos assinados por "Juiz(a) de Direito em exercício".' in s.textos_das_ferramentas

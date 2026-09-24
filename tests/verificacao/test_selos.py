@@ -82,3 +82,13 @@ def test_norma_citada_das_movimentacoes_confere():
     res = verificar("Arquivado provisoriamente com base no art. 40 da LEF.", "Resuma", s,
                     houve_sql=False)
     assert [x["status"] for x in res["selos"] if x["tipo"] == "norma"] == ["ok"]
+
+
+def test_citacao_nao_emenda_dois_campos_do_cadastro():
+    s = Sessao()
+    s.registrar_resultado("obter_dossie", {
+        "encontrado": True,
+        "processo": {"numero": NUM, "assunto": "Cobrança de honorários", "comarca": "Capital"},
+        "documentos": [], "movimentacoes": []})
+    res = verificar('O cadastro diz "Cobrança de honorários Capital".', "Resuma", s, houve_sql=False)
+    assert [x["status"] for x in res["selos"] if x["tipo"] == "aspas"] == ["alerta"]

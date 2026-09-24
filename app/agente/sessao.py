@@ -34,7 +34,8 @@ class Sessao:
         # Por processo aberto: o que a verificação de minuta precisa saber (spec §6).
         self.resumos: dict[str, dict] = {}
         # Texto das ferramentas que não é documento (cadastro, partes, alertas, "não encontrado",
-        # buscas, SQL): também é fonte literal para as aspas.
+        # buscas, SQL): também é fonte literal para as aspas. Um item por valor, para que uma
+        # citação não emende dois campos.
         self.textos_das_ferramentas: list[str] = []
         # Perguntas do usuário: aspas que só as repetem não são citação dos autos.
         self.perguntas: list[str] = []
@@ -78,8 +79,8 @@ class Sessao:
         if nome == "obter_dossie":
             if res.get("numero"):  # também o número buscado e não encontrado (a resposta pode citá-lo)
                 self.processos_consultados.add(res["numero"])
-            self.textos_das_ferramentas.append("\n".join(
-                _textos({k: v for k, v in res.items() if k != "documentos"})))
+            self.textos_das_ferramentas.extend(
+                _textos({k: v for k, v in res.items() if k != "documentos"}))
             if res.get("encontrado"):
                 p = res["processo"]
                 self.processos_consultados.add(p["numero"])
@@ -94,12 +95,12 @@ class Sessao:
                                   if "Sentença" in (d.get("tipo") or "")]}
         elif nome == "buscar_processos":
             self.processos_consultados.update(p["numero"] for p in res.get("processos", []))
-            self.textos_das_ferramentas.append("\n".join(_textos(res)))
+            self.textos_das_ferramentas.extend(_textos(res))
         elif nome == "consultar_sql":
             for linha in res.get("linhas", []):
                 self.processos_consultados.update(
                     v for v in linha if isinstance(v, str) and _RX_CNJ.fullmatch(v))
-            self.textos_das_ferramentas.append("\n".join(_textos(res)))
+            self.textos_das_ferramentas.extend(_textos(res))
 
 
 # Só letras: o log mascara como CPF qualquer sequência de 11 dígitos, e o id hexadecimal às vezes
