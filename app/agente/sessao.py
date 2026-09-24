@@ -1,3 +1,4 @@
+import json
 import re
 import uuid
 from collections import OrderedDict
@@ -20,6 +21,9 @@ class Sessao:
         self.processos_consultados: set[str] = set()
         # Por processo aberto: o que a verificação de minuta precisa saber (spec §6).
         self.resumos: dict[str, dict] = {}
+        # Texto das ferramentas que não é documento (cadastro, partes, alertas, buscas, SQL): também é
+        # fonte literal para as aspas.
+        self.textos_cadastro: list[str] = []
         # CPFs (só dígitos) digitados pelo usuário: os únicos aceitos na busca por CPF.
         self.cpfs_do_usuario: set[str] = set()
 
@@ -71,12 +75,16 @@ class Sessao:
                     "data_sentenca": p.get("data_sentenca"), "n_documentos": len(res["documentos"]),
                     "sentencas": [d["id"] for d in res["documentos"]
                                   if "Sentença" in (d.get("tipo") or "")]}
+                self.textos_cadastro.append(json.dumps(
+                    {k: v for k, v in res.items() if k != "documentos"}, ensure_ascii=False))
         elif nome == "buscar_processos":
             self.processos_consultados.update(p["numero"] for p in res.get("processos", []))
+            self.textos_cadastro.append(json.dumps(res, ensure_ascii=False))
         elif nome == "consultar_sql":
             for linha in res.get("linhas", []):
                 self.processos_consultados.update(
                     v for v in linha if isinstance(v, str) and _RX_CNJ.fullmatch(v))
+            self.textos_cadastro.append(json.dumps(res, ensure_ascii=False))
 
 
 _RX_ID = re.compile(r"[0-9a-f]{32}")

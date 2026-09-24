@@ -24,6 +24,7 @@ _RX_SECAO = re.compile(r"^\s*(?:#+\s*|\*\*\s*)?(?:[IVX]+\s*[-–.]\s*)?"
 _RX_AVISO_JULGADO = re.compile(r"j[áa]\s+(?:foi\s+)?(?:julgad|sentenciad)|"
                                r"j[áa]\s+(?:existe|h[áa])\s+senten[çc]a|"
                                r"senten[çc]a\s+j[áa]\s+(?:foi\s+)?proferida", re.I)
+_RX_CARGO = re.compile(r"\bju[ií]z(?:a|\(a\))?\b|magistrad", re.I)
 
 
 def _selo(status: str, mensagem: str, trechos: list[str] | None = None) -> dict:
@@ -54,9 +55,19 @@ def _redigiu(resposta: str) -> bool:
 
 
 def _assinada_por(resposta: str, magistrado: str) -> bool:
-    fim = [linha for linha in resposta.strip().splitlines() if linha.strip()][-5:]
+    # Assinatura = o nome numa linha curta (sobra pouco além dele, como "Juiz de Direito") ou numa
+    # linha breve vizinha do cargo — não uma menção ao magistrado no meio de uma frase.
     nome = py_normalizar(magistrado)
-    return any(nome in py_normalizar(linha) for linha in fim)
+    linhas = [linha for linha in resposta.strip().splitlines() if linha.strip()][-12:]
+    for i, linha in enumerate(linhas):
+        norm = py_normalizar(linha) or ""
+        if nome not in norm:
+            continue
+        resto = re.sub(r"[^a-z]", "", norm.replace(nome, ""))
+        vizinhas = " ".join(linhas[max(0, i - 1):i + 2])
+        if len(resto) <= 20 or (len(norm) <= len(nome) + 40 and _RX_CARGO.search(vizinhas)):
+            return True
+    return False
 
 
 def _avisou_sentenca(resposta: str, sentencas: list[int]) -> bool:

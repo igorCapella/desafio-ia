@@ -7,6 +7,8 @@ from app.dados.conexao import py_normalizar
 _RX_DOC = re.compile(r"[\[(]Docs?\.?\s*(\d+(?![\d/])(?:\s*(?:,|;|\be\b)\s*\d+(?![\d/]))*)", re.I)
 _RX_MOV = re.compile(r"\[Mov\.?\s*([^\]]*)\]", re.I)
 _RX_DATA = re.compile(r"(\d{2})/(\d{2})/(\d{4})|(\d{4})-(\d{2})-(\d{2})")
+_RX_PERIODO = re.compile(r"^\s*(\d{2}/\d{2}/\d{4}|\d{4}-\d{2}-\d{2})\s*(?:a|até|–|—|-)\s*"
+                         r"(\d{2}/\d{2}/\d{4}|\d{4}-\d{2}-\d{2})\s*$", re.I)
 _RX_SQL = re.compile(r"\[SQL", re.I)
 # Ferramentas cujo resultado pode ser marcado [SQL] (consulta ao banco neste turno).
 FERRAMENTAS_DE_CONSULTA = frozenset({"consultar_sql", "buscar_processos"})
@@ -24,6 +26,11 @@ def _selo(status: str, mensagem: str, trechos: list[str] | None = None) -> dict:
 def _mov_confere(conteudo: str, movs_vistas: set[tuple[str, str]]) -> bool:
     # [Mov 30/09/2024 – Trânsito em Julgado] ou [Mov 2024-09-30 – ...]: a data (em qualquer dos
     # dois formatos) e a descrição, se houver, batem com uma movimentação lida na conversa.
+    periodo = _RX_PERIODO.match(conteudo)
+    if periodo:  # [Mov 11/10/2022 a 15/08/2024]: as duas pontas têm de ser movimentações lidas
+        datas = {d for d, _ in movs_vistas}
+        return all((p if "-" in p else "-".join(reversed(p.split("/")))) in datas
+                   for p in (periodo[1], periodo[2]))
     m = _RX_DATA.search(conteudo)
     if not m:
         return False

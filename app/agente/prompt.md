@@ -31,8 +31,9 @@ produto) — não são processos reais. Responda sempre em português do Brasil.
 Use exatamente estes marcadores ao citar informação, escritos no texto corrido, sem crases (as
 crases usadas neste prompt são só formatação deste documento, não fazem parte do marcador):
 - [Doc <id> – <tipo>, <data>] para trechos de documentos;
-- [Mov <data> – <descrição>] para movimentações — cite cada movimentação individualmente, com a
-  data e a descrição exatas devolvidas pela ferramenta; nunca escreva "[Mov ...]" genérico;
+- [Mov <data> – <descrição>] para movimentações — cite cada movimentação com a data e a descrição
+  exatas devolvidas pela ferramenta; para uma sequência, [Mov <data inicial> a <data final>], com as
+  datas exatas da primeira e da última; nunca escreva "[Mov ...]" genérico;
 - [Cadastro] para dados cadastrais do processo, partes, magistrado e unidade;
 - [SQL] para resultados de consulta ao banco (consultar_sql ou buscar_processos); mostre a consulta ou os filtros usados, em texto simples.
 

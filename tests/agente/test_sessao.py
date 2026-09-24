@@ -116,3 +116,14 @@ def test_registrar_resultado_guarda_resumo_e_numero_nao_encontrado():
     assert s.resumos["0000001-15.2022.8.99.9012"] == {
         "magistrado": "X", "situacao": "Arquivado", "data_sentenca": "2024-08-26",
         "n_documentos": 2, "sentencas": [93]}
+
+
+def test_registrar_resultado_guarda_texto_do_cadastro_sem_documentos():
+    s = Sessao()
+    s.registrar_resultado("obter_dossie", {
+        "encontrado": True,
+        "processo": {"numero": "0000001-15.2022.8.99.9012", "assunto": "Assunto Muito Específico"},
+        "documentos": [{"id": 86, "tipo": "Petição Inicial", "texto": "TEXTO DO DOCUMENTO"}],
+        "movimentacoes": []})
+    assert "Assunto Muito Específico" in s.textos_cadastro[0]
+    assert "TEXTO DO DOCUMENTO" not in s.textos_cadastro[0]

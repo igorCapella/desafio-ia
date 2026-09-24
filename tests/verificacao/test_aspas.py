@@ -40,3 +40,10 @@ def test_aspas_dentro_de_codigo_nao_sao_citacao():
          '`buscar_processos(cpf_cnpj="12345678909")` → total 0.')
     assert verificar_aspas(r, DOCS) == []
 
+
+def test_aspas_do_cadastro_sao_literais_mas_nao_viram_link_de_documento():
+    cadastro = ['{"assunto": "Inclusão Indevida em Cadastro de Inadimplentes"}']
+    selos = verificar_aspas('O assunto é "Inclusão Indevida em Cadastro de Inadimplentes".',
+                            DOCS, cadastro)
+    assert [s["status"] for s in selos] == ["ok"]
+    assert selos[0]["docs"] == [] and selos[0]["trechos_cadastro"]

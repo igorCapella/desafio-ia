@@ -21,7 +21,8 @@ RAIZ = Path(__file__).parent
 CASOS = RAIZ / "casos.yaml"
 RUBRICA = RAIZ / "rubrica.md"
 RESULTADOS = RAIZ / "resultados"
-_MAX_DADOS_JUIZ = 12_000  # caracteres das ferramentas que o juiz recebe
+_MAX_DADOS_JUIZ = 40_000  # caracteres das ferramentas que o juiz recebe
+_MAX_POR_FERRAMENTA = 20_000
 
 
 def carregar_casos(caminho: Path = CASOS) -> list[dict]:
@@ -82,8 +83,16 @@ async def _rodar_caso(caso: dict) -> tuple[dict, Sessao]:
 
 
 def _dados_das_ferramentas(sessao: Sessao) -> str:
-    partes = [m["content"] for m in sessao.historico if m.get("role") == "tool"]
-    return "\n\n".join(partes)[-_MAX_DADOS_JUIZ:] or "(nenhuma ferramenta foi chamada)"
+    # O começo de cada resultado traz cadastro e partes: corta cada um pelo fim, nunca pelo começo,
+    # e dá prioridade aos resultados mais recentes da conversa.
+    partes, total = [], 0
+    for m in reversed([m for m in sessao.historico if m.get("role") == "tool"]):
+        trecho = m["content"][:_MAX_POR_FERRAMENTA]
+        if partes and total + len(trecho) > _MAX_DADOS_JUIZ:
+            break
+        partes.append(trecho)
+        total += len(trecho)
+    return "\n\n".join(reversed(partes)) or "(nenhuma ferramenta foi chamada)"
 
 
 async def _julgar(resultado: dict, sessao: Sessao) -> dict:

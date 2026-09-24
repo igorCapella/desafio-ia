@@ -2,6 +2,8 @@ from contextlib import closing
 
 from app.dados.conexao import abrir_conexao
 from evals.executar import carregar_casos, checagens_objetivas
+from app.agente.sessao import Sessao
+from evals.executar import _dados_das_ferramentas
 
 _CHAVES_ESPERA = {"fatos", "nao_deve", "ferramentas", "selos_ok", "sem_alerta"}
 
@@ -36,3 +38,11 @@ def test_checagem_objetiva():
                             [{"tipo": "processo", "status": "alerta"}])
     assert not any(r[k] for k in ("fatos_ok", "nao_deve_ok", "ferramentas_ok", "selos_ok",
                                   "sem_alerta_ok", "passou"))
+
+
+def test_juiz_ve_o_comeco_dos_resultados_mais_recentes():
+    s = Sessao()
+    s.adicionar({"role": "tool", "content": "ANTIGO" + "x" * 30_000})
+    s.adicionar({"role": "tool", "content": "PARTES:Maria" + "y" * 30_000})
+    dados = _dados_das_ferramentas(s)
+    assert "PARTES:Maria" in dados and len(dados) <= 40_002

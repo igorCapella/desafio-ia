@@ -57,3 +57,12 @@ def test_mov_descricao_sem_acento_confere():
                                movs_vistas=MOVS, houve_sql=False)
     assert _status(selos) == {"ok"}
 
+
+def test_mov_periodo_confere_se_as_duas_pontas_existem():
+    movs = MOVS | {("2022-10-11", "Distribuição por Sorteio")}
+    ok = verificar_citacoes("Tramitação [Mov 2022-10-11 a 2024-09-30].", docs_vistos={},
+                            movs_vistas=movs, houve_sql=False)
+    assert _status(ok) == {"ok"}
+    ruim = verificar_citacoes("Tramitação [Mov 11/10/2022 a 01/01/2025].", docs_vistos={},
+                              movs_vistas=movs, houve_sql=False)
+    assert _status(ruim) == {"alerta"}

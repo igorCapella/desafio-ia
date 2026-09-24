@@ -86,3 +86,14 @@ def test_pedido_de_minuta_por_substantivo():
         assert eh_minuta("...", p), p
     assert not eh_minuta("...", "Qual o dispositivo da sentença?")
 
+
+def test_mencao_ao_magistrado_numa_frase_nao_e_assinatura():
+    r = MINUTA + ("\n\n## Limites\n- **Magistrado:** Daiane Duarte Zanella, situação ativa, é a "
+                  "magistrada cadastrada para o processo [Cadastro].")
+    assert _alertas(verificar_minuta(r, magistrado="Daiane Duarte Zanella")) == []
+
+
+def test_assinatura_com_nome_e_cargo_na_mesma_linha_alerta():
+    r = MINUTA.replace("Juiz(a) de Direito", "Daiane Duarte Zanella — Juíza de Direito")
+    assert any("assinatura" in m
+               for m in _alertas(verificar_minuta(r, magistrado="Daiane Duarte Zanella")))
