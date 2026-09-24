@@ -1,4 +1,6 @@
+import gc
 import json
+import warnings
 
 from app.dados import ferramentas as F
 
@@ -37,8 +39,9 @@ def test_busca_por_parte():
 
 
 def test_busca_por_cpf_completo_mesmo_com_mascara():
+    autorizados = frozenset({"99955086221"})
     for doc in ("999.550.862-21", "99955086221"):
-        r = F.buscar_processos(cpf_cnpj=doc)
+        r = F.buscar_processos(cpf_cnpj=doc, cpfs_do_usuario=autorizados)
         assert r["total"] == 1
         assert r["processos"][0]["numero"] == "0000001-15.2022.8.99.9012"
         assert "550.862" not in json.dumps(r, ensure_ascii=False)
@@ -99,3 +102,43 @@ def test_sql_interrompe_por_tempo(monkeypatch):
     monkeypatch.setattr(F, "_TIMEOUT_S", 0.0)
     r = F.consultar_sql("select count(*) from v_movimentacoes a, v_unidades b")
     assert "interrompida" in r["erro"]
+
+
+def test_busca_por_cpf_exige_numero_digitado_pelo_usuario():
+    r = F.buscar_processos(cpf_cnpj="999.550.862-21")
+    assert "erro" in r and "digitado" in r["erro"]
+
+
+def test_busca_por_cnpj_nao_exige_autorizacao():
+    assert F.buscar_processos(cpf_cnpj="99.076.775/0001-59")["total"] >= 1
+
+
+def test_busca_parte_trata_curinga_como_texto():
+    assert F.buscar_processos(parte="%")["total"] == 0
+
+
+def test_sql_limita_tamanho():
+    assert "erro" in F.consultar_sql("select randomblob(2000000)")
+    assert "erro" in F.consultar_sql("select 1" + " " * 200_000)
+
+
+def test_sql_corta_celula_longa_e_blob():
+    r = F.consultar_sql("select group_concat(texto), randomblob(8) from "
+                        "(select texto from v_documentos limit 100)")
+    celula, blob = r["linhas"][0]
+    assert len(celula) < 4_100 and "cortado" in celula
+    assert blob == "<blob de 8 bytes>"
+
+
+def test_sql_rejeita_argumento_nao_texto():
+    assert "erro" in F.consultar_sql(None)
+
+
+def test_ferramentas_fecham_a_conexao_que_abrem():
+    gc.collect()  # descarta conexões esquecidas por outros testes
+    with warnings.catch_warnings(record=True) as avisos:
+        warnings.simplefilter("always")
+        F.obter_dossie("0000001-15.2022.8.99.9012")
+        F.buscar_processos(parte="Krüger")
+        gc.collect()
+    assert not [a for a in avisos if issubclass(a.category, ResourceWarning)]

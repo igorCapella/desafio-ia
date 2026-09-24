@@ -97,6 +97,9 @@ def _preparar_base_consulta() -> None:
             for v in VISOES:
                 origem.execute(f"create table consulta.{v} as select * from temp.{v}")
             origem.execute("detach database consulta")
+        except Exception:
+            guardia.close()  # descarta a cópia parcial; a próxima chamada recomeça do zero
+            raise
         finally:
             origem.close()
         _guardia = guardia
@@ -111,6 +114,8 @@ def abrir_conexao_consulta() -> sqlite3.Connection:
     c = sqlite3.connect(f"{_URI_CONSULTA}&mode=ro", uri=True)
     _registrar_funcoes(c)
     c.setlimit(sqlite3.SQLITE_LIMIT_ATTACHED, 0)
+    c.setlimit(sqlite3.SQLITE_LIMIT_LENGTH, 1_000_000)    # nenhuma célula passa de 1 MB
+    c.setlimit(sqlite3.SQLITE_LIMIT_SQL_LENGTH, 100_000)  # nem o comando de 100 mil caracteres
     c.execute("pragma query_only = on")
     c.set_authorizer(_autorizar_consulta)
     return c

@@ -1,3 +1,4 @@
+from contextlib import closing
 import re
 import sqlite3
 import time
@@ -10,6 +11,8 @@ _POLO_ATIVO = {"Petição Inicial", "Emenda à Inicial", "Réplica"}
 _POLO_PASSIVO = {"Contestação", "Exceção de Pré-Executividade", "Embargos à Execução Fiscal"}
 _LISTA_VISOES = ", ".join(VISOES)
 _TIMEOUT_S = 5.0
+_MAX_CELULA = 4_000       # o maior texto de documento no banco tem 2.589 caracteres
+_MAX_RESULTADO = 60_000   # soma de caracteres das células devolvidas ao modelo
 
 
 def _polo_inferido(tipo: str) -> str | None:
@@ -32,7 +35,9 @@ def _proc(conn, numero):
 
 
 def obter_dossie(numero: str, conn=None) -> dict:
-    conn = conn or abrir_conexao()
+    if conn is None:
+        with closing(abrir_conexao()) as propria:
+            return obter_dossie(numero, propria)
     p, err = _proc(conn, numero)
     if err:
         return err
@@ -81,17 +86,28 @@ def obter_dossie(numero: str, conn=None) -> dict:
 
 
 def buscar_processos(conn=None, parte=None, cpf_cnpj=None, classe=None,
-                     assunto=None, comarca=None, situacao=None) -> dict:
-    conn = conn or abrir_conexao()
+                     assunto=None, comarca=None, situacao=None,
+                     cpfs_do_usuario: frozenset[str] = frozenset()) -> dict:
+    # cpfs_do_usuario: CPFs (só dígitos) que o próprio usuário digitou na conversa.
+    # Quem preenche é o laço do agente, nunca o modelo (não está em DEFINICOES_TOOLS).
+    if conn is None:
+        with closing(abrir_conexao()) as propria:
+            return buscar_processos(propria, parte, cpf_cnpj, classe, assunto,
+                                    comarca, situacao, cpfs_do_usuario)
     cond, args = [], []
     if parte:
         cond.append("id in (select processo_id from v_partes "
-                    "where normalizar(nome) like '%' || normalizar(?) || '%')")
+                    "where instr(normalizar(nome), normalizar(?)) > 0)")
         args.append(parte)
     if cpf_cnpj:
-        digitos = re.sub(r"\D", "", cpf_cnpj)
+        digitos = re.sub(r"\D", "", str(cpf_cnpj))
         if len(digitos) not in (11, 14):
             return {"erro": "Informe o CPF (11 dígitos) ou o CNPJ (14 dígitos) completo."}
+        if len(digitos) == 11 and digitos not in cpfs_do_usuario:
+            # O CPF aparece mascarado (***.xxx.xxx-**); aceitar qualquer CPF faria desta
+            # busca um oráculo para descobrir os dígitos ocultos por tentativa.
+            return {"erro": "Por proteção de dados, a busca por CPF só aceita um número "
+                            "digitado pelo usuário nesta conversa."}
         # Compara com o documento cru porque v_partes pode estar mascarada;
         # o documento nunca volta na resposta.
         cond.append("id in (select pp.processo_id from processo_parte pp "
@@ -118,12 +134,17 @@ def buscar_processos(conn=None, parte=None, cpf_cnpj=None, classe=None,
     return {"total": total, "processos": resultados, "truncado": total > 20}
 
 
-def _erro_sql(e: sqlite3.Error) -> str:
+def _erro_sql(e: Exception) -> str:
+    if isinstance(e, MemoryError):
+        return "Resultado grande demais para a memória; agregue ou limite a consulta."
     msg = str(e)
     if isinstance(e, sqlite3.ProgrammingError) and "one statement" in msg:
         return "Envie um único comando SQL por vez."
     if "interrupted" in msg:
         return "Consulta interrompida por passar de 5 s; restrinja os filtros ou agregue."
+    if "too big" in msg or "too long" in msg:
+        return ("Valor ou comando grande demais (limite de 1 MB por célula); agregue menos "
+                "ou use obter_dossie para a íntegra de um processo.")
     if "not authorized" in msg or "prohibited" in msg:
         return f"Comando não permitido: apenas SELECT (leitura) nas visões {_LISTA_VISOES}."
     if "no such table" in msg:
@@ -131,7 +152,17 @@ def _erro_sql(e: sqlite3.Error) -> str:
     return f"Erro de SQL: {msg}"
 
 
+def _celula(v):
+    if isinstance(v, bytes):
+        return f"<blob de {len(v)} bytes>"
+    if isinstance(v, str) and len(v) > _MAX_CELULA:
+        return v[:_MAX_CELULA] + f" … [cortado: {len(v)} caracteres no total]"
+    return v
+
+
 def consultar_sql(sql: str) -> dict:
+    if not isinstance(sql, str) or not sql.strip():
+        return {"sql": sql, "erro": "Informe um comando SQL (texto)."}
     conn = abrir_conexao_consulta()
     inicio = time.monotonic()
     limite = inicio + _TIMEOUT_S
@@ -140,10 +171,17 @@ def consultar_sql(sql: str) -> dict:
         cur = conn.execute(sql)
         rows = cur.fetchmany(51)
         cols = [d[0] for d in cur.description or []]
-        return {"sql": sql, "colunas": cols, "linhas": [list(r) for r in rows[:50]],
-                "truncado": len(rows) > 50,
+        linhas, tamanho = [], 0
+        for r in rows[:50]:
+            linha = [_celula(v) for v in r]
+            tamanho += sum(len(str(v)) for v in linha)
+            if linhas and tamanho > _MAX_RESULTADO:
+                break
+            linhas.append(linha)
+        return {"sql": sql, "colunas": cols, "linhas": linhas,
+                "truncado": len(rows) > len(linhas),
                 "duracao_ms": round((time.monotonic() - inicio) * 1000, 1)}
-    except sqlite3.Error as e:
+    except (sqlite3.Error, MemoryError) as e:
         return {"sql": sql, "erro": _erro_sql(e)}
     finally:
         conn.close()
