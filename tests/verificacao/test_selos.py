@@ -92,3 +92,21 @@ def test_citacao_nao_emenda_dois_campos_do_cadastro():
         "documentos": [], "movimentacoes": []})
     res = verificar('O cadastro diz "Cobrança de honorários Capital".', "Resuma", s, houve_sql=False)
     assert [x["status"] for x in res["selos"] if x["tipo"] == "aspas"] == ["alerta"]
+
+
+def test_minuta_redigida_depois_da_confirmacao_continua_sendo_minuta():
+    s = _sessao()  # processo julgado, com a sentença Doc 93
+    aviso = verificar("Este processo já foi julgado [Doc 93]. Confirma que deseja uma nova minuta?",
+                      "Elabore uma minuta de sentença", s, houve_sql=False)
+    assert aviso["eh_minuta"] is True
+    r = ("RELATÓRIO\nTrata-se de ação.\n\nFUNDAMENTAÇÃO\nAnalisa-se.\n\nDISPOSITIVO\n"
+         "Ante o exposto, [JULGO PROCEDENTE / IMPROCEDENTE] o pedido.")
+    res = verificar(r, "Sim, confirmo. Pode redigir.", s, houve_sql=False)
+    assert res["eh_minuta"] is True
+    assert any("aviso" in x["mensagem"] for x in res["selos"] if x["status"] == "alerta")
+
+
+def test_secoes_sem_pedido_nem_minuta_anterior_nao_viram_minuta():
+    r = ("RELATÓRIO\nA sentença relatou.\n\nFUNDAMENTAÇÃO\nFundamentou.\n\nDISPOSITIVO\n"
+         "Julgou improcedente.")
+    assert verificar(r, "Resuma a sentença", _sessao(), houve_sql=False)["eh_minuta"] is False

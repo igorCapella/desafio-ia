@@ -113,13 +113,13 @@ async def chat(p: Pergunta) -> AsyncIterable[ServerSentEvent]:
     _EM_ANDAMENTO.add(p.sessao_id)
     custo_antes = sessao.custo_total
     resposta, uso, ferramentas, erros, selos = "", {}, [], [], []
-    houve_sql, gravado = False, False
+    houve_sql, gravado, minuta = False, False, False
 
     def gravar(interrompida: bool) -> None:
         # Um registro por pergunta (spec §9.3), inclusive quando o cliente desconecta no meio.
         nonlocal gravado
         gravado = True
-        registrar({"sessao": p.sessao_id, "pergunta": p.pergunta,
+        registrar({"sessao": p.sessao_id, "pergunta": p.pergunta, "resposta": resposta, "eh_minuta": minuta,
                    "processo_em_foco": sessao.processo_em_foco, "ferramentas": ferramentas,
                    "modelo": uso.get("modelo"), "provedor": uso.get("provedor"),
                    "tokens": {k: uso.get(k, 0) for k in ("prompt", "completion", "raciocinio")},
@@ -153,10 +153,10 @@ async def chat(p: Pergunta) -> AsyncIterable[ServerSentEvent]:
         except Exception as e:
             ver = {"selos": [{"tipo": "sistema", "status": "alerta",
                               "mensagem": "Verificação indisponível neste turno.", "trechos": []}],
-                   "eh_minuta": eh_minuta(resposta, p.pergunta)}
+                   "eh_minuta": eh_minuta(resposta, p.pergunta, sessao.ultimo_turno_minuta)}
             erros.append({"mensagem": "Falha na verificação.",
                           "detalhe": f"{type(e).__name__}: {e}"[:300]})
-        selos = ver["selos"]
+        selos, minuta = ver["selos"], ver["eh_minuta"]
         gravar(interrompida=False)  # antes do fim: a resposta só termina depois de registrada
         custo_sessao = round(sessao.custo_total, 4)  # lido antes de liberar a conversa
         _EM_ANDAMENTO.discard(p.sessao_id)  # e a conversa já aceita a próxima pergunta

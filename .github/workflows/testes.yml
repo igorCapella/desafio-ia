@@ -11,6 +11,6 @@ jobs:
       - uses: astral-sh/setup-uv@v10
         with:
           python-version: "3.12"
-      - run: uv sync
+      - run: uv sync --locked
       # tests/ e o smoke das avaliações (gabaritos conferidos no banco, sem chamar a API)
       - run: uv run pytest -q

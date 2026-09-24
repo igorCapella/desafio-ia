@@ -2,10 +2,13 @@ import re
 
 from app.dados.conexao import py_normalizar
 
-# [Doc 86], [Doc. 86 – Petição Inicial, 24/10/2022], [Doc 86, 90], [Docs 86 e 90], (Doc 86),
-# [Doc 939, 2023-06-01; Doc 944, 2024-10-08]. Número seguido de "/" ou "-" é data, não documento.
-_RX_MARCADOR_DOC = re.compile(r"[\[(]\s*Docs?(?![A-Za-zÀ-ÿ])[^\])]*[\])]", re.I)  # como no nucleo.js
-_RX_IDS_DOC = re.compile(r"\bDocs?\.?\s*(\d+(?![\d/-])(?:\s*(?:,|;|\be\b)\s*\d+(?![\d/-]))*)", re.I)
+# Como no nucleo.js: [ … ] que começa com Doc/Docs/Mov/SQL/Cadastro — os ids de documento valem em qualquer
+# ponto dele: "[Cadastro; Doc 938 – Petição]" — ou ( … ) que começa com Doc; numa linha só. Formas:
+# [Doc 86], [Doc. 86 – Petição Inicial, 24/10/2022], [Doc 86, 90], [Docs 86 e 90], [Docs 86 a 93] (as
+# duas pontas), (Doc 86), [Doc 939, 2023-06-01; Doc 944]. Número seguido de "/" ou "-" é data.
+_RX_MARCADOR_DOC = re.compile(r"\[\s*(?:Docs?|Mov|SQL|Cadastro)(?![A-Za-zÀ-ÿ])[^\[\]\n]*\]"
+                              r"|\(\s*Docs?(?![A-Za-zÀ-ÿ])[^()\[\]\n]*\)", re.I)
+_RX_IDS_DOC = re.compile(r"\bDocs?\.?\s*(\d+(?![\d/-])(?:\s*(?:,|;|\be\b|\ba\b)\s*\d+(?![\d/-]))*)", re.I)
 _RX_MOV = re.compile(r"\[Mov\.?\s*([^\]]*)\]", re.I)
 _RX_DATA = re.compile(r"(\d{2})/(\d{2})/(\d{4})|(\d{4})-(\d{2})-(\d{2})")
 _RX_PERIODO = re.compile(r"^\s*(\d{2}/\d{2}/\d{4}|\d{4}-\d{2}-\d{2})\s*(?:a|até|–|—|-)\s*"

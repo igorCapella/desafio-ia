@@ -39,6 +39,8 @@ class Sessao:
         self.textos_das_ferramentas: list[str] = []
         # Perguntas do usuário: aspas que só as repetem não são citação dos autos.
         self.perguntas: list[str] = []
+        # O turno anterior foi de minuta: a confirmação ("pode redigir") continua o pedido.
+        self.ultimo_turno_minuta = False
         # CPFs (só dígitos) digitados pelo usuário: os únicos aceitos na busca por CPF.
         self.cpfs_do_usuario: set[str] = set()
 

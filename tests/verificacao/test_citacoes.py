@@ -82,3 +82,18 @@ def test_doc_colado_ao_numero_tambem_e_conferido():
     ruim = verificar_citacoes("Ver [Doc86 - Petição Inicial].", docs_vistos={}, movs_vistas=set(),
                               houve_sql=False)
     assert next(s for s in ruim if s["status"] == "alerta")["trechos"] == ["Doc 86"]
+
+
+def test_doc_dentro_de_marcador_combinado_tambem_e_conferido():
+    # A interface mostra [Cadastro; Doc 938 – …] como link do documento 938.
+    r = "Cadastro e petição [Cadastro; Doc 938 – Petição Inicial]."
+    ruim = verificar_citacoes(r, docs_vistos={}, movs_vistas=set(), houve_sql=False)
+    assert next(s for s in ruim if s["status"] == "alerta")["trechos"] == ["Doc 938"]
+
+
+def test_intervalo_de_documentos_confere_as_duas_pontas():
+    r = "Ver [Docs 86 a 93]."
+    ok = verificar_citacoes(r, docs_vistos={86: "", 93: ""}, movs_vistas=set(), houve_sql=False)
+    assert _status(ok) == {"ok"}
+    ruim = verificar_citacoes(r, docs_vistos={86: ""}, movs_vistas=set(), houve_sql=False)
+    assert next(s for s in ruim if s["status"] == "alerta")["trechos"] == ["Doc 93"]

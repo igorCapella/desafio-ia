@@ -55,3 +55,10 @@ def test_marca_verificar_com_explicacao_tambem_vale():
     r = "Aplicável o art. 485 do CPC [verificar — dispositivo não citado nos autos]."
     assert all(s["status"] != "alerta" for s in verificar_normas(r, DOCS))
     assert any(s["status"] == "alerta" for s in verificar_normas("Aplicável o art. 485 do CPC.", DOCS))
+
+
+def test_artigo_com_ponto_de_milhar_e_um_numero_so():
+    docs = {1: "... nos termos do art. 1.694 do Código Civil ..."}
+    assert any(s["status"] == "alerta" for s in verificar_normas("Aplica-se o art. 1.699 do CC.", docs))
+    assert all(s["status"] == "ok" for s in verificar_normas("Aplica-se o art. 1.694 do CC.", docs))
+    assert all(s["status"] == "ok" for s in verificar_normas("Aplica-se o art. 1694 do CC.", docs))

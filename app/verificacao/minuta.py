@@ -17,8 +17,12 @@ _RX_PEDIDO = re.compile(
     r"senten[çc]a\b"
     r"|\b(?:proposta|projeto|modelo|rascunho|esbo[çc]o)\s+de\s+senten[çc]a\b"
     r"|\b(?:preciso|quero|gostaria)\s+(?:de\s+)?uma\s+(?:nova\s+)?senten[çc]a\b", re.I)
-_RX_DISPOSITIVO = re.compile(r"\bjulgo\s+(parcialmente\s+)?(procedente|improcedente)", re.I)
-_RX_SECAO = re.compile(r"^\s*(?:#+\s*|\*\*\s*)?(?:[IVX]+\s*[-–.]\s*)?"
+# Decisão proposta: "julgo (parcial/total/integralmente) procedente(s)/improcedente(s)/extinto" e os verbos do
+# dispositivo que as sentenças do banco usam. Fora de colchetes e de citação da sentença deste processo, alerta.
+_RX_DISPOSITIVO = re.compile(
+    r"\bjulgo\s+(?:(?:parcial|total|integral)mente\s+)?(?:procedentes?|improcedentes?|extint[oa]s?)\b"
+    r"|\b(?:condeno|decreto|acolho|rejeito|homologo)\b", re.I)
+_RX_SECAO = re.compile(r"^\s*(?:#+\s*|\*\*\s*)?(?:(?:[IVX]+|\d+)\s*[-–—.):]\s*)?"
                        r"(relat[óo]rio|fundamenta[çc][ãa]o|dispositivo)\b", re.I | re.M)
 _RX_AVISO_JULGADO = re.compile(r"j[áa]\s+(?:foi\s+)?(?:julgad|sentenciad)|"
                                r"j[áa]\s+(?:existe|h[áa])\s+senten[çc]a|"
@@ -30,10 +34,12 @@ def _selo(status: str, mensagem: str, trechos: list[str] | None = None) -> dict:
     return {"tipo": "minuta", "status": status, "mensagem": mensagem, "trechos": trechos or []}
 
 
-def eh_minuta(resposta: str, pergunta: str) -> bool:
+def eh_minuta(resposta: str, pergunta: str, continua_minuta: bool = False) -> bool:
+    # `continua_minuta`: o turno anterior foi de minuta. "Sim, confirmo. Pode redigir." não pede minuta com
+    # palavras, mas a resposta que a redige (com as seções) continua sendo minuta.
     if _MARCA in (resposta or "").lower():
         return True
-    return bool(_RX_PEDIDO.search(pergunta or ""))
+    return bool(_RX_PEDIDO.search(pergunta or "")) or (continua_minuta and _redigiu(resposta or ""))
 
 
 def _sem_lacunas_e_citacoes(resposta: str, da_sentenca: list[str]) -> str:

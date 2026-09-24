@@ -115,3 +115,19 @@ def test_so_a_sentenca_deste_processo_pode_ser_citada_sem_alerta():
     assert _alertas(verificar_minuta(r, docs=docs, sentencas=[93])) == []
     # O Doc 93 foi lido na conversa, mas é de OUTRO processo: a decisão entre aspas conta como proposta.
     assert any("decisão de mérito" in m for m in _alertas(verificar_minuta(r, docs=docs)))
+
+
+def test_secoes_com_travessao_ou_numeradas_contam_como_minuta_redigida():
+    for i, ii, iii in (("I —", "II —", "III —"), ("1.", "2.", "3."), ("1)", "2)", "3)")):
+        r = (MINUTA.replace(AVISO, "").replace("I – RELATÓRIO", f"{i} RELATÓRIO")
+             .replace("II – FUNDAMENTAÇÃO", f"{ii} FUNDAMENTAÇÃO")
+             .replace("III – DISPOSITIVO", f"{iii} DISPOSITIVO"))
+        assert any("aviso" in m for m in _alertas(verificar_minuta(r))), i
+
+
+def test_outras_formas_de_decidir_tambem_alertam():
+    for decisao in ("JULGO TOTALMENTE PROCEDENTE o pedido", "JULGO INTEGRALMENTE PROCEDENTES os pedidos",
+                    "CONDENO a ré ao pagamento de R$ 10.000,00", "DECRETO o despejo", "ACOLHO o pedido",
+                    "JULGO EXTINTO o processo"):
+        r = MINUTA.replace("[JULGO PROCEDENTE / IMPROCEDENTE] o pedido", decisao)
+        assert any("decisão de mérito" in m for m in _alertas(verificar_minuta(r))), decisao

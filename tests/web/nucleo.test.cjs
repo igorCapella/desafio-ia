@@ -56,3 +56,8 @@ test("data ISO não vira documento e cada Doc do marcador conta", () => {
   const s = N.segmentarCitacoes("[Doc 939, 2023-06-01; Doc 944, 2024-10-08]");
   assert.deepEqual(s.filter((x) => x.tipo === "doc").map((x) => x.ids), [[939, 944]]);
 });
+
+test("intervalo de documentos: as duas pontas contam", () => {
+  const s = N.segmentarCitacoes("[Docs 86 a 93]");
+  assert.deepEqual(s.filter((x) => x.tipo === "doc").map((x) => x.ids), [[86, 93]]);
+});

@@ -108,6 +108,7 @@ def test_auditoria_registra_o_turno(cliente, monkeypatch):
     assert linha["tokens"] == {"prompt": 10, "completion": 5, "raciocinio": 2}
     assert linha["custo"] == 0.001 and linha["latencia_ms"] == 12.5
     assert linha["selos"] and linha["erros"] == [] and linha["interrompida"] is False
+    assert linha["resposta"] == "Resumo [Doc 93]." and linha["eh_minuta"] is False
 
 
 def test_teto_de_orcamento(cliente, monkeypatch):
