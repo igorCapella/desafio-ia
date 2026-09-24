@@ -17,10 +17,10 @@ O usuário decidiu o design, o escopo e as prioridades. A IA propôs, escreveu, 
 |---|---|
 | Linha do tempo | spec em 23/09/2026, 18:47; plano em 24/09, 09:23; último commit da implementação antes da documentação (`5eff49a`) em 24/09, 18:23; primeira versão destes documentos (`0c088c1`) às 18:55; reverificação reproduzível (`707c603`) às 19:06 |
 | Tarefas do plano | 21, em TDD. As tarefas 10 a 14 foram executadas como um lote. Depois vieram 3 rodadas de integração guiadas por dados reais, 1 correção de segurança, 1 revisão conjunta e, já durante a documentação, 2 correções do verificador (Rulings 34 e 35) |
-| Decisões registradas | 36 (Ruling 1 a 36) |
+| Decisões registradas | 39 (Ruling 1 a 39) |
 | Commits | 45 da spec ao `707c603`, 18 deles de correção (`fix`) |
 | Rodadas de correção pedidas pela revisão das tarefas | 9, todas encerradas sem pendência aberta: tarefas 2, 3, 6, 7, 8 e 9, lote 10–14 (duas rodadas) e tarefa 15 |
-| Testes | 202 no pytest (196 em `tests/` e 6 em `evals/`) e 8 do núcleo JavaScript no Node |
+| Testes | 210 no pytest (204 em `tests/` e 6 em `evals/`) e 9 do núcleo JavaScript no Node |
 | Rodadas reais de avaliação | 3, com 25 casos cada |
 | Falsos positivos do verificador achados na releitura para esta documentação e na reclassificação que ela motivou | 9 alertas nas três rodadas (Rulings 34 e 35), corrigidos no código e reverificados |
 | Custo de API registrado (OpenRouter) | cerca de US$ 0,65, de uma chave com limite de US$ 4 (detalhe no fim) |

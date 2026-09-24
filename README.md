@@ -59,9 +59,9 @@ As quatro sugestões da tela são os exemplos do desafio, já preenchidos com pr
 ## Testes
 
 ```bash
-uv run pytest            # 202 testes (196 em tests/ e 6 em evals/), sem chave e sem rede
+uv run pytest            # 210 testes (204 em tests/ e 6 em evals/), sem chave e sem rede
 uv run pytest -W error   # os mesmos testes, com avisos tratados como erro: também passa
-node --test tests/web/nucleo.test.cjs   # 8 testes do núcleo JavaScript (o pytest também os roda se houver Node)
+node --test tests/web/nucleo.test.cjs   # 9 testes do núcleo JavaScript (o pytest também os roda se houver Node)
 ```
 
 O `pyproject.toml` já passa `-q` ao pytest. Um segundo `-q` esconde a linha com o total.
@@ -105,8 +105,9 @@ as três rodadas passam de 20, 18 e 7 alertas para 2, 7 e 4, todos verdadeiros.
 ## Log de auditoria
 
 Cada pergunta feita pela interface vira uma linha em `logs/auditoria.jsonl`. A linha guarda a data e hora, a sessão, a
-pergunta, o processo em foco, as ferramentas (argumentos, SQL e duração), o modelo, o provedor, os tokens, o custo, a
-latência, os selos e os erros. O log não guarda chaves, e todo CPF sai mascarado. Para resumir:
+pergunta, a resposta e se era minuta, o processo em foco, as ferramentas (argumentos, SQL e duração), o modelo, o
+provedor, os tokens, o custo, a latência, os selos e os erros. O log não guarda chaves, e todo CPF sai mascarado. Para
+resumir:
 
 ```bash
 uv run python scripts/resumo_logs.py   # custo total, latência p50/p95, selos, modelos e provedores

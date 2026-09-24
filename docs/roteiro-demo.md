@@ -101,8 +101,8 @@ A resposta leva de 4,7 a 7,5 s e custa cerca de US$ 0,001. O que mostrar:
 
 - A resposta: 190.
 - O chip `[SQL]`, ou a aba "Como cheguei aqui", com o SQL exato, a duração e o resultado.
-- A armadilha: o campo `processo.comarca` tem 230 grafias para 60 comarcas, e pela grafia crua a conta daria 168. A
-  visão usa a comarca da unidade.
+- A armadilha: o campo `processo.comarca` tem 230 grafias para 60 comarcas. Só essa grafia crua (com a situação ainda
+  normalizada) já daria 180; com a situação também crua, 168. A visão usa a comarca da unidade e dá 190.
 
 ### 6. Minuta (2 min)
 
@@ -136,7 +136,7 @@ jurisprudência de tribunais, e o agente não responde como se soubesse.
 - Na aba "Como cheguei aqui": tokens, custo e latência da última resposta, e o custo acumulado contra o teto.
 - No terminal, rodar `uv run python scripts/resumo_logs.py`. Ele mostra o custo total, a latência p50 e p95 e a
   contagem de selos por tipo.
-- Mostrar uma linha do log com `tail -n 1 logs/auditoria.jsonl | python3 -m json.tool`. A linha tem pergunta,
+- Mostrar uma linha do log com `tail -n 1 logs/auditoria.jsonl | python3 -m json.tool`. A linha tem pergunta, resposta,
   ferramentas com o SQL, modelo, provedor, tokens, custo e selos. O CPF sai mascarado, e não há nenhuma chave.
 
 ## Se sobrar tempo

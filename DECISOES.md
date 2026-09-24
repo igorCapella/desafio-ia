@@ -11,8 +11,9 @@ encontraram.
 - o log de auditoria real (`scripts/resumo_logs.py`);
 - a reverificação das respostas gravadas com o verificador de hoje (`evals/reverificar.py`);
 - a suíte de testes;
-- o diário de execução mantido durante a implementação. Cada decisão tomada no caminho foi registrada ali, com o
-  achado que a motivou. Este documento as cita como "Ruling N".
+- o diário de execução, mantido fora deste repositório durante a implementação. Cada decisão tomada no caminho foi
+  registrada ali, com o achado que a motivou; este documento cita cada uma como "Ruling N" e resume aqui o conteúdo
+  relevante (como o [CLAUDE.md](CLAUDE.md) já diz).
 
 Onde um número não foi medido, o texto diz.
 
@@ -93,8 +94,9 @@ Depois de cada resposta, uma camada de verificação por código confere a forma
 
 **Alternativas descartadas.**
 
-- **Só gerar SQL.** As armadilhas de grafia dão número errado sem aviso. Contando os julgados em Joinville, a grafia
-  crua dá 168 e a comarca da unidade dá 190.
+- **Só gerar SQL.** As armadilhas de grafia dão número errado sem aviso. Contando os julgados em Joinville: a visão
+  (comarca da unidade e situação normalizada) dá 190; só a comarca crua, 180; só a situação crua, 178; as duas cruas,
+  168.
 - **RAG.** O dossiê de um processo deste banco cabe inteiro no contexto. O maior documento tem 2.589 caracteres, e o
   resumo do processo da demo usou cerca de 10 mil tokens de entrada.
 - **Fluxo fixo.** Não seria autônomo.
@@ -204,10 +206,10 @@ O texto do modelo não é alterado.
 
 | Selo | O que confere |
 |---|---|
-| citação | `[Doc n]` lido nesta conversa; `[Mov data – descrição]` entre as movimentações lidas (um período vale se as duas pontas foram lidas); `[SQL]` só se houve consulta no turno |
+| citação | `[Doc n]` lido nesta conversa, inclusive dentro de um marcador combinado (`[Cadastro; Doc n]`) ou num intervalo (`[Docs n a m]`, que confere as duas pontas); `[Mov data – descrição]` entre as movimentações lidas (um período vale se as duas pontas foram lidas); `[SQL]` só se houve consulta no turno |
 | aspas | trecho entre aspas com 20 caracteres ou mais é literal nos documentos ou no texto devolvido pelas ferramentas; confere por fragmentos quando há reticências, exige palavras inteiras nas pontas e trata aspas simples, duplas e curvas como o mesmo caractere |
-| norma | "Súmula N" e "art. N" aparecem nos autos lidos (documentos e o que as ferramentas mostraram: movimentações, cadastro, buscas e SQL) ou vêm marcados com `[verificar]`, com ou sem explicação |
-| minuta | decisão de mérito fora dos colchetes, nome do magistrado na assinatura, minuta de processo sem documentos, processo já julgado sem aviso |
+| norma | "Súmula N" e "art. N" (com ou sem ponto de milhar, como em "art. 1.699") aparecem nos autos lidos (documentos e o que as ferramentas mostraram: movimentações, cadastro, buscas e SQL) ou vêm marcados com `[verificar]`, com ou sem explicação |
+| minuta | decisão de mérito fora dos colchetes — "julgo (parcial/total/integralmente) procedente(s)/improcedente(s)/extinto", "condeno", "decreto", "acolho", "rejeito" ou "homologo" —, nome do magistrado na assinatura, minuta de processo sem documentos, processo já julgado sem aviso; a resposta que redige a minuta depois de confirmar um pedido anterior ("pode redigir") também conta como minuta |
 | processo | todo número de processo citado na resposta é o processo em foco ou um processo consultado |
 | dados pessoais | nenhum CPF completo na resposta, exceto o que o próprio usuário digitou |
 
@@ -345,9 +347,10 @@ A arquitetura está no diagrama do [README](README.md#arquitetura). Três princ�
   exemplo, o SQL negado lista as visões permitidas. Se estourar os 8 passos, a resposta diz que não concluiu e lista
   as consultas feitas.
 - **Erro do provedor.** O cliente faz 3 tentativas com espera crescente em 429 e 5xx, só antes do primeiro evento da
-  resposta. O OpenRouter troca de provedor e, se preciso, usa o modelo reserva. Cada chamada tem timeout de 180 s. Se a
-  conexão cair no meio da resposta, o histórico fica íntegro e a próxima pergunta na mesma conversa funciona. Isso
-  foi verificado ao vivo na revisão da API.
+  resposta. O OpenRouter troca de provedor e, se preciso, usa o modelo reserva. O timeout de 180 s é por leitura do
+  stream, não para a chamada inteira: cada trecho recebido reinicia a contagem, e uma minuta legitimamente passa
+  disso. Se a conexão cair no meio da resposta, o histórico fica íntegro e a próxima pergunta na mesma conversa
+  funciona. Isso foi verificado ao vivo na revisão da API.
 - **Erro de conteúdo.** Os selos da decisão 8 apontam o problema, e a faixa da minuta é posta pela interface.
 
 **Avaliações.** São 25 casos, 16 deles críticos. Os gabaritos de todos os casos são conferidos no banco por um teste
@@ -449,7 +452,7 @@ escolhido pela complexidade:
 - Opus para a interface e para estes documentos.
 
 As tarefas 1 a 20 passaram por revisão, e as mais arriscadas, por revisão adversarial ou por teste ao vivo com o
-modelo real. As 36 decisões tomadas no caminho ficaram registradas com o achado que motivou cada uma. Da spec ao commit
+modelo real. As 39 decisões tomadas no caminho ficaram registradas com o achado que motivou cada uma. Da spec ao commit
 `707c603` foram 45 commits, 18 deles de correção.
 
 A IA também atrapalhou, em casos concretos:
@@ -494,15 +497,25 @@ Detalhes e números em [docs/uso-de-ia.md](docs/uso-de-ia.md).
 - **Formatos não detectados.** Número de processo sem pontuação e CPF com espaços, dentro da resposta.
 - **Modo minuta por engano.** "modelo de sentença" numa frase referencial ativa o modo minuta. A faixa aparece, e os
   selos ficam ok.
+- **`[SQL]` sem sucesso.** O selo de citação aceita `[SQL]` sempre que o turno chamou a ferramenta de consulta, mesmo
+  que o SELECT tenha falhado ou sido recusado (por exemplo, por tentar ler uma tabela base).
+- **Formas de citação não conferidas.** Aspas simples de abertura ou «», bloco de citação, trechos entre reticências
+  com menos de 15 caracteres, e as formas `[Doc. nº N]` e `[Documento N]`.
+- **Aviso da minuta só no fim.** A faixa vermelha só aparece depois da verificação, isto é, quando a resposta termina
+  de chegar; durante o streaming de uma minuta, o texto aparece antes do aviso.
 
 **Limitações de memória, desempenho e ambiente.**
 
 - **Memória por conversa sem teto.** O que as ferramentas mostraram (documentos lidos e texto das ferramentas) fica
   guardado na conversa. O único limite é o de 1.000 sessões em memória, que descarta a usada há mais tempo.
+- **Teto de CPFs por conversa.** Os até 20 CPFs aceitos na busca (Parte 3) valem por conversa: uma conversa nova
+  recomeça a contagem do zero. Em produção, com clientes reais, o limite deveria ser por cliente, não por sessão.
 - **Concorrência.** Uma consulta pesada com a função Python `normalizar` segura o GIL. As ferramentas de um mesmo
   passo rodam em sequência.
 - **Sessões voláteis.** Reiniciar o servidor apaga as conversas, e recarregar a página não restaura o histórico na
   tela.
+- **Cabeçalho restaurado sem a sessão.** O navegador guarda o processo em foco e reexibe o cabeçalho ao recarregar a
+  página, mesmo que o servidor tenha reiniciado e a sessão em memória já não exista.
 - **SQLite 3.36 ou mais novo,** por causa da VFS `memdb`. A alternativa descartada foi um banco em memória com cache
   compartilhado, modo que o próprio SQLite desaconselha.
 - **Dependência de teste.** A cadeia de suprimentos do httpx2 foi verificada (Parte 3).
@@ -514,7 +527,9 @@ Detalhes e números em [docs/uso-de-ia.md](docs/uso-de-ia.md).
   reverificação sem custo reconfere só os selos; o juiz e as checagens objetivas precisam de uma rodada nova.
 - **Aderência a instruções de forma.** No teste ao vivo da API, o modelo ignorou o pedido "em três frases".
 - **Teto parcial.** O teto de orçamento conta só o que passa pela API, via log de auditoria. As avaliações ficam de
-  fora.
+  fora, e o custo de um stream cortado pela desconexão ou de uma tentativa repetida ao provedor também não entra.
+- **Desconexão sem teste na API.** O caminho de desconexão no meio da resposta tem teste no laço do agente e foi
+  verificado ao vivo (pergunta 2), mas não tem teste no nível da API.
 
 **Próximos passos, em ordem.**
 
