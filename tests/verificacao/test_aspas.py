@@ -72,3 +72,11 @@ def test_trecho_que_comeca_no_meio_de_uma_palavra_nao_e_literal():
     assert [s["status"] for s in trocado] == ["alerta"]  # "procedente" não é literal de "improcedente"
     certo = verificar_aspas('Decidiu "improcedente o pedido formulado na inicial".', docs)
     assert [s["status"] for s in certo] == ["ok"]
+
+
+def test_aspas_desbalanceadas_avisam_que_a_conferencia_pode_estar_incompleta():
+    docs = {1: "Ante o exposto, o réu nunca esteve no local do fato e nega qualquer participação."}
+    r = ('O documento menciona uma parede de 12" de largura. O réu declarou em juízo: '
+         '"isso nunca aconteceu, eu nunca estive no local do fato", conforme consta na petição.')
+    alertas = [s for s in verificar_aspas(r, docs) if s["status"] == "alerta"]
+    assert any("desbalanceadas" in s["mensagem"] for s in alertas)

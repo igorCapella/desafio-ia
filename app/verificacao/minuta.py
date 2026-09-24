@@ -36,10 +36,10 @@ def eh_minuta(resposta: str, pergunta: str) -> bool:
     return bool(_RX_PEDIDO.search(pergunta or ""))
 
 
-def _sem_lacunas_e_citacoes(resposta: str, sentencas: list[str]) -> str:
+def _sem_lacunas_e_citacoes(resposta: str, da_sentenca: list[str]) -> str:
     # Decisão entre colchetes é lacuna para o magistrado. Entre aspas, só sai da conferência a citação
     # literal da sentença que o processo em foco já tem; aspas inventadas ou de outro processo ficam.
-    textos = [normalizar_trecho(t or "") for t in sentencas]
+    textos = [normalizar_trecho(t or "") for t in da_sentenca]
 
     def _trocar(m: re.Match) -> str:
         # Com reticências, cada fragmento tem de estar na mesma sentença.

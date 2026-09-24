@@ -1,9 +1,11 @@
+import asyncio
 from contextlib import closing
 
 from app.dados.conexao import abrir_conexao
 from evals.executar import carregar_casos, checagens_objetivas
 from app.agente.sessao import Sessao
 from evals.executar import _dados_das_ferramentas
+from evals import executar
 
 _CHAVES_ESPERA = {"fatos", "nao_deve", "ferramentas", "selos_ok", "sem_alerta"}
 
@@ -46,3 +48,13 @@ def test_juiz_ve_o_comeco_dos_resultados_mais_recentes():
     s.adicionar({"role": "tool", "content": "PARTES:Maria" + "y" * 30_000})
     dados = _dados_das_ferramentas(s)
     assert "PARTES:Maria" in dados and len(dados) <= 40_002
+
+
+def test_custo_do_caso_inclui_turno_que_caiu_no_meio(monkeypatch):
+    async def responder(sessao, pergunta):
+        sessao.custo_total += 0.01  # o laço soma o gasto parcial mesmo quando a chamada cai
+        yield {"tipo": "erro", "mensagem": "Falha no provedor."}
+
+    monkeypatch.setattr(executar, "responder", responder)
+    resultado, _ = asyncio.run(executar._rodar_caso({"id": "X", "conversa": ["oi"], "espera": {}}))
+    assert resultado["custo"] == 0.01

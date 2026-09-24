@@ -75,3 +75,10 @@ def test_datas_iso_e_varios_documentos_no_mesmo_marcador():
     assert _status(ok) == {"ok"}
     ruim = verificar_citacoes(r, docs_vistos={939: "", 86: ""}, movs_vistas=set(), houve_sql=False)
     assert next(s for s in ruim if s["status"] == "alerta")["trechos"] == ["Doc 944"]
+
+
+def test_doc_colado_ao_numero_tambem_e_conferido():
+    # A interface mostra [Doc86 …] como link do documento 86: o verificador tem de conferi-lo também.
+    ruim = verificar_citacoes("Ver [Doc86 - Petição Inicial].", docs_vistos={}, movs_vistas=set(),
+                              houve_sql=False)
+    assert next(s for s in ruim if s["status"] == "alerta")["trechos"] == ["Doc 86"]

@@ -4,7 +4,7 @@ from app.dados.conexao import py_normalizar
 
 # [Doc 86], [Doc. 86 – Petição Inicial, 24/10/2022], [Doc 86, 90], [Docs 86 e 90], (Doc 86),
 # [Doc 939, 2023-06-01; Doc 944, 2024-10-08]. Número seguido de "/" ou "-" é data, não documento.
-_RX_MARCADOR_DOC = re.compile(r"[\[(]\s*Docs?\b[^\])]*[\])]", re.I)
+_RX_MARCADOR_DOC = re.compile(r"[\[(]\s*Docs?(?![A-Za-zÀ-ÿ])[^\])]*[\])]", re.I)  # como no nucleo.js
 _RX_IDS_DOC = re.compile(r"\bDocs?\.?\s*(\d+(?![\d/-])(?:\s*(?:,|;|\be\b)\s*\d+(?![\d/-]))*)", re.I)
 _RX_MOV = re.compile(r"\[Mov\.?\s*([^\]]*)\]", re.I)
 _RX_DATA = re.compile(r"(\d{2})/(\d{2})/(\d{4})|(\d{4})-(\d{2})-(\d{2})")

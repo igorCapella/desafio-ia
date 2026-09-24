@@ -158,9 +158,10 @@ async def chat(p: Pergunta) -> AsyncIterable[ServerSentEvent]:
                           "detalhe": f"{type(e).__name__}: {e}"[:300]})
         selos = ver["selos"]
         gravar(interrompida=False)  # antes do fim: a resposta só termina depois de registrada
+        custo_sessao = round(sessao.custo_total, 4)  # lido antes de liberar a conversa
         _EM_ANDAMENTO.discard(p.sessao_id)  # e a conversa já aceita a próxima pergunta
         yield _sse("verificacao", {**ver, "aviso": AVISO if ver["eh_minuta"] else None})
-        yield _sse("fim", {"uso": uso, "custo_sessao": round(sessao.custo_total, 4)})
+        yield _sse("fim", {"uso": uso, "custo_sessao": custo_sessao})
     finally:
         _EM_ANDAMENTO.discard(p.sessao_id)
         if not gravado:

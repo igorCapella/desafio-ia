@@ -78,7 +78,8 @@ async def _rodar_caso(caso: dict) -> tuple[dict, Sessao]:
     resultado = {"id": caso["id"], "descricao": caso.get("descricao", ""),
                  "critico": bool(caso.get("critico")), "turnos": turnos,
                  "checagens": checagens_objetivas(caso, ultimo["resposta"], usadas, ultimo["selos"]),
-                 "custo": round(sum(t["uso"].get("cost", 0.0) for t in turnos), 6)}
+                 # o laço soma na sessão também o gasto de um turno que caiu no meio (sem "fim")
+                 "custo": round(sessao.custo_total, 6)}
     return resultado, sessao
 
 

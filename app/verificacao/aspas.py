@@ -23,6 +23,13 @@ def trechos_entre_aspas(texto: str) -> list[str]:
     return [a or b for a, b in RX_ENTRE_ASPAS.findall(_RX_CODIGO.sub(" ", texto))]
 
 
+def _linhas_desbalanceadas(texto: str) -> list[str]:
+    # Aspas ímpares numa linha (ex.: 12" como polegada) desalinham o pareamento e uma citação adiante
+    # ficaria sem conferência nenhuma: melhor avisar do que silenciar.
+    return [linha.strip()[:120] for linha in _RX_CODIGO.sub(" ", texto).splitlines()
+            if linha.count('"') % 2 or linha.count("“") != linha.count("”")]
+
+
 def _no_texto(fragmento: str, texto: str) -> bool:
     # Palavras inteiras nas pontas: "procedente o pedido" não é literal de "improcedente o pedido".
     if fragmento not in texto:
@@ -71,4 +78,9 @@ def verificar_aspas(resposta: str, docs: dict[int, str], textos_ferramentas: lis
         selos.append({"tipo": "aspas", "status": "alerta",
                       "mensagem": "Trecho entre aspas não encontrado literalmente nos documentos "
                                   "(pode ser paráfrase).", "trechos": suspeitos})
+    desbalanceadas = _linhas_desbalanceadas(resposta)
+    if desbalanceadas:
+        selos.append({"tipo": "aspas", "status": "alerta",
+                      "mensagem": "Aspas desbalanceadas: algum trecho entre aspas pode não ter sido "
+                                  "conferido.", "trechos": desbalanceadas})
     return selos

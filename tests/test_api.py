@@ -246,3 +246,19 @@ def test_turno_registrado_e_conversa_liberada_antes_do_fim(cliente, monkeypatch)
     assert [n for n, _ in _chat(cliente, sid)][-1] == "fim"
     assert visto == {"registrado": True, "livre": True}
     assert "erro" not in [n for n, _ in _chat(cliente, sid)]  # a pergunta seguinte é aceita
+
+
+def test_custo_da_sessao_no_fim_e_o_deste_turno(cliente, monkeypatch):
+    monkeypatch.setattr(main, "responder", _fake({"tipo": "texto", "delta": "oi"}, FIM,
+                                                 preparo=_com_doc_93))
+    sse = main._sse
+
+    def espiao(evento, dados):
+        if evento == "verificacao":  # outra pergunta da mesma conversa soma custo neste intervalo
+            main.obter_sessao(sid).custo_total += 1.0
+        return sse(evento, dados)
+
+    monkeypatch.setattr(main, "_sse", espiao)
+    sid = _sid(cliente)
+    fim = [d for n, d in _chat(cliente, sid) if n == "fim"][0]
+    assert fim["custo_sessao"] == 0.001
