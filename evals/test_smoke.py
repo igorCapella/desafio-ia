@@ -1,4 +1,6 @@
 import asyncio
+import json
+from pathlib import Path
 from contextlib import closing
 
 from app.dados.conexao import abrir_conexao
@@ -58,3 +60,11 @@ def test_custo_do_caso_inclui_turno_que_caiu_no_meio(monkeypatch):
     monkeypatch.setattr(executar, "responder", responder)
     resultado, _ = asyncio.run(executar._rodar_caso({"id": "X", "conversa": ["oi"], "espera": {}}))
     assert resultado["custo"] == 0.01
+
+
+def test_reverificar_remonta_todos_os_turnos_de_uma_rodada_real():
+    from evals.reverificar import reverificar
+    rodada = json.loads(sorted(Path("evals/resultados").glob("*.json"))[-1].read_text(encoding="utf-8"))
+    turnos = reverificar(rodada)
+    assert len(turnos) == sum(len(c["turnos"]) for c in rodada["casos"])
+    assert all({"antes", "agora"} <= set(t) for t in turnos)
