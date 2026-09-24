@@ -18,6 +18,8 @@ class Sessao:
         self.docs_vistos: dict[int, str] = {}
         self.movs_vistas: set[tuple[str, str]] = set()
         self.processos_consultados: set[str] = set()
+        # Por processo aberto: o que a verificação de minuta precisa saber (spec §6).
+        self.resumos: dict[str, dict] = {}
         # CPFs (só dígitos) digitados pelo usuário: os únicos aceitos na busca por CPF.
         self.cpfs_do_usuario: set[str] = set()
 
@@ -54,12 +56,21 @@ class Sessao:
             self.cpfs_do_usuario.add(re.sub(r"\D", "", m))
 
     def registrar_resultado(self, nome: str, res: dict) -> None:
-        if nome == "obter_dossie" and res.get("encontrado"):
-            self.processos_consultados.add(res["processo"]["numero"])
-            for d in res["documentos"]:
-                self.docs_vistos[d["id"]] = d["texto"] or ""
-            for m in res["movimentacoes"]:
-                self.movs_vistas.add((m["data"], m["descricao"]))
+        if nome == "obter_dossie":
+            if res.get("numero"):  # também o número buscado e não encontrado (a resposta pode citá-lo)
+                self.processos_consultados.add(res["numero"])
+            if res.get("encontrado"):
+                p = res["processo"]
+                self.processos_consultados.add(p["numero"])
+                for d in res["documentos"]:
+                    self.docs_vistos[d["id"]] = d["texto"] or ""
+                for m in res["movimentacoes"]:
+                    self.movs_vistas.add((m["data"], m["descricao"]))
+                self.resumos[p["numero"]] = {
+                    "magistrado": p.get("magistrado"), "situacao": p.get("situacao"),
+                    "data_sentenca": p.get("data_sentenca"), "n_documentos": len(res["documentos"]),
+                    "sentencas": [d["id"] for d in res["documentos"]
+                                  if "Sentença" in (d.get("tipo") or "")]}
         elif nome == "buscar_processos":
             self.processos_consultados.update(p["numero"] for p in res.get("processos", []))
         elif nome == "consultar_sql":

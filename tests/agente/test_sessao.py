@@ -98,3 +98,21 @@ def test_registrar_pergunta_limita_cpfs_por_conversa():
     s = Sessao()
     s.registrar_pergunta(" ".join(f"{i:011d}" for i in range(1, 26)))
     assert len(s.cpfs_do_usuario) == 20
+
+
+def test_registrar_resultado_guarda_resumo_e_numero_nao_encontrado():
+    s = Sessao()
+    s.registrar_resultado("obter_dossie", {"encontrado": False,
+                                           "numero": "0009999-69.2024.8.99.9001",
+                                           "erro": "Processo não encontrado no banco."})
+    s.registrar_resultado("obter_dossie", {
+        "encontrado": True,
+        "processo": {"numero": "0000001-15.2022.8.99.9012", "magistrado": "X",
+                     "situacao": "Arquivado", "data_sentenca": "2024-08-26"},
+        "documentos": [{"id": 93, "tipo": "Sentença", "texto": "t"},
+                       {"id": 86, "tipo": "Petição Inicial", "texto": "p"}],
+        "movimentacoes": []})
+    assert "0009999-69.2024.8.99.9001" in s.processos_consultados
+    assert s.resumos["0000001-15.2022.8.99.9012"] == {
+        "magistrado": "X", "situacao": "Arquivado", "data_sentenca": "2024-08-26",
+        "n_documentos": 2, "sentencas": [93]}
