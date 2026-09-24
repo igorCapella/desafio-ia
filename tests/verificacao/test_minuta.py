@@ -54,3 +54,21 @@ def test_processo_julgado_sem_aviso_alerta_e_com_aviso_nao():
     avisada = MINUTA.replace("## I – RELATÓRIO", "Atenção: este processo já foi julgado "
                              "[Doc 93 – Sentença, 26/08/2024].\n\n## I – RELATÓRIO")
     assert _alertas(verificar_minuta(avisada, ja_julgado=True, sentencas=[93])) == []
+
+def test_pergunta_sobre_a_sentenca_existente_nao_e_minuta():
+    for p in ("Faça um resumo da sentença", "Escreva o que a sentença decidiu",
+              "Elabore um resumo da sentença", "Qual foi a sentença?"):
+        assert not eh_minuta("A sentença julgou improcedente.", p), p
+    for p in ("Redija a sentença", "Escreva uma nova sentença", "Quero uma minuta"):
+        assert eh_minuta("...", p), p
+
+
+def test_dispositivo_citado_entre_aspas_nao_alerta():
+    r = MINUTA.replace("Trata-se de ação...",
+                       'A sentença anterior [Doc 93] disse: "julgo improcedente o pedido".')
+    assert _alertas(verificar_minuta(r)) == []
+
+
+def test_resposta_sem_minuta_redigida_nao_cobra_aviso():
+    assert _alertas(verificar_minuta("Antes de redigir, confirme: o processo já foi julgado?")) == []
+

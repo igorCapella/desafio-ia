@@ -4,9 +4,16 @@ from app.dados.conexao import py_normalizar
 
 AVISO = "PROPOSTA DE TEXTO GERADA POR IA — NÃO É SENTENÇA PROFERIDA"  # a faixa que a interface exibe
 _MARCA = "proposta de texto gerada por ia"  # parte do aviso usada na detecção (tolera pontuação)
-_RX_PEDIDO = re.compile(r"\b(elabore|elaborar|redija|redigir|minute|proponha|propor|"
-                        r"faça|escreva)\b.{0,40}(minuta|senten[çc]a)", re.I)
+_VERBOS = (r"elabore|elaborar|elabora|redija|redigir|redige|minute|minutar|proponha|propor|"
+           r"fa[çc]a|fazer|escreva|escrever|prepare|preparar|gere|gerar|crie|criar")
+# Pedido de minuta: a palavra "minuta", ou um verbo de redação com a SENTENÇA como objeto direto
+# ("redija a sentença", "escreva uma nova sentença") — não "faça um resumo da sentença" (spec §6).
+_RX_PEDIDO = re.compile(
+    rf"\bminutas?\b|\b(?:{_VERBOS})\s+"
+    r"(?:(?:uma|um|a|o|nova|novo|outra|proposta\s+de|modelo\s+de|projeto\s+de|rascunho\s+de)\s+){0,3}"
+    r"senten[çc]a\b", re.I)
 _RX_DISPOSITIVO = re.compile(r"\bjulgo\s+(parcialmente\s+)?(procedente|improcedente)", re.I)
+_RX_CITADO = re.compile(r"\[[^\]]*\]|[“\"][^”\"\n]*[”\"]")  # colchetes e trechos entre aspas
 _RX_SECAO = re.compile(r"^\s*(?:#+\s*|\*\*\s*)?(?:[IVX]+\s*[-–.]\s*)?"
                        r"(relat[óo]rio|fundamenta[çc][ãa]o|dispositivo)\b", re.I | re.M)
 _RX_AVISO_JULGADO = re.compile(r"j[áa]\s+(?:foi\s+)?(?:julgad|sentenciad)|"
@@ -44,18 +51,18 @@ def verificar_minuta(resposta: str, *, magistrado: str | None = None,
                      n_documentos: int | None = None, ja_julgado: bool = False,
                      sentencas: list[int] | None = None) -> list[dict]:
     selos = []
-    sem_colchetes = re.sub(r"\[[^\]]*\]", " ", resposta)
-    if _RX_DISPOSITIVO.search(sem_colchetes):
+    # Decisão entre colchetes é lacuna para o magistrado; entre aspas é citação da sentença que já existe.
+    if _RX_DISPOSITIVO.search(_RX_CITADO.sub(" ", resposta)):
         selos.append(_selo("alerta", "A minuta propõe uma decisão de mérito fora de colchetes; "
                                      "decidir cabe ao magistrado."))
     else:
         selos.append(_selo("ok", "Dispositivo deixado à decisão do magistrado."))
-    if _MARCA not in resposta.lower():
+    redigiu = _redigiu(resposta)
+    if redigiu and _MARCA not in resposta.lower():
         selos.append(_selo("alerta", "Minuta sem o aviso de proposta (a interface insere a faixa)."))
     if magistrado and _assinada_por(resposta, magistrado):
         selos.append(_selo("alerta", "A minuta traz o nome do magistrado na assinatura; a IA não "
                                      "assina por ele.", [magistrado]))
-    redigiu = _redigiu(resposta)
     if n_documentos == 0 and redigiu:
         selos.append(_selo("alerta", "Minuta redigida para processo sem documentos: não há "
                                      "elementos dos autos para fundamentá-la."))

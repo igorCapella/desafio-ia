@@ -24,3 +24,13 @@ def test_reticencias_juntam_fragmentos_do_mesmo_documento():
 def test_fragmentos_de_documentos_diferentes_nao_contam_como_literal():
     r = '"A parte autora não se desincumbiu... improcedência total dos pedidos formulados"'
     assert any(s["status"] == "alerta" for s in verificar_aspas(r, DOCS))
+
+def test_aspas_curvas_tambem_sao_conferidas():
+    r = "A juíza afirmou: “não se desincumbiu do ônus de comprovar os fatos constitutivos”."
+    assert [s["status"] for s in verificar_aspas(r, DOCS)] == ["ok"]
+
+
+def test_parafrase_entre_aspas_curvas_alerta():
+    r = "A juíza disse que “a autora não provou nada do que alegou na inicial”."
+    assert any(s["status"] == "alerta" for s in verificar_aspas(r, DOCS))
+

@@ -25,3 +25,20 @@ def test_artigo_marcado_verificar_nao_alerta():
 def test_verificar_em_outra_linha_nao_vale():
     r = "Incide a Súmula 403 do STJ.\n[verificar] outra coisa"
     assert any(s["status"] == "alerta" for s in verificar_normas(r, DOCS))
+
+def test_lista_de_artigos_e_prefixo_de_numero():
+    docs = {1: "com base nos arts. 485 e 487 do CPC e no artigo 52 da lei"}
+    assert all(s["status"] == "ok" for s in verificar_normas("Aplicam-se os arts. 485 e 487.", docs))
+    alerta = verificar_normas("Conforme o artigo 5º da Constituição.", docs)[0]
+    assert alerta["status"] == "alerta" and alerta["trechos"] == ["art. 5"]
+
+
+def test_lista_de_artigos_inventados_alerta():
+    selos = verificar_normas("Aplicam-se os arts. 485 e 487.", {1: "sem artigos aqui"})
+    assert selos[0]["trechos"] == ["art. 485", "art. 487"]
+
+
+def test_verificar_antes_da_referencia_vale():
+    selos = verificar_normas("Conforme [verificar] a Súmula 403 do STJ.", DOCS)
+    assert all(s["status"] != "alerta" for s in selos)
+

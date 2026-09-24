@@ -1,10 +1,10 @@
 import re
 
-_RX_ASPAS = re.compile(r'[""]([^""\n]{20,}?)[""]')
+_RX_ASPAS = re.compile(r'[“"]([^”"\n]{20,}?)[”"]')
 
 
 def _norm(s: str) -> str:
-    s = re.sub(r"[*_`]", "", s).lower().replace(""", '"').replace(""", '"')
+    s = re.sub(r"[*_`]", "", s).lower().replace("“", '"').replace("”", '"')
     return re.sub(r"\s+", " ", s).strip(" .,;:")
 
 
