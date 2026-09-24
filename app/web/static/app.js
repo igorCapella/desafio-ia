@@ -19,7 +19,7 @@
 
   const N = window.Nucleo;
   const CHAVES = { sessao: "consulta.sessao", conversa: "consulta.conversa", tema: "consulta.tema" };
-  const RX_ID_SESSAO = /^[0-9a-f]{32}$/;
+  const RX_ID_SESSAO = /^[a-z]{32}$/;
   const AVISO_PADRAO = "PROPOSTA DE TEXTO GERADA POR IA — NÃO É SENTENÇA PROFERIDA";
   const COMPLEMENTO_FAIXA = "Requer revisão e assinatura do magistrado.";
   const ROTULO_COPIAR = "Copiar minuta (com aviso)";

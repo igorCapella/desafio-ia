@@ -75,7 +75,7 @@
   const RX_COLCHETES = /\[[^\[\]\n]*\]/g;
   const RX_PALAVRA_MARCADOR = /^\s*(Docs?|Mov|SQL|Cadastro)(?![A-Za-zÀ-ÿ])/i;
   // Como em app/verificacao/citacoes.py: lista de ids após "Doc"/"Docs"; número seguido
-  // de "/" é data, não documento.
+  // de "/" ou "-" é data, não documento.
   const RX_IDS_DOC = /\bDocs?\.?\s*(\d+(?![\d/-])(?:\s*(?:,|;|\be\b)\s*\d+(?![\d/-]))*)/gi;
 
   function idsDeDocumento(conteudo) {

@@ -1,5 +1,7 @@
 import json
+import re
 
+from app.agente import sessao as S
 from app.auditoria import custo_acumulado, registrar
 
 
@@ -54,3 +56,14 @@ def test_remove_bearer_e_o_valor_real_de_segredos(tmp_path, monkeypatch):
     texto = p.read_text(encoding="utf-8")
     assert "abc.def.ghi" not in texto and "segredo-muito-secreto-123" not in texto
     assert texto.count("[chave removida]") == 2
+
+
+def test_id_de_sessao_nunca_e_mascarado_como_cpf(tmp_path, monkeypatch):
+    # O log mascara qualquer sequência de 11 dígitos; o id da sessão não tem dígito nenhum.
+    monkeypatch.setattr(S, "SESSOES", S.OrderedDict())
+    ids = [S.nova_sessao() for _ in range(20)]
+    assert all(re.fullmatch(r"[a-z]{32}", i) for i in ids)
+    p = tmp_path / "aud.jsonl"
+    registrar({"sessao": ids[0], "pergunta": "CPF 999.550.862-21"}, caminho=str(p))
+    linha = json.loads(p.read_text(encoding="utf-8"))
+    assert linha["sessao"] == ids[0] and "***.550.862-**" in linha["pergunta"]

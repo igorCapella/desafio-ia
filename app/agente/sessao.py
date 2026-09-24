@@ -1,6 +1,7 @@
 import json
 import re
-import uuid
+import secrets
+import string
 from collections import OrderedDict
 
 _RX_CNJ = re.compile(r"\d{7}-\d{2}\.\d{4}\.\d\.\d{2}\.\d{4}")
@@ -90,7 +91,9 @@ class Sessao:
             self.textos_das_ferramentas.append(json.dumps(res, ensure_ascii=False))
 
 
-_RX_ID = re.compile(r"[0-9a-f]{32}")
+# Só letras: o log mascara como CPF qualquer sequência de 11 dígitos, e o id hexadecimal às vezes
+# tinha uma (o id da sessão saía corrompido na auditoria).
+_RX_ID = re.compile(r"[a-z]{32}")
 _MAX_SESSOES = 1000  # sessões em memória; a usada há mais tempo sai primeiro
 
 SESSOES: OrderedDict[str, Sessao] = OrderedDict()
@@ -104,7 +107,7 @@ def _guardar(sid: str, sessao: Sessao) -> Sessao:
 
 
 def nova_sessao() -> str:
-    sid = uuid.uuid4().hex
+    sid = "".join(secrets.choice(string.ascii_lowercase) for _ in range(32))
     _guardar(sid, Sessao())
     return sid
 
