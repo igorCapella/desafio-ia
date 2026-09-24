@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- Só arquivos deste servidor: nem a resposta do modelo consegue carregar algo de fora. -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self'; font-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'">
+  <meta name="color-scheme" content="light dark">
+  <title>Consulta Processual · IA</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230066cc'/%3E%3Cpath d='M9 10h14M9 16h14M9 22h9' stroke='white' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="estilo.css">
+</head>
+<body>
+  <a class="pular" href="#pergunta">Ir para a caixa de pergunta</a>
+
+  <header class="topo">
+    <div class="marca">
+      <h1 class="marca-nome">Consulta Processual · IA</h1>
+      <span class="marca-sub">protótipo · processos fictícios</span>
+    </div>
+    <p class="foco" id="foco" aria-live="polite">
+      <span class="foco-rotulo">Processo em foco:</span>
+      <strong class="foco-numero" id="foco-numero">nenhum</strong>
+      <span class="foco-classe" id="foco-classe" hidden></span>
+      <span class="foco-situacao" id="foco-situacao" hidden></span>
+    </p>
+    <button type="button" class="botao-tema" id="botao-tema" aria-label="Usar tema escuro" title="Alternar tema claro/escuro">
+      <span aria-hidden="true" id="icone-tema">☾</span>
+    </button>
+  </header>
+
+  <main class="principal">
+    <section class="coluna-chat" aria-label="Conversa">
+      <div class="mensagens" id="mensagens" role="log" aria-live="polite" aria-label="Mensagens da conversa">
+        <div class="boas-vindas" id="boas-vindas">
+          <h2>Pergunte sobre um processo</h2>
+          <p>O agente consulta o banco de processos e responde citando as fontes (documentos,
+            movimentações, cadastro e consultas SQL). Cada resposta passa por uma verificação
+            automática, mostrada logo abaixo dela.</p>
+          <p class="boas-vindas-dica">Comece por uma das sugestões ou digite o número CNJ do processo.</p>
+        </div>
+      </div>
+
+      <form class="compositor" id="formulario" autocomplete="off">
+        <div class="sugestoes" role="group" aria-label="Sugestões de pergunta">
+          <button type="button" class="sugestao" title="Resuma o processo 0000001-15.2022.8.99.9012."
+                  data-pergunta="Resuma o processo 0000001-15.2022.8.99.9012.">Resuma o processo…</button>
+          <button type="button" class="sugestao" title="Quem são as partes e os advogados do processo 0000001-15.2022.8.99.9012?"
+                  data-pergunta="Quem são as partes e os advogados do processo 0000001-15.2022.8.99.9012?">Partes e advogados…</button>
+          <button type="button" class="sugestao" title="O processo 0000001-15.2022.8.99.9012 já foi julgado? Qual a decisão e os fundamentos?"
+                  data-pergunta="O processo 0000001-15.2022.8.99.9012 já foi julgado? Qual a decisão e os fundamentos?">Já foi julgado?…</button>
+          <button type="button" class="sugestao" title="Elabore uma minuta de sentença para o processo 0000001-81.2023.8.99.9011."
+                  data-pergunta="Elabore uma minuta de sentença para o processo 0000001-81.2023.8.99.9011.">Minuta de sentença…</button>
+        </div>
+        <div class="linha-entrada">
+          <label class="visualmente-oculto" for="pergunta">Pergunta</label>
+          <textarea id="pergunta" name="pergunta" rows="2" maxlength="4000"
+                    placeholder="Pergunte sobre um processo…"></textarea>
+          <button type="submit" class="botao-enviar" id="botao-enviar">Enviar</button>
+        </div>
+        <div class="rodape-entrada">
+          <button type="button" class="botao-nova" id="botao-nova">↺ Nova conversa</button>
+          <span class="dica">Enter envia · Shift+Enter quebra a linha</span>
+        </div>
+      </form>
+    </section>
+
+    <aside class="painel" id="painel" aria-label="Painel de apoio">
+      <div class="abas" role="tablist" aria-label="Painel de apoio">
+        <button type="button" class="aba" role="tab" id="aba-fontes" data-aba="fontes"
+                aria-controls="painel-fontes" aria-selected="true">Fontes</button>
+        <button type="button" class="aba" role="tab" id="aba-como" data-aba="como"
+                aria-controls="painel-como" aria-selected="false" tabindex="-1">Como cheguei aqui</button>
+        <button type="button" class="aba" role="tab" id="aba-processo" data-aba="processo"
+                aria-controls="painel-processo" aria-selected="false" tabindex="-1">Processo</button>
+      </div>
+
+      <section class="conteudo-aba" role="tabpanel" id="painel-fontes" aria-labelledby="aba-fontes" tabindex="0">
+        <div id="fontes-documento"></div>
+        <div class="lista-fontes" id="fontes-lista" hidden>
+          <h2 class="subtitulo">Documentos citados na conversa</h2>
+          <ul id="fontes-itens"></ul>
+        </div>
+      </section>
+
+      <section class="conteudo-aba" role="tabpanel" id="painel-como" aria-labelledby="aba-como" tabindex="0" hidden>
+        <div id="como-conteudo"></div>
+        <div class="custo" id="como-custo"></div>
+      </section>
+
+      <section class="conteudo-aba" role="tabpanel" id="painel-processo" aria-labelledby="aba-processo" tabindex="0" hidden>
+        <div id="processo-conteudo"></div>
+      </section>
+    </aside>
+  </main>
+
+  <script src="vendor/marked.umd.js"></script>
+  <script src="vendor/purify.min.js"></script>
+  <script src="nucleo.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
