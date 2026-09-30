@@ -195,19 +195,3 @@ docs/                uso-de-ia.md · roteiro-demo.md · img/ · pesquisa/ · sup
   provedor falhou depois de 3 tentativas. O detalhe técnico fica no campo `erros` do log de auditoria.
 - **"Banco não encontrado em …"** Confira o `DB_PATH` no `.env`.
 - **Porta 8000 ocupada.** Use `uv run uvicorn app.main:app --port 8001`.
-
-## Git
-
-O repositório usa só configuração local do git; a configuração global não muda. Depois de clonar ou copiar a pasta,
-rode:
-
-```bash
-bash scripts/configurar-git.sh
-```
-
-O script define a identidade local dos commits e aponta `core.hooksPath` para `scripts/git-hooks`. Ele também zera o
-`credential.helper` local e, se existir a chave `~/.ssh/id_ed25519_desafio_ia`, usa essa chave nas operações SSH. O
-hook `scripts/git-hooks/pre-push` recusa push para qualquer remoto cuja URL contenha "gitlab". É uma regra do projeto:
-este código nunca vai para GitLab. O git não copia hooks num clone, então o hook só vale depois de rodar o script. Os
-dois scripts têm testes em `tests/test_git_hook.py`. Um deles roda o `configurar-git.sh` num repositório temporário,
-com HOME isolado, e prova que nada vai para a configuração global.
