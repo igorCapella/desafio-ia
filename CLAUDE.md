@@ -75,6 +75,7 @@ execução, que fica fora do repositório; o DECISOES.md resume as que importam.
 | `tests/` | testes pytest; `tests/web/` tem o teste do núcleo JS |
 | `docs/superpowers/` | spec, plano e mockups aprovados |
 | `docs/pesquisa/` | spike de modelos (evidência; o código ali é descartável) |
+| `docs/apresentacao/` | slides da arguição: HTML autocontido, que abre sem internet, e o PDF impresso a partir dele |
 
 ## Limitações conhecidas
 

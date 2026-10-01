@@ -18,6 +18,7 @@ norma "art. 485" não foi encontrada nos autos. À direita, a aba "Como cheguei 
 | [DECISOES.md](DECISOES.md) | decisões com evidência medida e as respostas às 5 perguntas da arguição |
 | [docs/uso-de-ia.md](docs/uso-de-ia.md) | como a IA foi usada no desenvolvimento e onde atrapalhou |
 | [docs/roteiro-demo.md](docs/roteiro-demo.md) | roteiro da demonstração, com plano B |
+| [apresentação em PDF](docs/apresentacao/apresentacao.pdf) e [em HTML](docs/apresentacao/apresentacao.html) | slides da arguição: o desafio, o sistema e as cinco perguntas; o HTML abre no navegador depois de baixado |
 | [CLAUDE.md](CLAUDE.md) | convenções para quem continuar o projeto, pessoa ou IA |
 | [spec](docs/superpowers/specs/2026-09-23-agente-consulta-processual-design.md), [plano](docs/superpowers/plans/2026-09-24-agente-consulta-processual.md) e [spike](docs/pesquisa/2026-09-23-spike-modelos/RESULTADOS.md) | design aprovado, plano em 21 tarefas e a pesquisa que escolheu o modelo |
 
@@ -231,7 +232,7 @@ data/desafio.sqlite  banco original do desafio, versionado descompactado
 evals/               casos.yaml · rubrica.md · executar.py · reverificar.py · resultados/
 scripts/             resumo_logs.py
 tests/               testes pytest; tests/web/ tem o teste do núcleo JS
-docs/                uso-de-ia.md · roteiro-demo.md · img/ · pesquisa/ · superpowers/ (spec, plano e mockups)
+docs/                uso-de-ia.md · roteiro-demo.md · apresentacao/ · img/ · pesquisa/ · superpowers/ (spec, plano, mockups)
 ```
 
 ## Solução de problemas
