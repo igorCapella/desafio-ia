@@ -562,7 +562,7 @@ O resto muda assim:
 |---|---|---|
 | Modelo | DeepSeek V4.1 Flash via OpenRouter, provedores sem treino com dados, fp8 ou mais preciso | o mesmo modelo, que tem pesos abertos, num vLLM on-premises; o cliente já fala esse protocolo e troca pela `LLM_BASE_URL`; se ficar em nuvem, retenção zero (`zdr: true`) ou hospedagem própria |
 | Banco | SQLite de 41,8 MB, só leitura, visões temporárias por conexão | PostgreSQL ou réplica de leitura, com as visões curadas como objetos do banco |
-| SQL do modelo | cópia em memória só com as visões e CPF mascarado (+35 MB de RAM, 0,18 s na subida) | papel de consulta que só enxerga as visões mascaradas da réplica, com timeout e limite de linhas; a cópia em memória não escala |
+| SQL do modelo | cópia em memória só com as visões e CPF mascarado (cerca de 45 MB de RAM, 0,18 s na subida) | papel de consulta que só enxerga as visões mascaradas da réplica, com timeout e limite de linhas; a cópia em memória não escala |
 | Documentos | dossiê inteiro no contexto | busca por trechos (FTS ou vetorial) e OCR das peças digitalizadas; a verificação de aspas continua conferindo contra os trechos lidos |
 | Acesso | localhost sem autenticação | autenticação e controle de acesso por processo (sigilo e segredo de justiça), aplicado nas visões, não no prompt |
 | Dados pessoais | CPF mascarado nas visões, no log e na resposta (salvo o que o próprio usuário digitou) | o mesmo, mais política de LGPD (base legal, retenção, direitos do titular) e revisão de outros dados pessoais além do CPF |

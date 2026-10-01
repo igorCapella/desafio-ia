@@ -20,7 +20,7 @@ O usuário decidiu o design, o escopo e as prioridades. A IA propôs, escreveu, 
 | Decisões registradas | 39 (Ruling 1 a 39) |
 | Commits | 45 da spec ao `eb545cf`, 18 deles de correção (`fix`) |
 | Rodadas de correção pedidas pela revisão das tarefas | 9, todas encerradas sem pendência aberta: tarefas 2, 3, 6, 7, 8 e 9, lote 10–14 (duas rodadas) e tarefa 15 |
-| Testes | 210 no pytest (204 em `tests/` e 6 em `evals/`) e 9 do núcleo JavaScript no Node |
+| Testes | 208 no pytest (202 em `tests/` e 6 em `evals/`) e 9 do núcleo JavaScript no Node |
 | Rodadas reais de avaliação | 3, com 25 casos cada |
 | Falsos positivos do verificador achados na releitura para esta documentação e na reclassificação que ela motivou | 9 alertas nas três rodadas (Rulings 34 e 35), corrigidos no código e reverificados |
 | Custo de API registrado (OpenRouter) | cerca de US$ 0,65, de uma chave com limite de US$ 4 (detalhe no fim) |
