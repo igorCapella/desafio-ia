@@ -1,10 +1,10 @@
 # Agente de Consulta Processual
 
-Protótipo feito para o desafio "Agente de IA sobre dados estruturados" do TJSC/DTI, no processo seletivo para Líder
-de Produtos de Inteligência Artificial. É um chat em português sobre o banco SQLite sintético do desafio, com 10.000
-processos fictícios. O agente entende a pergunta e decide sozinho como consultar o banco. Ele cita a fonte de cada
-informação e mantém o foco em um processo ao longo da conversa. Quando os dados não permitem afirmar algo, ele diz. A
-minuta de sentença sai sempre como proposta, nunca como sentença proferida.
+Protótipo feito para o desafio "Agente de IA sobre dados estruturados" do TJSC/DTI, no processo seletivo para
+Engenheiro de Produto de IA do Tribunal de Justiça de Santa Catarina. É um chat em português sobre o banco SQLite
+sintético do desafio, com 10.000 processos fictícios. O agente entende a pergunta e decide sozinho como consultar o
+banco. Ele cita a fonte de cada informação e mantém o foco em um processo ao longo da conversa. Quando os dados não
+permitem afirmar algo, ele diz. A minuta de sentença sai sempre como proposta, nunca como sentença proferida.
 
 ![Resposta com selos de verificação e a aba "Como cheguei aqui"](docs/img/interface-resposta-e-selos.png)
 

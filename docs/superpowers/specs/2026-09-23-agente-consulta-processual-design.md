@@ -2,7 +2,7 @@
 
 - **Data:** 23/09/2026
 - **Status:** design aprovado em conversa (seções 1 a 7); aguardando revisão desta spec escrita
-- **Desafio:** TJSC / DTI — "Desafio de Entrega: Agente de IA sobre dados estruturados" (https://desafio-ia.sandbox.tjsc.jus.br/), processo seletivo para Líder de Produtos de Inteligência Artificial
+- **Desafio:** TJSC / DTI — "Desafio de Entrega: Agente de IA sobre dados estruturados" (https://desafio-ia.sandbox.tjsc.jus.br/), processo seletivo para Engenheiro de Produto de IA do Tribunal de Justiça de Santa Catarina
 - **Evidências:** [docs/pesquisa/2026-09-23-spike-modelos/RESULTADOS.md](../../pesquisa/2026-09-23-spike-modelos/RESULTADOS.md)
 
 ## 1. Objetivo
