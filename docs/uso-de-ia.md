@@ -39,8 +39,8 @@ O usuário decidiu o design, o escopo e as prioridades. A IA propôs, escreveu, 
 - **Revisão automática de segurança dos commits.** Os achados reais estão nas Rulings 5, 6, 21 e 32. Os falsos
   positivos sobre o httpx2 estão descritos abaixo.
 - **Context7**, para consultar a documentação atual das bibliotecas.
-- **Memória do Claude Code**, com regras que valem entre sessões. Exemplos: "nunca GitLab", o IPv6 quebrado da máquina
-  e as decisões do desafio.
+- **Memória do Claude Code**, com regras que valem entre sessões. Exemplos: o IPv6 quebrado da máquina e as
+  decisões do desafio.
 - **Instruções configuradas.** O [CLAUDE.md](../CLAUDE.md) guarda as convenções do projeto. O prompt do agente
   (`app/agente/prompt.md`) é versionado, porque é parte do produto.
 

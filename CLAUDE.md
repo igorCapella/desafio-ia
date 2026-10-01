@@ -71,7 +71,7 @@ execução, que fica fora do repositório; o DECISOES.md resume as que importam.
 | `app/auditoria.py` | log jsonl com CPF mascarado e sem chaves |
 | `app/web/static/` | interface; `nucleo.js` tem as funções puras testadas pelo Node |
 | `evals/` | casos, rubrica, executor, reverificação sem custo (`reverificar.py`) e resultados das rodadas reais |
-| `scripts/` | resumo do log, configuração do git, hook anti-GitLab |
+| `scripts/` | resumo do log |
 | `tests/` | testes pytest; `tests/web/` tem o teste do núcleo JS |
 | `docs/superpowers/` | spec, plano e mockups aprovados |
 | `docs/pesquisa/` | spike de modelos (evidência; o código ali é descartável) |

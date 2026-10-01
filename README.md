@@ -59,7 +59,7 @@ As quatro sugestões da tela são os exemplos do desafio, já preenchidos com pr
 ## Testes
 
 ```bash
-uv run pytest            # 210 testes (204 em tests/ e 6 em evals/), sem chave e sem rede
+uv run pytest            # 208 testes (202 em tests/ e 6 em evals/), sem chave e sem rede
 uv run pytest -W error   # os mesmos testes, com avisos tratados como erro: também passa
 node --test tests/web/nucleo.test.cjs   # 9 testes do núcleo JavaScript (o pytest também os roda se houver Node)
 ```
@@ -176,7 +176,7 @@ app/
   web/static/        index.html · app.js · nucleo.js (funções puras, testadas) · estilo.css · vendor/
 data/desafio.sqlite  banco original do desafio, versionado descompactado
 evals/               casos.yaml · rubrica.md · executar.py · reverificar.py · resultados/
-scripts/             resumo_logs.py · configurar-git.sh · git-hooks/pre-push
+scripts/             resumo_logs.py
 tests/               testes pytest; tests/web/ tem o teste do núcleo JS
 docs/                uso-de-ia.md · roteiro-demo.md · img/ · pesquisa/ · superpowers/ (spec, plano e mockups)
 ```

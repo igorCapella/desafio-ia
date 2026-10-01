@@ -277,7 +277,6 @@ Eventos SSE:
 - Roteamento só para provedores sem treino com dados (`data_collection: deny`, reforçado pelo filtro da conta) e sem quantização de 4 bits.
 - Painel de documentos restrito ao que foi consultado na sessão.
 - Saída do modelo sanitizada antes de virar HTML.
-- Hook `pre-push` bloqueia GitLab.
 
 ## 9. Qualidade
 
@@ -321,9 +320,7 @@ Eventos SSE:
 
 ### 10.1 Git isolado neste projeto
 
-- **Nenhuma configuração global muda.** Tudo fica em `.git/config`: `user.name` e `user.email` pessoais (não o e-mail corporativo); `origin` no GitHub; `core.sshCommand` com chave SSH exclusiva (`~/.ssh/id_ed25519_desafio_ia`); `core.hooksPath=scripts/git-hooks`.
-- `scripts/git-hooks/pre-push` recusa qualquer remoto cujo host contenha "gitlab".
-- `scripts/configurar-git.sh` reaplica a configuração local em outra máquina (identidade, hooks, chave SSH).
+- **Nenhuma configuração global muda.** Tudo fica em `.git/config`: `user.name` e `user.email` pessoais (não o e-mail corporativo); `origin` no GitHub; `core.sshCommand` com chave SSH exclusiva (`~/.ssh/id_ed25519_desafio_ia`).
 - **Portabilidade:** copiar a pasta leva o histórico. O `.env` é recriado a partir do `.env.example`.
 - O git local é a versão 2.25, então o branch `main` é definido manualmente (`git symbolic-ref HEAD refs/heads/main`).
 
@@ -343,7 +340,7 @@ desafio-ia/
 ├── tests/
 ├── evals/            casos.yaml · rubrica.md · executar.py · resultados/
 ├── data/desafio.sqlite        banco original, versionado descompactado (SHA-256 conferido nos testes)
-├── scripts/          resumo_logs.py · configurar-git.sh · git-hooks/pre-push
+├── scripts/          resumo_logs.py
 └── docs/             uso-de-ia.md · roteiro-demo.md · pesquisa/ · superpowers/{specs,plans}/
 ```
 
@@ -367,7 +364,7 @@ O SQLite, hoje na raiz, é movido para `data/`. O `.gitignore` cobre `.env`, `lo
   - ferramentas: Claude Code com skills de brainstorming, companheiro visual, spike, planos, TDD, subagentes e revisão; Context7; memória;
   - instruções configuradas: `CLAUDE.md` e o prompt do agente;
   - **onde a IA atrapalhou**, com casos reais: comarca interpretada errado, mockup com advogados no lugar das partes, falsos negativos das checagens por palavra-chave, súmula inventada pelo V4 Flash.
-- **CLAUDE.md:** convenções do projeto, a regra "nunca GitLab" e como rodar testes e avaliações.
+- **CLAUDE.md:** convenções do projeto e como rodar testes e avaliações.
 - **docs/roteiro-demo.md:** roteiro da seção 11.
 
 ## 11. Demonstração
