@@ -29,32 +29,85 @@ norma "art. 485" não foi encontrada nos autos. À direita, a aba "Como cheguei 
   3.31.1. Nesse caso, o app se recusa a subir e explica o motivo. A solução é `uv sync --managed-python`. O
   desenvolvimento e os testes rodaram em Python 3.14.6, e a suíte também foi validada em 3.12.13 gerenciado pelo
   uv. As duas versões têm SQLite 3.53.1.
-- **[uv](https://docs.astral.sh/uv/)**, testado com a versão 0.11.28.
+- **[uv](https://docs.astral.sh/uv/)**, testado com a versão 0.11.28. A instalação está em [Como rodar](#como-rodar).
 - **Chave do OpenRouter**, só para o chat e as avaliações. Os testes não usam chave nem rede.
 - **Node.js** (opcional, testado com a v22.17.0) para o teste do núcleo JavaScript da interface. Sem Node, esse
   teste é pulado.
 
-## Preparação
+## Como rodar
 
-```bash
-uv sync
-cp .env.example .env
-# edite o .env e preencha OPENROUTER_API_KEY
-```
+O projeto roda no Linux e no Windows, sem WSL. Foi desenvolvido no Linux e testado também no Windows 11 com Python
+3.12, onde o app sobe e os testes passam. Não é preciso instalar o Python à parte: se não houver um 3.12 ou mais novo
+na máquina, o `uv` baixa um.
 
-O banco já vem no repositório, descompactado, em `data/desafio.sqlite` (41.811.968 bytes). Ele só é aberto em modo
-leitura. Um teste confere o SHA-256 do arquivo (`8a90b47c…0c43`), provando que ele nunca foi alterado.
+### Linux
 
-## Execução
+1. Instale o `uv`:
 
-```bash
-uv run uvicorn app.main:app
-```
+   ```bash
+   curl -LsSf https://astral.sh/uv/install.sh | sh
+   ```
+
+   Sem `curl`, use `wget -qO- https://astral.sh/uv/install.sh | sh`. Depois feche e abra o terminal, para o `uv`
+   entrar no PATH.
+
+2. Baixe o projeto e prepare o ambiente:
+
+   ```bash
+   git clone https://github.com/igorCapella/desafio-ia.git
+   cd desafio-ia
+   uv sync
+   cp .env.example .env
+   ```
+
+3. Edite o `.env` e preencha `OPENROUTER_API_KEY`.
+4. Suba o app:
+
+   ```bash
+   uv run uvicorn app.main:app
+   ```
+
+No macOS, os passos são os mesmos.
+
+### Windows
+
+Os comandos abaixo são para o PowerShell. O `git clone` precisa do [Git para Windows](https://git-scm.com/download/win).
+
+1. Instale o `uv`:
+
+   ```powershell
+   powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
+   ```
+
+   Outra opção é `winget install --id=astral-sh.uv -e`. Depois feche e abra o PowerShell, para o `uv` entrar no PATH.
+
+2. Baixe o projeto e prepare o ambiente:
+
+   ```powershell
+   git clone https://github.com/igorCapella/desafio-ia.git
+   cd desafio-ia
+   uv sync
+   Copy-Item .env.example .env
+   ```
+
+3. Edite o `.env` (por exemplo, com `notepad .env`) e preencha `OPENROUTER_API_KEY`.
+4. Suba o app:
+
+   ```powershell
+   uv run uvicorn app.main:app
+   ```
+
+### Depois de subir
 
 Abra <http://localhost:8000>. Na subida, o app confere o banco (o arquivo existe e tem as 7 tabelas esperadas) e
 prepara a cópia de consulta do modelo. Qualquer problema interrompe a subida com mensagem em português.
 
 As quatro sugestões da tela são os exemplos do desafio, já preenchidos com processos do banco.
+
+O banco já vem no repositório, descompactado, em `data/desafio.sqlite` (41.811.968 bytes). Ele só é aberto em modo
+leitura. Um teste confere o SHA-256 do arquivo (`8a90b47c…0c43`), provando que ele nunca foi alterado.
+
+Os demais comandos deste README (testes, avaliações e resumo do log) são iguais no Linux e no Windows.
 
 ## Testes
 
